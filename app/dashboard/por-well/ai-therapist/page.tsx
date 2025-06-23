@@ -1,63 +1,85 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import './style.css';
 
 interface Message {
   id: string;
-  sender: 'ai' | 'user';
-  text: string;
+  sender: 'user' | 'ai';
+  content: string;
   timestamp: Date;
+  type: 'text' | 'insight' | 'exercise' | 'warning';
+  mood?: string;
+  tags?: string[];
 }
 
-interface UserData {
-  mood: {
-    entries: Array<{ mood: string; date: string; notes?: string }>;
-    currentMood?: string;
-  };
-  meditation: {
-    totalMinutes: number;
-    streakDays: number;
-    totalSessions: number;
-  };
-  sleep: {
-    averageScore: number;
-    lastNight?: number;
-  };
-  stress: {
-    currentLevel: number;
-    totalSessions: number;
-    reductionPercentage: number;
-  };
-  journal: {
-    totalEntries: number;
-    dominantEmotion?: string;
-  };
+interface UserProfile {
+  name: string;
+  currentMood: number;
+  moodTrend: 'improving' | 'stable' | 'declining';
+  stressLevel: number;
+  lastMeditationDate: string;
+  crisisRisk: 'low' | 'medium' | 'high';
+  totalSessions: number;
+  preferredTherapyStyle: 'supportive' | 'analytical' | 'practical';
 }
 
-export default function AITherapistPage() {
+interface TherapyMetrics {
+  sessionDuration: number;
+  messagesExchanged: number;
+  insightsGenerated: number;
+  exercisesCompleted: number;
+  moodImprovement: number;
+}
+
+export default function AITherapist() {
   const router = useRouter();
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [userData, setUserData] = useState<UserData>({
-    mood: { entries: [] },
-    meditation: { totalMinutes: 0, streakDays: 0, totalSessions: 0 },
-    sleep: { averageScore: 0 },
-    stress: { currentLevel: 5, totalSessions: 0, reductionPercentage: 0 },
-    journal: { totalEntries: 0 }
+  const [sessionStarted, setSessionStarted] = useState(false);
+  const [currentSession, setCurrentSession] = useState<TherapyMetrics>({
+    sessionDuration: 0,
+    messagesExchanged: 0,
+    insightsGenerated: 0,
+    exercisesCompleted: 0,
+    moodImprovement: 0
   });
-  const [conversationStarted, setConversationStarted] = useState(false);
   
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [userProfile] = useState<UserProfile>({
+    name: 'Sofia',
+    currentMood: 6.8,
+    moodTrend: 'improving',
+    stressLevel: 4,
+    lastMeditationDate: '2025-01-15',
+    crisisRisk: 'low',
+    totalSessions: 12,
+    preferredTherapyStyle: 'supportive'
+  });
 
-  // Load user data on component mount
+  const [sessionTimer, setSessionTimer] = useState(0);
+  const [showExerciseModal, setShowExerciseModal] = useState(false);
+  const [currentExercise, setCurrentExercise] = useState<any>(null);
+
   useEffect(() => {
-    loadUserData();
-  }, []);
+    if (sessionStarted) {
+      const timer = setInterval(() => {
+        setSessionTimer(prev => prev + 1);
+        setCurrentSession(prev => ({
+          ...prev,
+          sessionDuration: prev.sessionDuration + 1
+        }));
+      }, 1000);
+      
+      return () => clearInterval(timer);
+    }
+  }, [sessionStarted]);
 
-  // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
@@ -66,304 +88,153 @@ export default function AITherapistPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const loadUserData = async () => {
-    try {
-      // TODO: Replace with actual Xano API calls
-      const mockData: UserData = {
-        mood: {
-          entries: [
-            { mood: 'good', date: '2025-06-19', notes: 'Felt productive today' },
-            { mood: 'excellent', date: '2025-06-18', notes: 'Great workout' }
-          ],
-          currentMood: 'good'
-        },
-        meditation: {
-          totalMinutes: 180,
-          streakDays: 12,
-          totalSessions: 23
-        },
-        sleep: {
-          averageScore: 8.2,
-          lastNight: 8.5
-        },
-        stress: {
-          currentLevel: 3,
-          totalSessions: 15,
-          reductionPercentage: 20
-        },
-        journal: {
-          totalEntries: 23,
-          dominantEmotion: 'optimism'
-        }
-      };
-      
-      setUserData(mockData);
-    } catch (error) {
-      console.error('Error loading user data:', error);
-    }
-  };
-
-  const startConversation = () => {
-    setConversationStarted(true);
-    const greeting = getPersonalizedGreeting();
-    addMessage('ai', greeting);
-  };
-
-  const getPersonalizedGreeting = (): string => {
-    let greeting = "Bună! Sunt Dr. Aria și sunt aici să te ajut cu wellness-ul mental. ";
+  const startSession = () => {
+    setSessionStarted(true);
     
-    if (userData.mood.entries && userData.mood.entries.length > 0) {
-      const lastMood = userData.mood.entries[userData.mood.entries.length - 1];
-      greeting += `Văd că mood-ul tău recent a fost ${lastMood.mood}. `;
-    }
-    
-    if (userData.meditation.streakDays > 7) {
-      greeting += `Felicitări pentru streak-ul de ${userData.meditation.streakDays} zile la meditație! `;
-    }
-    
-    if (userData.sleep.averageScore > 8) {
-      greeting += `Somnul tău a fost excelent recent - aceasta îți susține wellness-ul mental. `;
-    }
-    
-    greeting += "Cum te simți astăzi și cu ce te pot ajuta?";
-    
-    return greeting;
-  };
-
-  const addMessage = (sender: 'ai' | 'user', text: string) => {
-    const newMessage: Message = {
-      id: Date.now().toString(),
-      sender,
-      text,
-      timestamp: new Date()
+    const welcomeMessage: Message = {
+      id: crypto.randomUUID(),
+      sender: 'ai',
+      content: `Bună ${userProfile.name}! 🌸 Sunt Dr. Aria, AI-ul tău pentru wellness mental.\n\nAm analizat datele tale din PorWell și observ că:\n• Mood-ul tău actual: ${userProfile.currentMood}/10 (${userProfile.moodTrend === 'improving' ? 'în creștere 📈' : userProfile.moodTrend === 'stable' ? 'stabil 📊' : 'în scădere 📉'})\n• Nivel stress: ${userProfile.stressLevel}/10\n• Ultima meditație: ${userProfile.lastMeditationDate}\n\nSunt aici să te ajut cu orice te preocupă. Cu ce vrei să începem?`,
+      timestamp: new Date(),
+      type: 'insight',
+      tags: ['welcome', 'data-analysis']
     };
     
-    setMessages(prev => [...prev, newMessage]);
+    setMessages([welcomeMessage]);
+  };
+
+  const detectCrisis = (message: string): boolean => {
+    const crisisKeywords = [
+      'sinucidere', 'să mor', 'vreau să mor', 'nu mai pot', 'să mă omor',
+      'nu mai are sens', 'să dispar', 'să mă fac', 'nu mai vreau să trăiesc'
+    ];
+    
+    return crisisKeywords.some(keyword => 
+      message.toLowerCase().includes(keyword)
+    );
+  };
+
+  const generateAIResponse = async (userMessage: string): Promise<Message> => {
+    const lowerMessage = userMessage.toLowerCase();
+    
+    // Crisis detection
+    if (detectCrisis(userMessage)) {
+      return {
+        id: crypto.randomUUID(),
+        sender: 'ai',
+        content: `🚨 **Îmi pare foarte rău că te simți așa.** Aceste gânduri sunt serioase și vreau să știi că nu ești singur/ă.\n\n**Contacte urgente:**\n📞 Telefonul Sufletului: 116 123\n📞 Urgențe: 112\n\nÎmi poți spune cum te simți chiar acum? Sunt aici pentru tine și vom găsi împreună modalități să te simți mai bine.`,
+        timestamp: new Date(),
+        type: 'warning',
+        tags: ['crisis', 'emergency', 'support']
+      };
+    }
+    
+    // Mood-related responses
+    if (lowerMessage.includes('trist') || lowerMessage.includes('deprimat') || lowerMessage.includes('down')) {
+      return {
+        id: crypto.randomUUID(),
+        sender: 'ai',
+        content: `💙 Îmi pare rău că te simți trist/ă. Este perfect normal să ai perioade mai grele.\n\n**Pe baza datelor tale:**\n• Mood-ul tău a fost ${userProfile.moodTrend === 'improving' ? 'în ameliorare' : 'fluctuant'} recent\n• Meditația poate ajuta - ultima ta sesiune a fost pe ${userProfile.lastMeditationDate}\n\n**Strategii imediate:**\n🌱 Respirația 4-7-8 (2 minute)\n🎵 Playlist-ul tău de relaxare\n☀️ 5 minute la lumină naturală\n\nVrei să încercăm un exercițiu împreună?`,
+        timestamp: new Date(),
+        type: 'insight',
+        tags: ['mood', 'sadness', 'support', 'strategies']
+      };
+    }
+    
+    // Stress-related responses
+    if (lowerMessage.includes('stres') || lowerMessage.includes('copleșit') || lowerMessage.includes('anxios')) {
+      return {
+        id: crypto.randomUUID(),
+        sender: 'ai',
+        content: `💆‍♀️ Observ că te simți stresat/ă. Nivelul tău actual de stress este ${userProfile.stressLevel}/10.\n\n**Tehnici rapide anti-stress:**\n\n**5-4-3-2-1 Grounding:**\n• 5 lucruri pe care le vezi\n• 4 lucruri pe care le atingi\n• 3 lucruri pe care le auzi\n• 2 lucruri pe care le miroși\n• 1 lucru pe care îl guști\n\n**Box Breathing:** 4 sec inspiră → 4 sec ține → 4 sec expiră → 4 sec ține\n\nVrei să facem împreună un exercițiu de relaxare ghidat?`,
+        timestamp: new Date(),
+        type: 'exercise',
+        tags: ['stress', 'anxiety', 'techniques', 'grounding']
+      };
+    }
+    
+    // Sleep-related responses
+    if (lowerMessage.includes('somn') || lowerMessage.includes('insomnie') || lowerMessage.includes('obosit')) {
+      return {
+        id: crypto.randomUUID(),
+        sender: 'ai',
+        content: `😴 Somnul afectează masiv mood-ul și energia. Văd din datele tale că sunt aspecte de îmbunătățit.\n\n**Sleep Hygiene Tips:**\n🌙 Stop ecrane cu 1h înainte de culcare\n🌡️ Cameră răcoroasă (18-20°C)\n📱 Modul avion sau zona fără telefon\n🎧 Sunete binaurale pentru relaxare\n\n**Rutina de seară ideală:**\n• 21:00 - Ultimul ecran\n• 21:30 - Ceai de mușețel + carte\n• 22:00 - Meditație de 10 min\n• 22:30 - Culcare\n\nVrei să setăm împreună o rutină personalizată?`,
+        timestamp: new Date(),
+        type: 'insight',
+        tags: ['sleep', 'hygiene', 'routine', 'optimization']
+      };
+    }
+    
+    // Work/productivity related
+    if (lowerMessage.includes('muncă') || lowerMessage.includes('job') || lowerMessage.includes('productiv')) {
+      return {
+        id: crypto.randomUUID(),
+        sender: 'ai',
+        content: `⚡ Burnout-ul și stresul de la muncă sunt foarte comune. Să analizăm situația ta.\n\n**Red flags burnout:**\n❌ Epuizare constantă\n❌ Detașare emoțională\n❌ Sentimente de ineficiență\n❌ Cicluri vicioase de procrastinare\n\n**Strategii immediate:**\n🎯 Pomodoro Technique (25 min focus + 5 min pauză)\n🚶‍♀️ Walking meetings\n🧘‍♀️ Micro-meditații (2 min între task-uri)\n📝 Boundary setting clar\n\n**Integration PorFlow:** Ecosistemul nostru de productivitate te poate ajuta cu workflow-uri optimizate.\n\nCe aspect te stresează cel mai mult la muncă?`,
+        timestamp: new Date(),
+        type: 'insight',
+        tags: ['work', 'burnout', 'productivity', 'boundaries']
+      };
+    }
+    
+    // Relationships
+    if (lowerMessage.includes('relații') || lowerMessage.includes('familie') || lowerMessage.includes('prieteni')) {
+      return {
+        id: crypto.randomUUID(),
+        sender: 'ai',
+        content: `❤️ Relațiile sănătoase sunt fundamentale pentru wellness mental. Să explorăm.\n\n**Tipuri de relații:**\n🌱 **Nutritive:** Te energizează și susțin\n⚡ **Neutre:** Nici bune, nici rele\n🔋 **Toxice:** Îți consumă energia\n\n**Red flags relații toxice:**\n• Criticism constant\n• Manipulation emoțională\n• Lipsa de respectare a boundary-urilor\n• Drama continuă\n\n**Healthy boundaries:**\n✅ \"Nu\" este o propoziție completă\n✅ Nu ești responsabil/ă pentru emoțiile altora\n✅ Self-care nu este egoism\n\nÎmi poți spune despre o relație care te preocupă?`,
+        timestamp: new Date(),
+        type: 'insight',
+        tags: ['relationships', 'boundaries', 'toxicity', 'self-care']
+      };
+    }
+    
+    // General supportive response
+    return {
+      id: crypto.randomUUID(),
+      sender: 'ai',
+      content: `🌿 Îți mulțumesc că îmi împărtășești asta. Fiecare experiență este validă și importantă.\n\n**Pe baza profilului tău:**\n• Ai parcurs deja ${userProfile.totalSessions} sesiuni de terapie\n• Stilul tău preferat: ${userProfile.preferredTherapyStyle === 'supportive' ? 'Suportiv și empatic' : userProfile.preferredTherapyStyle === 'analytical' ? 'Analitic și structurat' : 'Practic și orientat spre soluții'}\n\nSă explorăm împreună această situație. Ce simți că te-ar ajuta cel mai mult chiar acum?\n\n**Opțiuni:**\n💭 Vorbim despre emoții\n🎯 Găsim soluții practice\n🧘‍♀️ Facem un exercițiu de relaxare`,
+      timestamp: new Date(),
+      type: 'text',
+      tags: ['general', 'supportive', 'exploration']
+    };
   };
 
   const sendMessage = async () => {
-    if (!inputValue.trim() || isTyping) return;
+    if (!inputValue.trim()) return;
     
-    const userMessage = inputValue.trim();
-    addMessage('user', userMessage);
+    const userMessage: Message = {
+      id: crypto.randomUUID(),
+      sender: 'user',
+      content: inputValue.trim(),
+      timestamp: new Date(),
+      type: 'text'
+    };
+    
+    setMessages(prev => [...prev, userMessage]);
     setInputValue('');
-    
-    // Reset textarea height
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
-    }
-    
-    // Show typing indicator and generate AI response
     setIsTyping(true);
     
-    try {
-      const response = await generateAIResponse(userMessage);
-      setTimeout(() => {
-        setIsTyping(false);
-        addMessage('ai', response);
-      }, 1500 + Math.random() * 1000);
-    } catch (error) {
+    // Update session metrics
+    setCurrentSession(prev => ({
+      ...prev,
+      messagesExchanged: prev.messagesExchanged + 1
+    }));
+    
+    // Simulate AI thinking time
+    setTimeout(async () => {
+      const aiResponse = await generateAIResponse(userMessage.content);
+      setMessages(prev => [...prev, aiResponse]);
       setIsTyping(false);
-      addMessage('ai', 'Îmi pare rău, am întâmpinat o problemă tehnică. Te rog să încerci din nou.');
-    }
-  };
-
-  const generateAIResponse = async (userMessage: string): Promise<string> => {
-    // TODO: Replace with actual OpenRouter API call
-    // For now, using intelligent pattern matching based on user data
-    
-    const message = userMessage.toLowerCase();
-    
-    if (message.includes('mood') || message.includes('simt')) {
-      return generateMoodResponse(message);
-    } else if (message.includes('somn') || message.includes('dormit')) {
-      return generateSleepResponse(message);
-    } else if (message.includes('stres') || message.includes('anxio')) {
-      return generateStressResponse(message);
-    } else if (message.includes('jurnal') || message.includes('emotion')) {
-      return generateJournalResponse(message);
-    } else if (message.includes('meditati') || message.includes('mindfulness')) {
-      return generateMeditationResponse(message);
-    } else if (message.includes('plan') || message.includes('recomand')) {
-      return generateRecommendationResponse(message);
-    } else if (message.includes('ajutor') || message.includes('greu')) {
-      return generateSupportResponse(message);
-    } else {
-      return generateGeneralResponse(message);
-    }
-  };
-
-  const generateMoodResponse = (message: string): string => {
-    const moodData = userData.mood;
-    let response = "În legătură cu mood-ul tău, ";
-    
-    if (moodData.entries && moodData.entries.length > 0) {
-      const recentMoods = moodData.entries.slice(-7);
-      const moodValues = { excellent: 5, good: 4, neutral: 3, low: 2, poor: 1 };
-      const avgMood = recentMoods.reduce((sum, entry) => {
-        return sum + (moodValues[entry.mood as keyof typeof moodValues] || 3);
-      }, 0) / recentMoods.length;
       
-      if (avgMood >= 4) {
-        response += "observ că ai avut un trend pozitiv în ultima săptămână! Aceasta arată că strategiile tale de wellness funcționează. ";
-      } else if (avgMood >= 3) {
-        response += "ai avut un mood echilibrat, cu ups and downs normale. ";
-      } else {
-        response += "observ că ai trecut prin momente mai dificile recent. Este important să fii blând cu tine însuți. ";
+      // Update metrics based on response type
+      if (aiResponse.type === 'insight') {
+        setCurrentSession(prev => ({
+          ...prev,
+          insightsGenerated: prev.insightsGenerated + 1
+        }));
       }
-      
-      response += `\n\nPattern-urile tale sugerează că mood-ul tău este influențat pozitiv de meditațiile regulate. Vrei să explorăm modalități de optimizare a mood-ului?`;
-    } else {
-      response += "îți recomand să începi să îți trackuiești mood-ul zilnic. Aceasta îți va oferi insights valoroase despre pattern-urile emoționale.";
-    }
-    
-    return response;
-  };
-
-  const generateSleepResponse = (message: string): string => {
-    const sleepData = userData.sleep;
-    let response = "În privința somnului tău, ";
-    
-    if (sleepData.averageScore) {
-      if (sleepData.averageScore >= 8) {
-        response += "ai o calitate excelentă! Aceasta susține direct wellness-ul tău mental și mood-ul pozitiv. ";
-      } else if (sleepData.averageScore >= 6) {
-        response += "este decent, dar există spațiu pentru îmbunătățire. ";
-      } else {
-        response += "pare să necesite atenție. Somnul de calitate este fundamental pentru echilibrul emoțional. ";
-      }
-      
-      response += `\n\nPe baza datelor tale, recomand să stabilești un ritual de relaxare cu 30 min înainte de culcare. Aceasta va avea un impact pozitiv asupra mood-ului și energiei zilnice.`;
-    } else {
-      response += "îți sugerez să începi să îți monitorizezi pattern-urile de somn. Sleep tracking-ul te va ajuta să identifici factorii care îți afectează odihna.";
-    }
-    
-    return response;
-  };
-
-  const generateStressResponse = (message: string): string => {
-    const stressData = userData.stress;
-    let response = "Pentru gestionarea stresului, ";
-    
-    if (stressData.totalSessions > 0) {
-      response += `văd că ai completat ${stressData.totalSessions} sesiuni de stress management - felicitări pentru consistență! `;
-      
-      if (stressData.reductionPercentage > 15) {
-        response += `Reducerea de ${stressData.reductionPercentage}% în nivelul de stres este impresionantă. `;
-      }
-      
-      response += `\n\nTehnicile care par să funcționeze cel mai bine pentru tine sunt breathing exercises și progressive relaxation. Recomand să practici box breathing de 5 minute zilnic pentru menținerea acestui progres.`;
-    } else {
-      response += "îți recomand să începi cu tehnici simple de respirație. Box breathing este foarte eficient pentru calm instant în momentele stresante.";
-    }
-    
-    return response;
-  };
-
-  const generateJournalResponse = (message: string): string => {
-    const journalData = userData.journal;
-    let response = "Jurnalul tău emoțional ";
-    
-    if (journalData.totalEntries > 0) {
-      response += `cu ${journalData.totalEntries} intrări este o practică excelentă pentru autocunoaștere! `;
-      
-      if (journalData.dominantEmotion) {
-        response += `Observ că emoția dominantă este '${journalData.dominantEmotion}', ceea ce îmi oferă insight-uri despre pattern-urile tale emoționale. `;
-      }
-      
-      response += `\n\nJournaling-ul consistent îți dezvoltă inteligența emoțională și îți oferă claritate în procesele interne. Continuă să explorezi pattern-urile emoționale - aceasta îți va aduce self-awareness profund.`;
-    } else {
-      response += "ar fi o adăugire valoroasă la rutina ta de wellness. Scrierea despre emoții și experiențe zilnice îți poate aduce claritate și vindecare emoțională.";
-    }
-    
-    return response;
-  };
-
-  const generateMeditationResponse = (message: string): string => {
-    const meditationData = userData.meditation;
-    let response = "În privința meditației, ";
-    
-    if (meditationData.totalMinutes > 0) {
-      response += `ai acumulat ${meditationData.totalMinutes} minute de practică - aceasta este o fundație solidă pentru peace of mind! `;
-      
-      if (meditationData.streakDays > 7) {
-        response += `Streak-ul de ${meditationData.streakDays} zile arată o dedicare admirabilă. `;
-      }
-      
-      response += `\n\nPracticile regulate de mindfulness îți reduc cortizolul și îți îmbunătățesc focus-ul. Recomand să continui cu mindfulness de dimineață pentru setarea intenției zilei.`;
-    } else {
-      response += "ar fi perfect să începi cu sesiuni scurte de 5-10 minute. Mindfulness-ul este una dintre cele mai eficiente modalități de a-ți calma mintea.";
-    }
-    
-    return response;
-  };
-
-  const generateRecommendationResponse = (message: string): string => {
-    let response = "Pe baza analizei complete a datelor tale de wellness, iată recomandările mele personalizate:\n\n";
-    
-    const recommendations = [];
-    
-    if (userData.mood.entries && userData.mood.entries.length > 0) {
-      const recentMood = userData.mood.entries[userData.mood.entries.length - 1];
-      if (recentMood.mood === 'poor' || recentMood.mood === 'low') {
-        recommendations.push("🌟 Prioritizează activități care îți ridică mood-ul: exerciții în aer liber, muzică preferată, conexiuni sociale");
-      }
-    }
-    
-    if (!userData.meditation.totalMinutes || userData.meditation.totalMinutes < 50) {
-      recommendations.push("🧘 Integrează 10 minute de meditație zilnică - aceasta va avea impact major asupra tuturor aspectelor wellness-ului");
-    }
-    
-    if (!userData.sleep.averageScore || userData.sleep.averageScore < 7) {
-      recommendations.push("💤 Optimizează rutina de somn: orar fix, fără ecrane cu 1h înainte de culcare, temperatură 18-20°C");
-    }
-    
-    if (!userData.stress.totalSessions || userData.stress.currentLevel > 6) {
-      recommendations.push("💊 Practică tehnici de stress management zilnic: box breathing de 5 minute dimineața și seara");
-    }
-    
-    recommendations.push("📝 Continuă jurnaling-ul pentru procesarea emoțiilor și dezvoltarea autocompasiunii");
-    
-    response += recommendations.join('\n\n');
-    response += '\n\nVrei să discutăm în detaliu implementarea acestor recomandări?';
-    
-    return response;
-  };
-
-  const generateSupportResponse = (message: string): string => {
-    const supportResponses = [
-      "Înțeleg că treci prin momente dificile. Datele tale arată progres chiar și când nu simți aceasta - ești mai puternic decât crezi.",
-      "Este normal să ai ups and downs în journey-ul de wellness mental. Faptul că cauți activ suport și practici self-care arată curaj.",
-      "Momentele grele fac parte din procesul de creștere. Analiza ta de wellness arată că ai instrumentele necesare să treci prin aceasta.",
-      "Ești pe drumul cel bun, chiar dacă uneori nu se simte așa. Să explorăm împreună tehnici care te pot susține în această perioadă."
-    ];
-    
-    const randomResponse = supportResponses[Math.floor(Math.random() * supportResponses.length)];
-    const practicalAdvice = "Încearcă tehnica 5-4-3-2-1 când te simți copleșit: 5 lucruri pe care le vezi, 4 pe care le atingi, 3 pe care le auzi, 2 pe care le miroși, 1 pe care îl guști.";
-    
-    return `${randomResponse}\n\n${practicalAdvice}`;
-  };
-
-  const generateGeneralResponse = (message: string): string => {
-    const generalResponses = [
-      "Aceasta este o întrebare interesantă! Pe baza pattern-urilor tale de wellness, pot să îți ofer o perspectivă personalizată.",
-      "Să analizez datele tale pentru a-ți oferi cel mai relevant răspuns la această situație.",
-      "Din experiența mea ca AI therapist și bazându-mă pe progress-ul tău în PorWell, iată ce observ...",
-      "Perfect că îmi aduci această întrebare! Să explorăm împreună această temă prin prisma wellness-ului tău personal."
-    ];
-    
-    const randomResponse = generalResponses[Math.floor(Math.random() * generalResponses.length)];
-    const insight = "Wellness-ul mental este un proces continuu, nu o destinație. Fiecare mic pas contează.";
-    
-    return `${randomResponse}\n\n${insight}`;
-  };
-
-  const askTopic = (topic: string) => {
-    setInputValue(topic);
-    // Auto-focus textarea
-    setTimeout(() => {
-      textareaRef.current?.focus();
-    }, 100);
+    }, 1500 + Math.random() * 1000); // 1.5-2.5 seconds
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -382,244 +253,368 @@ export default function AITherapistPage() {
     textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
   };
 
-  const formatTime = (date: Date): string => {
-    return date.toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' });
+  const formatTime = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const getMoodDisplay = () => {
-    if (!userData.mood.currentMood) return "😐 Neutru";
-    
-    const moodEmojis = {
-      excellent: '😄 Excelent',
-      good: '😊 Bun',
-      neutral: '😐 Neutru',
-      low: '😔 Scăzut',
-      poor: '😢 Prost'
+  const quickPrompts = [
+    { text: "Mă simt copleșit/ă astăzi", icon: "😰" },
+    { text: "Nu pot să dorm bine", icon: "😴" },
+    { text: "Am mult stress la muncă", icon: "💼" },
+    { text: "Mă simt trist/ă fără motiv", icon: "😔" },
+    { text: "Vreau să îmi îmbunătățesc mood-ul", icon: "🌟" },
+    { text: "Am conflicte în relații", icon: "💔" }
+  ];
+
+  const startGuidedExercise = (type: string) => {
+    const exercises = {
+      breathing: {
+        title: "🫁 Respirație Ghidată 4-7-8",
+        description: "Tehnica perfectă pentru relaxare instantanee",
+        duration: "4 minute",
+        steps: [
+          "Inspiră prin nas 4 secunde",
+          "Ține respirația 7 secunde", 
+          "Expiră prin gură 8 secunde",
+          "Repetă ciclul de 4 ori"
+        ]
+      },
+      grounding: {
+        title: "🌍 Exercițiu de Grounding 5-4-3-2-1",
+        description: "Pentru a te reconecta cu prezentul",
+        duration: "5 minute",
+        steps: [
+          "5 lucruri pe care le vezi",
+          "4 lucruri pe care le atingi",
+          "3 lucruri pe care le auzi",
+          "2 lucruri pe care le miroși",
+          "1 lucru pe care îl guști"
+        ]
+      },
+      mindfulness: {
+        title: "🧘‍♀️ Mindfulness Rapid",
+        description: "Meditație scurtă pentru claritate mentală",
+        duration: "3 minute",
+        steps: [
+          "Așează-te confortabil",
+          "Închide ochii și respiră natural",
+          "Observă gândurile fără să le judeci",
+          "Focalizează-te pe respirație",
+          "Revino ușor la prezent"
+        ]
+      }
     };
     
-    return moodEmojis[userData.mood.currentMood as keyof typeof moodEmojis] || "😐 Neutru";
-  };
-
-  const getStressLevel = () => {
-    const level = userData.stress.currentLevel;
-    if (level <= 3) return 'Scăzut';
-    if (level <= 6) return 'Moderat';
-    return 'Ridicat';
+    setCurrentExercise(exercises[type as keyof typeof exercises]);
+    setShowExerciseModal(true);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
-      {/* Animated background */}
-      <div className="absolute inset-0 opacity-60">
-        <div className="absolute inset-0 bg-gradient-to-r from-purple-500/15 via-transparent to-cyan-500/10 animate-pulse" />
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-purple-500/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl animate-pulse delay-1000" />
-      </div>
-
-      <div className="relative z-10 max-w-7xl mx-auto p-6">
-        {/* Header */}
-        <div className="mb-6">
-          <button
-            onClick={() => router.push('/dashboard/por-well')}
-            className="mb-4 px-4 py-2 bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl text-white font-semibold hover:bg-purple-500 hover:border-purple-500 transition-all duration-300"
-          >
-            ← Înapoi la Dashboard
-          </button>
-          
-          <div className="text-center">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent mb-2">
-              🤖 AI Therapist
-            </h1>
-            <p className="text-gray-300 text-lg">
-              Coaching personal bazat pe datele tale de wellness mental
-            </p>
+    <div className="ai-therapist">
+      {/* Header */}
+      <div className="therapy-header">
+        <button 
+          onClick={() => router.push('/dashboard/por-well')}
+          className="back-btn"
+        >
+          ← Înapoi la PorWell
+        </button>
+        
+        <div className="therapist-info">
+          <div className="therapist-avatar">
+            <div className="avatar-image">🤖</div>
+            <div className="status-indicator"></div>
+          </div>
+          <div className="therapist-details">
+            <h1>Dr. Aria - AI Therapist</h1>
+            <p>Specialist în wellness mental • {sessionStarted ? 'În sesiune' : 'Disponibil'}</p>
           </div>
         </div>
+        
+        {sessionStarted && (
+          <div className="session-metrics">
+            <div className="metric">
+              <span className="metric-value">{formatTime(sessionTimer)}</span>
+              <span className="metric-label">Durată</span>
+            </div>
+            <div className="metric">
+              <span className="metric-value">{currentSession.messagesExchanged}</span>
+              <span className="metric-label">Mesaje</span>
+            </div>
+            <div className="metric">
+              <span className="metric-value">{currentSession.insightsGenerated}</span>
+              <span className="metric-label">Insights</span>
+            </div>
+          </div>
+        )}
+      </div>
 
-        {/* Main Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-[calc(100vh-200px)]">
-          {/* Chat Area */}
-          <div className="lg:col-span-3 bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl shadow-2xl flex flex-col overflow-hidden">
-            {/* Chat Header */}
-            <div className="bg-gradient-to-r from-purple-500 to-cyan-500 p-6 text-white">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center text-2xl">
-                  🤖
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold">Dr. Aria - AI Therapist</h3>
-                  <div className="flex items-center gap-2 text-sm opacity-90">
-                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-                    Online • Pregătit să te ajute
+      {/* Chat Area */}
+      <div className="chat-container">
+        {!sessionStarted ? (
+          <div className="welcome-screen">
+            <div className="welcome-content">
+              <div className="welcome-avatar">
+                <div className="avatar-large">🤖</div>
+                <div className="pulse-ring"></div>
+              </div>
+              
+              <h2>Bună, {userProfile.name}! 🌸</h2>
+              <p>Sunt Dr. Aria, asistentul tău AI pentru wellness mental. Sunt antrenat să înțeleg emoțiile și să ofer strategii personalizate pentru îmbunătățirea stării tale de bine.</p>
+              
+              <div className="profile-preview">
+                <h3>📊 Profilul tău actual:</h3>
+                <div className="profile-stats">
+                  <div className="stat">
+                    <span className="stat-icon">😊</span>
+                    <span className="stat-text">Mood: {userProfile.currentMood}/10</span>
+                  </div>
+                  <div className="stat">
+                    <span className="stat-icon">📈</span>
+                    <span className="stat-text">Trend: {userProfile.moodTrend === 'improving' ? 'Îmbunătățire' : userProfile.moodTrend === 'stable' ? 'Stabil' : 'Scădere'}</span>
+                  </div>
+                  <div className="stat">
+                    <span className="stat-icon">💆‍♀️</span>
+                    <span className="stat-text">Stress: {userProfile.stressLevel}/10</span>
+                  </div>
+                  <div className="stat">
+                    <span className="stat-icon">🎯</span>
+                    <span className="stat-text">{userProfile.totalSessions} sesiuni complete</span>
                   </div>
                 </div>
               </div>
-            </div>
-
-            {/* Messages */}
-            <div className="flex-1 p-6 overflow-y-auto space-y-4">
-              {!conversationStarted ? (
-                <div className="bg-purple-500/10 border-2 border-purple-500/30 rounded-xl p-6 text-center">
-                  <h4 className="text-xl font-semibold text-purple-400 mb-3">👋 Bună! Sunt Dr. Aria</h4>
-                  <p className="text-gray-300 mb-4 leading-relaxed">
-                    Sunt asistentul tău AI pentru wellness mental. Am analizat datele tale din PorWell 
-                    și sunt gata să îți ofer coaching personalizat bazat pe mood-ul tău, somnul, 
-                    meditațiile și jurnalul emoțional.
-                  </p>
-                  <button
-                    onClick={startConversation}
-                    className="px-6 py-3 bg-gradient-to-r from-purple-500 to-cyan-500 text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
-                  >
-                    💬 Începe Conversația
-                  </button>
-                </div>
-              ) : (
-                <>
-                  {messages.map((message) => (
-                    <div
-                      key={message.id}
-                      className={`max-w-[80%] p-4 rounded-xl animate-fadeInUp ${
-                        message.sender === 'ai'
-                          ? 'bg-purple-500/10 border border-purple-500/30 self-start rounded-bl-sm'
-                          : 'bg-gradient-to-r from-cyan-500 to-purple-500 text-white self-end ml-auto rounded-br-sm'
-                      }`}
+              
+              <button 
+                onClick={startSession}
+                className="start-session-btn"
+              >
+                💬 Începe Sesiunea de Terapie
+              </button>
+              
+              <div className="quick-topics">
+                <h4>Sau alege un subiect rapid:</h4>
+                <div className="topic-grid">
+                  {quickPrompts.slice(0, 4).map((prompt, index) => (
+                    <button
+                      key={index}
+                      onClick={() => {
+                        startSession();
+                        setTimeout(() => {
+                          setInputValue(prompt.text);
+                          inputRef.current?.focus();
+                        }, 1000);
+                      }}
+                      className="topic-btn"
                     >
-                      <p className="whitespace-pre-wrap leading-relaxed">{message.text}</p>
-                      <div className="text-xs opacity-70 mt-2">
-                        {formatTime(message.timestamp)}
+                      <span className="topic-icon">{prompt.icon}</span>
+                      <span className="topic-text">{prompt.text}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <>
+            {/* Messages */}
+            <div className="messages-area">
+              {messages.map((message) => (
+                <div
+                  key={message.id}
+                  className={`message ${message.sender} ${message.type}`}
+                >
+                  <div className="message-content">
+                    {message.sender === 'ai' && (
+                      <div className="message-avatar">🤖</div>
+                    )}
+                    <div className="message-bubble">
+                      <div className="message-text">
+                        {message.content.split('\n').map((line, index) => (
+                          <div key={index}>{line}</div>
+                        ))}
+                      </div>
+                      <div className="message-meta">
+                        <span className="message-time">
+                          {message.timestamp.toLocaleTimeString('ro-RO', { 
+                            hour: '2-digit', 
+                            minute: '2-digit' 
+                          })}
+                        </span>
+                        {message.tags && (
+                          <div className="message-tags">
+                            {message.tags.map((tag, index) => (
+                              <span key={index} className="tag">{tag}</span>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </div>
-                  ))}
+                    {message.sender === 'user' && (
+                      <div className="message-avatar user">👤</div>
+                    )}
+                  </div>
                   
-                  {isTyping && (
-                    <div className="max-w-[80%] p-4 bg-purple-500/10 border border-purple-500/30 rounded-xl rounded-bl-sm self-start">
-                      <div className="flex items-center space-x-1">
-                        <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" />
-                        <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce delay-100" />
-                        <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce delay-200" />
-                      </div>
+                  {/* Action buttons for AI messages */}
+                  {message.sender === 'ai' && message.type === 'insight' && (
+                    <div className="message-actions">
+                      <button 
+                        onClick={() => startGuidedExercise('breathing')}
+                        className="action-btn"
+                      >
+                        🫁 Respirație
+                      </button>
+                      <button 
+                        onClick={() => startGuidedExercise('grounding')}
+                        className="action-btn"
+                      >
+                        🌍 Grounding
+                      </button>
+                      <button 
+                        onClick={() => startGuidedExercise('mindfulness')}
+                        className="action-btn"
+                      >
+                        🧘‍♀️ Mindfulness
+                      </button>
                     </div>
                   )}
-                </>
+                </div>
+              ))}
+              
+              {isTyping && (
+                <div className="message ai typing">
+                  <div className="message-content">
+                    <div className="message-avatar">🤖</div>
+                    <div className="message-bubble">
+                      <div className="typing-indicator">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                      </div>
+                      <div className="typing-text">Dr. Aria scrie...</div>
+                    </div>
+                  </div>
+                </div>
               )}
+              
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Input Area */}
-            <div className="p-6 border-t border-white/20 bg-white/5">
-              <div className="flex gap-4 items-end">
-                <div className="flex-1">
-                  <textarea
-                    ref={textareaRef}
-                    value={inputValue}
-                    onChange={handleInputChange}
-                    onKeyPress={handleKeyPress}
-                    placeholder="Scrie-mi despre cum te simți sau întreabă-mă orice despre wellness-ul tău mental..."
-                    className="w-full bg-white/10 border border-white/20 rounded-xl p-4 text-white placeholder-gray-400 resize-none focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300"
-                    rows={1}
-                    style={{ minHeight: '50px', maxHeight: '120px' }}
-                  />
+            {/* Quick Prompts */}
+            {messages.length === 1 && (
+              <div className="quick-prompts">
+                <h4>💭 Subiecte populare:</h4>
+                <div className="prompts-grid">
+                  {quickPrompts.map((prompt, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setInputValue(prompt.text)}
+                      className="prompt-btn"
+                    >
+                      <span>{prompt.icon}</span>
+                      <span>{prompt.text}</span>
+                    </button>
+                  ))}
                 </div>
+              </div>
+            )}
+
+            {/* Input Area */}
+            <div className="input-area">
+              <div className="input-container">
+                <textarea
+                  ref={inputRef}
+                  value={inputValue}
+                  onChange={handleInputChange}
+                  onKeyPress={handleKeyPress}
+                  placeholder="Scrie despre ce te preocupă sau cum te simți..."
+                  className="message-input"
+                  rows={1}
+                />
                 <button
                   onClick={sendMessage}
                   disabled={!inputValue.trim() || isTyping}
-                  className="px-6 py-3 bg-gradient-to-r from-purple-500 to-cyan-500 text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                  className="send-btn"
                 >
-                  Trimite
+                  <span>📤</span>
+                </button>
+              </div>
+              
+              <div className="input-footer">
+                <span className="input-hint">
+                  💡 Apasă Enter pentru a trimite, Shift+Enter pentru linie nouă
+                </span>
+                <span className="safety-note">
+                  🔒 Conversația este confidențială și securizată
+                </span>
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* Guided Exercise Modal */}
+      {showExerciseModal && currentExercise && (
+        <div className="exercise-modal">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h3>{currentExercise.title}</h3>
+              <button 
+                onClick={() => setShowExerciseModal(false)}
+                className="close-btn"
+              >
+                ✕
+              </button>
+            </div>
+            
+            <div className="modal-body">
+              <p className="exercise-description">{currentExercise.description}</p>
+              <div className="exercise-duration">⏱️ Durată estimată: {currentExercise.duration}</div>
+              
+              <div className="exercise-steps">
+                <h4>Pașii exercițiului:</h4>
+                <ol>
+                  {currentExercise.steps.map((step: string, index: number) => (
+                    <li key={index}>{step}</li>
+                  ))}
+                </ol>
+              </div>
+              
+              <div className="modal-actions">
+                <button 
+                  onClick={() => {
+                    setShowExerciseModal(false);
+                    setCurrentSession(prev => ({
+                      ...prev,
+                      exercisesCompleted: prev.exercisesCompleted + 1
+                    }));
+                    // Add completion message
+                    const completionMessage: Message = {
+                      id: crypto.randomUUID(),
+                      sender: 'ai',
+                      content: `🎉 Felicitări! Ai completat exercițiul "${currentExercise.title}". Cum te simți acum? Observi vreo diferență în nivelul de relaxare?`,
+                      timestamp: new Date(),
+                      type: 'insight',
+                      tags: ['exercise-completion', 'feedback']
+                    };
+                    setMessages(prev => [...prev, completionMessage]);
+                  }}
+                  className="complete-btn"
+                >
+                  ✅ Am Terminat Exercițiul
+                </button>
+                <button 
+                  onClick={() => setShowExerciseModal(false)}
+                  className="cancel-btn"
+                >
+                  Închide
                 </button>
               </div>
             </div>
           </div>
-
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Wellness Summary */}
-            <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6 shadow-2xl">
-              <h3 className="text-lg font-bold text-purple-400 mb-4 text-center">📊 Sumarul Tău Wellness</h3>
-              <div className="space-y-3">
-                <div className="flex justify-between items-center p-3 bg-white/5 rounded-lg">
-                  <span className="text-gray-300 text-sm">Mood Actual</span>
-                  <span className="text-purple-400 font-semibold">{getMoodDisplay()}</span>
-                </div>
-                <div className="flex justify-between items-center p-3 bg-white/5 rounded-lg">
-                  <span className="text-gray-300 text-sm">Calitate Somn</span>
-                  <span className="text-purple-400 font-semibold">{userData.sleep.averageScore}/10</span>
-                </div>
-                <div className="flex justify-between items-center p-3 bg-white/5 rounded-lg">
-                  <span className="text-gray-300 text-sm">Nivel Stres</span>
-                  <span className="text-purple-400 font-semibold">{getStressLevel()}</span>
-                </div>
-                <div className="flex justify-between items-center p-3 bg-white/5 rounded-lg">
-                  <span className="text-gray-300 text-sm">Zile Meditație</span>
-                  <span className="text-purple-400 font-semibold">{userData.meditation.streakDays}</span>
-                </div>
-                <div className="flex justify-between items-center p-3 bg-white/5 rounded-lg">
-                  <span className="text-gray-300 text-sm">Intrări Jurnal</span>
-                  <span className="text-purple-400 font-semibold">{userData.journal.totalEntries}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Quick Topics */}
-            <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6 shadow-2xl">
-              <h3 className="text-lg font-bold text-purple-400 mb-4 text-center">💡 Subiecte Rapide</h3>
-              <div className="space-y-2">
-                {[
-                  'Cum îmi pot îmbunătăți mood-ul astăzi?',
-                  'De ce am dormit prost săptămâna aceasta?',
-                  'Ce tehnici de stress îmi recomandai?',
-                  'Analiza pattern-urilor mele emoționale',
-                  'Planul meu de wellness pentru săptămâna viitoare'
-                ].map((topic, index) => (
-                  <button
-                    key={index}
-                    onClick={() => askTopic(topic)}
-                    className="w-full p-3 bg-white/5 border border-white/10 rounded-lg text-left text-sm text-gray-300 hover:bg-purple-500/10 hover:border-purple-500/30 hover:text-purple-400 transition-all duration-300"
-                  >
-                    {topic}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* AI Capabilities */}
-            <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6 shadow-2xl">
-              <h3 className="text-lg font-bold text-purple-400 mb-4 text-center">🧠 Ce Pot Face</h3>
-              <div className="space-y-3">
-                {[
-                  { icon: '📈', text: 'Analizez pattern-urile tale de mood și somn' },
-                  { icon: '💡', text: 'Ofer insights personalizate bazate pe datele tale' },
-                  { icon: '🎯', text: 'Recomand tehnici specifice pentru situația ta' },
-                  { icon: '📅', text: 'Creez planuri personalizate de wellness' },
-                  { icon: '🤝', text: 'Ofer suport empatic 24/7' }
-                ].map((capability, index) => (
-                  <div key={index} className="flex items-center gap-3 p-3 bg-white/5 rounded-lg">
-                    <span className="text-lg">{capability.icon}</span>
-                    <span className="text-gray-300 text-sm leading-relaxed">{capability.text}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
         </div>
-      </div>
-
-      <style jsx>{`
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        
-        .animate-fadeInUp {
-          animation: fadeInUp 0.3s ease-out;
-        }
-      `}</style>
+      )}
     </div>
   );
 }
