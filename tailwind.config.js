@@ -1,1 +1,192 @@
-ECHO is off.
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    './pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './components/**/*.{js,ts,jsx,tsx,mdx}',
+    './app/**/*.{js,ts,jsx,tsx,mdx}',
+  ],
+  theme: {
+    extend: {
+      colors: {
+        // PorVerse Brand Colors
+        primary: {
+          50: '#f0f4ff',
+          100: '#e0e9ff',
+          200: '#c7d5ff',
+          300: '#a5b6ff',
+          400: '#818cff',
+          500: '#667eea',
+          600: '#5a67d8',
+          700: '#4c51bf',
+          800: '#434190',
+          900: '#3c366b',
+        },
+        secondary: {
+          50: '#faf5ff',
+          100: '#f3e8ff',
+          200: '#e9d5ff',
+          300: '#d8b4fe',
+          400: '#c084fc',
+          500: '#a855f7',
+          600: '#9333ea',
+          700: '#7c3aed',
+          800: '#6b46c1',
+          900: '#764ba2',
+        },
+        accent: {
+          50: '#fdf2f8',
+          100: '#fce7f3',
+          200: '#fbcfe8',
+          300: '#f9a8d4',
+          400: '#f472b6',
+          500: '#f093fb',
+          600: '#ec4899',
+          700: '#be185d',
+          800: '#9d174d',
+          900: '#831843',
+        },
+        // Ecosystem Colors
+        health: {
+          50: '#f0fdf4',
+          100: '#dcfce7',
+          200: '#bbf7d0',
+          300: '#86efac',
+          400: '#4ade80',
+          500: '#00ff88',
+          600: '#16a34a',
+          700: '#15803d',
+          800: '#166534',
+          900: '#14532d',
+        },
+        mind: {
+          50: '#fffbeb',
+          100: '#fef3c7',
+          200: '#fde68a',
+          300: '#fcd34d',
+          400: '#fbbf24',
+          500: '#ffd700',
+          600: '#d97706',
+          700: '#b45309',
+          800: '#92400e',
+          900: '#78350f',
+        },
+        well: {
+          50: '#fdf2f8',
+          100: '#fce7f3',
+          200: '#fbcfe8',
+          300: '#f9a8d4',
+          400: '#f472b6',
+          500: '#ff69b4',
+          600: '#ec4899',
+          700: '#be185d',
+          800: '#9d174d',
+          900: '#831843',
+        },
+        flow: {
+          50: '#f0f9ff',
+          100: '#e0f2fe',
+          200: '#bae6fd',
+          300: '#7dd3fc',
+          400: '#38bdf8',
+          500: '#00d4ff',
+          600: '#0284c7',
+          700: '#0369a1',
+          800: '#075985',
+          900: '#0c4a6e',
+        },
+        blu: {
+          50: '#eff6ff',
+          100: '#dbeafe',
+          200: '#bfdbfe',
+          300: '#93c5fd',
+          400: '#60a5fa',
+          500: '#0077ff',
+          600: '#2563eb',
+          700: '#1d4ed8',
+          800: '#1e40af',
+          900: '#1e3a8a',
+        },
+        // UI Colors
+        glass: 'rgba(255, 255, 255, 0.1)',
+        glassBorder: 'rgba(255, 255, 255, 0.2)',
+        glassStrong: 'rgba(255, 255, 255, 0.15)',
+      },
+      backgroundImage: {
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+        'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+        'gradient-porverse': 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
+        'gradient-health': 'linear-gradient(135deg, #00ff88 0%, #667eea 100%)',
+        'gradient-mind': 'linear-gradient(135deg, #ffd700 0%, #ff8c00 100%)',
+        'gradient-well': 'linear-gradient(135deg, #ff69b4 0%, #e91e63 100%)',
+        'gradient-flow': 'linear-gradient(135deg, #00d4ff 0%, #0099cc 100%)',
+        'gradient-blu': 'linear-gradient(135deg, #0077ff 0%, #87ceeb 100%)',
+      },
+      fontFamily: {
+        sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'Noto Sans', 'sans-serif'],
+      },
+      borderRadius: {
+        'xl': '1rem',
+        '2xl': '1.25rem',
+        '3xl': '1.5rem',
+      },
+      spacing: {
+        '18': '4.5rem',
+        '88': '22rem',
+        '128': '32rem',
+      },
+      boxShadow: {
+        'glass': '0 8px 32px rgba(31, 38, 135, 0.37)',
+        'heavy': '0 20px 60px rgba(0, 0, 0, 0.3)',
+        'glow': '0 0 20px rgba(102, 126, 234, 0.5)',
+        'glow-health': '0 0 20px rgba(0, 255, 136, 0.5)',
+        'glow-mind': '0 0 20px rgba(255, 215, 0, 0.5)',
+        'glow-well': '0 0 20px rgba(255, 105, 180, 0.5)',
+        'glow-flow': '0 0 20px rgba(0, 212, 255, 0.5)',
+        'glow-blu': '0 0 20px rgba(0, 119, 255, 0.5)',
+      },
+      animation: {
+        'gradient': 'gradient 15s ease infinite',
+        'float': 'float 6s ease-in-out infinite',
+        'pulse-glow': 'pulseGlow 2s ease-in-out infinite alternate',
+        'slide-up': 'slideUp 0.5s ease-out',
+        'fade-in': 'fadeIn 0.3s ease-out',
+      },
+      keyframes: {
+        gradient: {
+          '0%, 100%': {
+            'background-size': '200% 200%',
+            'background-position': 'left center'
+          },
+          '50%': {
+            'background-size': '200% 200%',
+            'background-position': 'right center'
+          },
+        },
+        float: {
+          '0%, 100%': { transform: 'translateY(0px)' },
+          '50%': { transform: 'translateY(-20px)' },
+        },
+        pulseGlow: {
+          '0%': { boxShadow: '0 0 20px rgba(102, 126, 234, 0.5)' },
+          '100%': { boxShadow: '0 0 30px rgba(102, 126, 234, 0.8), 0 0 40px rgba(102, 126, 234, 0.3)' },
+        },
+        slideUp: {
+          '0%': { transform: 'translateY(100px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+      },
+      backdropBlur: {
+        'xs': '2px',
+        '4xl': '72px',
+      },
+    },
+  },
+  plugins: [
+    require('@tailwindcss/forms'),
+    require('@tailwindcss/typography'),
+  ],
+}
