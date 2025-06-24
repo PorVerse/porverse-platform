@@ -1,668 +1,803 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
+import Link from 'next/link';
+import './style.css';
 
 interface MoodEntry {
   id: string;
-  mood: 'excellent' | 'good' | 'neutral' | 'low' | 'poor';
-  energy: number;
-  notes: string;
-  factors: string[];
   date: string;
+  mood: number;
+  energy: number;
+  stress: number;
+  sleep: number;
+  notes: string;
+  triggers: string[];
+  activities: string[];
+  weather: string;
   timestamp: Date;
 }
 
 interface MoodStats {
   weeklyAverage: number;
   monthlyTrend: 'improving' | 'stable' | 'declining';
-  dominantMood: string;
-  energyPattern: string;
-  triggerFactors: string[];
   streakDays: number;
+  bestDay: string;
+  worstDay: string;
+  commonTriggers: string[];
+  topActivities: string[];
 }
 
-const moodOptions = [
-  { value: 'excellent', emoji: '😄', label: 'Excelent', color: '#22c55e' },
-  { value: 'good', emoji: '😊', label: 'Bun', color: '#84cc16' },
-  { value: 'neutral', emoji: '😐', label: 'Neutru', color: '#f59e0b' },
-  { value: 'low', emoji: '😔', label: 'Scăzut', color: '#f97316' },
-  { value: 'poor', emoji: '😢', label: 'Prost', color: '#ef4444' }
-];
+interface AIInsight {
+  id: string;
+  type: 'pattern' | 'recommendation' | 'warning' | 'celebration';
+  title: string;
+  message: string;
+  confidence: number;
+  actionable: boolean;
+}
 
-const moodFactors = [
-  { id: 'work', label: 'Muncă', icon: '💼' },
-  { id: 'relationships', label: 'Relații', icon: '👥' },
-  { id: 'sleep', label: 'Somn', icon: '😴' },
-  { id: 'exercise', label: 'Exerciții', icon: '🏃‍♂️' },
-  { id: 'weather', label: 'Vreme', icon: '🌤️' },
-  { id: 'nutrition', label: 'Alimentație', icon: '🥗' },
-  { id: 'social', label: 'Social', icon: '🎉' },
-  { id: 'stress', label: 'Stres', icon: '😰' },
-  { id: 'health', label: 'Sănătate', icon: '🏥' },
-  { id: 'finance', label: 'Finanse', icon: '💰' }
-];
-
-export default function MoodTrackerPage() {
+export default function MoodTracker() {
   const router = useRouter();
-  const [moodEntries, setMoodEntries] = useState<MoodEntry[]>([]);
-  const [selectedMood, setSelectedMood] = useState<string>('');
-  const [energy, setEnergy] = useState<number>(5);
-  const [notes, setNotes] = useState<string>('');
-  const [selectedFactors, setSelectedFactors] = useState<string[]>([]);
-  const [showAddForm, setShowAddForm] = useState<boolean>(false);
-  const [stats, setStats] = useState<MoodStats | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [aiInsights, setAiInsights] = useState<string>('');
-  const [view, setView] = useState<'today' | 'week' | 'month'>('week');
+  
+  const [currentMood, setCurrentMood] = useState(5);
+  const [currentEnergy, setCurrentEnergy] = useState(5);
+  const [currentStress, setCurrentStress] = useState(5);
+  const [currentSleep, setCurrentSleep] = useState(7);
+  const [todayNotes, setTodayNotes] = useState('');
+  const [selectedTriggers, setSelectedTriggers] = useState<string[]>([]);
+  const [selectedActivities, setSelectedActivities] = useState<string[]>([]);
+  const [currentWeather, setCurrentWeather] = useState('sunny');
+  
+  const [moodHistory, setMoodHistory] = useState<MoodEntry[]>([]);
+  const [moodStats, setMoodStats] = useState<MoodStats | null>(null);
+  const [aiInsights, setAiInsights] = useState<AIInsight[]>([]);
+  const [selectedTimeframe, setSelectedTimeframe] = useState<'week' | 'month' | 'year'>('week');
+  const [showEntryForm, setShowEntryForm] = useState(false);
+  const [hasLoggedToday, setHasLoggedToday] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  const moodEmojis = ['😢', '😔', '😐', '🙂', '😊', '😁', '🤩', '🥳', '😍', '🌟'];
+  const energyEmojis = ['🔋', '🔋', '🔋', '⚡', '⚡', '⚡', '🚀', '🚀', '💥', '🌟'];
+  const stressEmojis = ['😌', '😌', '😐', '😐', '😰', '😰', '😱', '😱', '🤯', '💥'];
+
+  const commonTriggers = [
+    'Work stress', 'Lack of sleep', 'Social situations', 'Weather changes',
+    'Family issues', 'Health concerns', 'Financial worries', 'Relationship problems',
+    'Time pressure', 'Technology overload', 'Negative news', 'Physical pain'
+  ];
+
+  const positiveActivities = [
+    'Exercise', 'Meditation', 'Reading', 'Music', 'Nature walk', 'Cooking',
+    'Friends time', 'Creative work', 'Learning', 'Gaming', 'Movies', 'Shopping',
+    'Journaling', 'Photography', 'Dancing', 'Yoga'
+  ];
 
   useEffect(() => {
-    loadMoodData();
+    loadMockData();
+    checkTodayEntry();
   }, []);
 
   useEffect(() => {
-    if (moodEntries.length > 0) {
+    if (moodHistory.length > 0) {
       calculateStats();
       generateAIInsights();
     }
-  }, [moodEntries]);
+  }, [moodHistory, selectedTimeframe]);
 
-  const loadMoodData = async () => {
-    try {
-      setLoading(true);
-      // TODO: Replace with actual Xano API call
-      const mockData: MoodEntry[] = [
-        {
-          id: '1',
-          mood: 'good',
-          energy: 7,
-          notes: 'Zi productivă la muncă',
-          factors: ['work', 'exercise'],
-          date: '2025-06-19',
-          timestamp: new Date('2025-06-19T09:00:00')
-        },
-        {
-          id: '2',
-          mood: 'excellent',
-          energy: 9,
-          notes: 'Weekend relaxant',
-          factors: ['social', 'sleep'],
-          date: '2025-06-18',
-          timestamp: new Date('2025-06-18T10:30:00')
-        },
-        {
-          id: '3',
-          mood: 'neutral',
-          energy: 5,
-          notes: 'Zi obișnuită',
-          factors: ['work'],
-          date: '2025-06-17',
-          timestamp: new Date('2025-06-17T14:00:00')
-        },
-        {
-          id: '4',
-          mood: 'low',
-          energy: 3,
-          notes: 'Stres la serviciu',
-          factors: ['work', 'stress'],
-          date: '2025-06-16',
-          timestamp: new Date('2025-06-16T16:00:00')
-        },
-        {
-          id: '5',
-          mood: 'good',
-          energy: 8,
-          notes: 'Alergare dimineața',
-          factors: ['exercise', 'weather'],
-          date: '2025-06-15',
-          timestamp: new Date('2025-06-15T07:00:00')
-        }
-      ];
-      setMoodEntries(mockData);
-    } catch (error) {
-      console.error('Error loading mood data:', error);
-    } finally {
-      setLoading(false);
+  const loadMockData = () => {
+    // Generate mock data for the last 30 days
+    const mockData: MoodEntry[] = [];
+    const today = new Date();
+    
+    for (let i = 29; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(date.getDate() - i);
+      
+      // Generate realistic mood patterns
+      const baseMood = 6 + Math.sin(i * 0.1) * 2; // Wave pattern
+      const randomVariation = (Math.random() - 0.5) * 2;
+      const mood = Math.max(1, Math.min(10, Math.round(baseMood + randomVariation)));
+      
+      const energy = Math.max(1, Math.min(10, mood + (Math.random() - 0.5) * 3));
+      const stress = Math.max(1, Math.min(10, 11 - mood + (Math.random() - 0.5) * 2));
+      const sleep = Math.max(4, Math.min(10, 7 + (Math.random() - 0.5) * 2));
+      
+      mockData.push({
+        id: crypto.randomUUID(),
+        date: date.toISOString().split('T')[0],
+        mood: Math.round(mood),
+        energy: Math.round(energy),
+        stress: Math.round(stress),
+        sleep: Math.round(sleep),
+        notes: i === 0 ? '' : `Generated entry for ${date.toLocaleDateString('ro-RO')}`,
+        triggers: i % 3 === 0 ? ['Work stress'] : i % 5 === 0 ? ['Lack of sleep'] : [],
+        activities: i % 2 === 0 ? ['Exercise'] : i % 3 === 0 ? ['Meditation'] : ['Reading'],
+        weather: ['sunny', 'cloudy', 'rainy'][Math.floor(Math.random() * 3)],
+        timestamp: date
+      });
     }
+    
+    setMoodHistory(mockData);
+    setLoading(false);
   };
 
-  const saveMoodEntry = async () => {
-    if (!selectedMood) return;
-
-    const newEntry: MoodEntry = {
-      id: Date.now().toString(),
-      mood: selectedMood as any,
-      energy,
-      notes,
-      factors: selectedFactors,
-      date: new Date().toISOString().split('T')[0],
-      timestamp: new Date()
-    };
-
-    try {
-      // TODO: Save to Xano API
-      setMoodEntries(prev => [newEntry, ...prev]);
-      
-      // Reset form
-      setSelectedMood('');
-      setEnergy(5);
-      setNotes('');
-      setSelectedFactors([]);
-      setShowAddForm(false);
-      
-      // Show success message
-      alert('Mood înregistrat cu succes!');
-    } catch (error) {
-      console.error('Error saving mood entry:', error);
-      alert('Eroare la salvarea mood-ului');
+  const checkTodayEntry = () => {
+    const today = new Date().toISOString().split('T')[0];
+    const todayEntry = moodHistory.find(entry => entry.date === today);
+    setHasLoggedToday(!!todayEntry);
+    
+    if (todayEntry) {
+      setCurrentMood(todayEntry.mood);
+      setCurrentEnergy(todayEntry.energy);
+      setCurrentStress(todayEntry.stress);
+      setCurrentSleep(todayEntry.sleep);
+      setTodayNotes(todayEntry.notes);
+      setSelectedTriggers(todayEntry.triggers);
+      setSelectedActivities(todayEntry.activities);
+      setCurrentWeather(todayEntry.weather);
     }
   };
 
   const calculateStats = () => {
-    const moodValues = { excellent: 5, good: 4, neutral: 3, low: 2, poor: 1 };
-    const recentEntries = moodEntries.slice(0, 7);
-    
-    const weeklyAverage = recentEntries.reduce((sum, entry) => 
-      sum + moodValues[entry.mood], 0) / recentEntries.length;
-    
-    const monthlyEntries = moodEntries.slice(0, 30);
-    const monthlyAverage = monthlyEntries.reduce((sum, entry) => 
-      sum + moodValues[entry.mood], 0) / monthlyEntries.length;
-    
-    const monthlyTrend = monthlyAverage > weeklyAverage ? 'improving' : 
-                        monthlyAverage === weeklyAverage ? 'stable' : 'declining';
-    
-    const moodCounts = moodEntries.reduce((acc, entry) => {
-      acc[entry.mood] = (acc[entry.mood] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
-    
-    const dominantMood = Object.keys(moodCounts).reduce((a, b) => 
-      moodCounts[a] > moodCounts[b] ? a : b, 'neutral');
-    
-    const avgEnergy = moodEntries.reduce((sum, entry) => sum + entry.energy, 0) / moodEntries.length;
-    const energyPattern = avgEnergy > 7 ? 'high' : avgEnergy > 4 ? 'moderate' : 'low';
-    
-    const allFactors = moodEntries.flatMap(entry => entry.factors);
-    const factorCounts = allFactors.reduce((acc, factor) => {
-      acc[factor] = (acc[factor] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
-    
-    const triggerFactors = Object.keys(factorCounts)
-      .sort((a, b) => factorCounts[b] - factorCounts[a])
-      .slice(0, 3);
-    
-    const streakDays = calculateMoodStreak();
-    
-    setStats({
-      weeklyAverage,
-      monthlyTrend,
-      dominantMood,
-      energyPattern,
-      triggerFactors,
-      streakDays
-    });
-  };
+    if (moodHistory.length === 0) return;
 
-  const calculateMoodStreak = (): number => {
-    let streak = 0;
-    const sortedEntries = [...moodEntries].sort((a, b) => 
-      new Date(b.date).getTime() - new Date(a.date).getTime());
+    const timeframeDays = selectedTimeframe === 'week' ? 7 : 
+                         selectedTimeframe === 'month' ? 30 : 365;
     
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const recentEntries = moodHistory.slice(-timeframeDays);
+    const weeklyAverage = recentEntries.reduce((sum, entry) => sum + entry.mood, 0) / recentEntries.length;
     
-    for (let i = 0; i < sortedEntries.length; i++) {
-      const entryDate = new Date(sortedEntries[i].date);
-      entryDate.setHours(0, 0, 0, 0);
-      
-      const daysDiff = Math.floor((today.getTime() - entryDate.getTime()) / (1000 * 60 * 60 * 24));
-      
-      if (daysDiff === i) {
-        streak++;
+    // Calculate trend
+    const firstHalf = recentEntries.slice(0, Math.floor(recentEntries.length / 2));
+    const secondHalf = recentEntries.slice(Math.floor(recentEntries.length / 2));
+    const firstAvg = firstHalf.reduce((sum, entry) => sum + entry.mood, 0) / firstHalf.length;
+    const secondAvg = secondHalf.reduce((sum, entry) => sum + entry.mood, 0) / secondHalf.length;
+    
+    let monthlyTrend: 'improving' | 'stable' | 'declining' = 'stable';
+    if (secondAvg > firstAvg + 0.5) monthlyTrend = 'improving';
+    else if (secondAvg < firstAvg - 0.5) monthlyTrend = 'declining';
+
+    // Calculate streak
+    let streakDays = 0;
+    for (let i = moodHistory.length - 1; i >= 0; i--) {
+      if (moodHistory[i].mood >= 6) {
+        streakDays++;
       } else {
         break;
       }
     }
+
+    // Find best and worst days
+    const sortedByMood = [...recentEntries].sort((a, b) => b.mood - a.mood);
+    const bestDay = sortedByMood[0]?.date || '';
+    const worstDay = sortedByMood[sortedByMood.length - 1]?.date || '';
+
+    // Common triggers and activities
+    const allTriggers = recentEntries.flatMap(entry => entry.triggers);
+    const allActivities = recentEntries.flatMap(entry => entry.activities);
     
-    return streak;
-  };
-
-  const generateAIInsights = async () => {
-    try {
-      const recentMoods = moodEntries.slice(0, 7);
-      const moodValues = { excellent: 5, good: 4, neutral: 3, low: 2, poor: 1 };
-      const avgMood = recentMoods.reduce((sum, entry) => sum + moodValues[entry.mood], 0) / recentMoods.length;
-      
-      let insights = '';
-      
-      if (avgMood >= 4) {
-        insights = `🌟 Mood-ul tău arată un trend pozitiv cu o medie de ${avgMood.toFixed(1)}/5! Pattern-urile tale sugerează că ${stats?.triggerFactors[0] || 'exercițiile'} au impact pozitiv asupra stării tale emoționale.`;
-      } else if (avgMood >= 3) {
-        insights = `⚖️ Mood-ul tău este echilibrat (${avgMood.toFixed(1)}/5), cu variații normale. Observ că ${stats?.triggerFactors[0] || 'munca'} influențează frecvent starea ta emoțională.`;
-      } else {
-        insights = `💙 Observ că mood-ul tău a fost mai scăzut recent (${avgMood.toFixed(1)}/5). Factori precum ${stats?.triggerFactors.join(', ') || 'stresul'} par să aibă impact negativ. Îți recomand să explorezi tehnici de relaxare și să contactezi suportul profesional dacă este necesar.`;
-      }
-      
-      setAiInsights(insights);
-    } catch (error) {
-      console.error('Error generating AI insights:', error);
-    }
-  };
-
-  const getChartData = () => {
-    const moodValues = { excellent: 5, good: 4, neutral: 3, low: 2, poor: 1 };
-    
-    return moodEntries
-      .slice(0, view === 'week' ? 7 : view === 'month' ? 30 : 1)
-      .reverse()
-      .map(entry => ({
-        date: new Date(entry.date).toLocaleDateString('ro-RO', { 
-          month: 'short', 
-          day: 'numeric' 
-        }),
-        mood: moodValues[entry.mood],
-        energy: entry.energy,
-        moodLabel: entry.mood
-      }));
-  };
-
-  const getMoodDistribution = () => {
-    const distribution = moodEntries.reduce((acc, entry) => {
-      acc[entry.mood] = (acc[entry.mood] || 0) + 1;
+    const triggerCounts = allTriggers.reduce((acc: Record<string, number>, trigger) => {
+      acc[trigger] = (acc[trigger] || 0) + 1;
       return acc;
-    }, {} as Record<string, number>);
+    }, {});
+    
+    const activityCounts = allActivities.reduce((acc: Record<string, number>, activity) => {
+      acc[activity] = (acc[activity] || 0) + 1;
+      return acc;
+    }, {});
 
-    return moodOptions.map(option => ({
-      name: option.label,
-      value: distribution[option.value] || 0,
-      color: option.color
-    }));
+    const commonTriggers = Object.entries(triggerCounts)
+      .sort(([,a], [,b]) => b - a)
+      .slice(0, 3)
+      .map(([trigger]) => trigger);
+
+    const topActivities = Object.entries(activityCounts)
+      .sort(([,a], [,b]) => b - a)
+      .slice(0, 3)
+      .map(([activity]) => activity);
+
+    setMoodStats({
+      weeklyAverage: Math.round(weeklyAverage * 10) / 10,
+      monthlyTrend,
+      streakDays,
+      bestDay,
+      worstDay,
+      commonTriggers,
+      topActivities
+    });
   };
 
-  const getFactorAnalysis = () => {
-    const factorCounts = moodEntries.flatMap(entry => entry.factors)
-      .reduce((acc, factor) => {
-        acc[factor] = (acc[factor] || 0) + 1;
-        return acc;
-      }, {} as Record<string, number>);
+  const generateAIInsights = () => {
+    if (!moodStats || moodHistory.length === 0) return;
 
-    return Object.keys(factorCounts)
-      .map(factorId => {
-        const factor = moodFactors.find(f => f.id === factorId);
-        return {
-          name: factor?.label || factorId,
-          count: factorCounts[factorId],
-          icon: factor?.icon || '📊'
-        };
-      })
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 5);
+    const insights: AIInsight[] = [];
+
+    // Trend analysis
+    if (moodStats.monthlyTrend === 'improving') {
+      insights.push({
+        id: '1',
+        type: 'celebration',
+        title: '🎉 Progres Excelent!',
+        message: `Mood-ul tău a crescut cu ${((moodStats.weeklyAverage - 5) * 20).toFixed(1)}% în ultima perioadă! Continuă cu strategiile care funcționează.`,
+        confidence: 0.9,
+        actionable: true
+      });
+    } else if (moodStats.monthlyTrend === 'declining') {
+      insights.push({
+        id: '2',
+        type: 'warning',
+        title: '⚠️ Atenție la Trend',
+        message: 'Observ o scădere în mood-ul tău recent. Să explorăm împreună ce s-a schimbat în rutina ta.',
+        confidence: 0.8,
+        actionable: true
+      });
+    }
+
+    // Streak analysis
+    if (moodStats.streakDays >= 7) {
+      insights.push({
+        id: '3',
+        type: 'celebration',
+        title: '🔥 Streak Incredibil!',
+        message: `${moodStats.streakDays} zile consecutive cu mood bun! Ai găsit formula succesului.`,
+        confidence: 0.95,
+        actionable: false
+      });
+    }
+
+    // Activity patterns
+    if (moodStats.topActivities.includes('Exercise')) {
+      insights.push({
+        id: '4',
+        type: 'pattern',
+        title: '💪 Pattern Detectat',
+        message: 'Exercițiile fizice sunt corelate pozitiv cu mood-ul tău. Încearcă să le faci mai des.',
+        confidence: 0.85,
+        actionable: true
+      });
+    }
+
+    // Sleep correlation
+    const recentEntries = moodHistory.slice(-7);
+    const avgSleep = recentEntries.reduce((sum, entry) => sum + entry.sleep, 0) / recentEntries.length;
+    
+    if (avgSleep < 7) {
+      insights.push({
+        id: '5',
+        type: 'recommendation',
+        title: '😴 Optimizează Somnul',
+        message: `Somnul tău mediu (${avgSleep.toFixed(1)}h) poate afecta mood-ul. Target: 7-9 ore/noapte.`,
+        confidence: 0.9,
+        actionable: true
+      });
+    }
+
+    // Stress analysis
+    const avgStress = recentEntries.reduce((sum, entry) => sum + entry.stress, 0) / recentEntries.length;
+    
+    if (avgStress >= 7) {
+      insights.push({
+        id: '6',
+        type: 'recommendation',
+        title: '💆‍♀️ Gestionează Stresul',
+        message: 'Nivelul de stress este ridicat. Încearcă meditația sau tehnicile de respirație zilnic.',
+        confidence: 0.87,
+        actionable: true
+      });
+    }
+
+    setAiInsights(insights);
   };
 
-  const toggleFactor = (factorId: string) => {
-    setSelectedFactors(prev => 
-      prev.includes(factorId) 
-        ? prev.filter(f => f !== factorId)
-        : [...prev, factorId]
+  const saveMoodEntry = () => {
+    const today = new Date().toISOString().split('T')[0];
+    
+    const newEntry: MoodEntry = {
+      id: crypto.randomUUID(),
+      date: today,
+      mood: currentMood,
+      energy: currentEnergy,
+      stress: currentStress,
+      sleep: currentSleep,
+      notes: todayNotes,
+      triggers: selectedTriggers,
+      activities: selectedActivities,
+      weather: currentWeather,
+      timestamp: new Date()
+    };
+
+    const updatedHistory = moodHistory.filter(entry => entry.date !== today);
+    updatedHistory.push(newEntry);
+    updatedHistory.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    
+    setMoodHistory(updatedHistory);
+    setHasLoggedToday(true);
+    setShowEntryForm(false);
+
+    // Success message simulation
+    setTimeout(() => {
+      alert('✅ Mood logged successfully! Check AI Insights for new recommendations.');
+    }, 500);
+  };
+
+  const toggleTrigger = (trigger: string) => {
+    setSelectedTriggers(prev => 
+      prev.includes(trigger) 
+        ? prev.filter(t => t !== trigger)
+        : [...prev, trigger]
     );
+  };
+
+  const toggleActivity = (activity: string) => {
+    setSelectedActivities(prev => 
+      prev.includes(activity) 
+        ? prev.filter(a => a !== activity)
+        : [...prev, activity]
+    );
+  };
+
+  const getMoodColor = (mood: number) => {
+    if (mood <= 3) return '#ef4444';
+    if (mood <= 5) return '#f59e0b';
+    if (mood <= 7) return '#06b6d4';
+    return '#22c55e';
+  };
+
+  const getTimeframeDays = () => {
+    switch (selectedTimeframe) {
+      case 'week': return 7;
+      case 'month': return 30;
+      case 'year': return 365;
+    }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
-        <div className="text-white text-xl">Loading mood data...</div>
+      <div className="mood-tracker loading">
+        <div className="loading-content">
+          <div className="loading-spinner"></div>
+          <h2>Se încarcă Mood Tracker...</h2>
+          <p>Analizez patterns și generez insights 📊</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
-      {/* Animated background */}
-      <div className="absolute inset-0 opacity-60">
-        <div className="absolute inset-0 bg-gradient-to-r from-purple-500/15 via-transparent to-cyan-500/10 animate-pulse" />
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-purple-500/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl animate-pulse delay-1000" />
+    <div className="mood-tracker">
+      {/* Header */}
+      <div className="tracker-header">
+        <button 
+          onClick={() => router.push('/dashboard/por-well')}
+          className="back-btn"
+        >
+          ← Înapoi la PorWell
+        </button>
+        
+        <div className="header-info">
+          <h1>😊 Mood Tracker Advanced</h1>
+          <p>Track, analyze și optimizează-ți starea emoțională cu AI insights</p>
+        </div>
+        
+        <div className="header-actions">
+          <div className="timeframe-selector">
+            {(['week', 'month', 'year'] as const).map(timeframe => (
+              <button
+                key={timeframe}
+                onClick={() => setSelectedTimeframe(timeframe)}
+                className={`timeframe-btn ${selectedTimeframe === timeframe ? 'active' : ''}`}
+              >
+                {timeframe === 'week' ? '7 zile' : timeframe === 'month' ? '30 zile' : '1 an'}
+              </button>
+            ))}
+          </div>
+          
+          {!hasLoggedToday && (
+            <button 
+              onClick={() => setShowEntryForm(true)}
+              className="log-mood-btn primary"
+            >
+              📝 Log Mood Azi
+            </button>
+          )}
+        </div>
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto p-6">
-        {/* Header */}
-        <div className="mb-6">
-          <button
-            onClick={() => router.push('/dashboard/por-well')}
-            className="mb-4 px-4 py-2 bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl text-white font-semibold hover:bg-purple-500 hover:border-purple-500 transition-all duration-300"
-          >
-            ← Înapoi la Dashboard
-          </button>
-          
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent mb-2">
-                😊 Mood Tracker
-              </h1>
-              <p className="text-gray-300 text-lg">
-                Urmărește-ți starea emoțională și descoperă pattern-urile
-              </p>
+      {/* Main Content */}
+      <div className="tracker-content">
+        {/* Today's Summary */}
+        <div className="today-summary">
+          <div className="summary-card main">
+            <div className="card-header">
+              <h3>📅 Astăzi - {new Date().toLocaleDateString('ro-RO', { 
+                weekday: 'long', 
+                day: 'numeric', 
+                month: 'long' 
+              })}</h3>
+              {hasLoggedToday && (
+                <button 
+                  onClick={() => setShowEntryForm(true)}
+                  className="edit-btn"
+                >
+                  ✏️ Editează
+                </button>
+              )}
             </div>
             
-            <button
-              onClick={() => setShowAddForm(true)}
-              className="px-6 py-3 bg-gradient-to-r from-purple-500 to-cyan-500 text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
-            >
-              + Adaugă Mood
-            </button>
+            {hasLoggedToday ? (
+              <div className="today-metrics">
+                <div className="metric">
+                  <span className="metric-icon">{moodEmojis[currentMood - 1]}</span>
+                  <span className="metric-value">{currentMood}/10</span>
+                  <span className="metric-label">Mood</span>
+                </div>
+                <div className="metric">
+                  <span className="metric-icon">{energyEmojis[currentEnergy - 1]}</span>
+                  <span className="metric-value">{currentEnergy}/10</span>
+                  <span className="metric-label">Energie</span>
+                </div>
+                <div className="metric">
+                  <span className="metric-icon">{stressEmojis[currentStress - 1]}</span>
+                  <span className="metric-value">{currentStress}/10</span>
+                  <span className="metric-label">Stress</span>
+                </div>
+                <div className="metric">
+                  <span className="metric-icon">😴</span>
+                  <span className="metric-value">{currentSleep}h</span>
+                  <span className="metric-label">Somn</span>
+                </div>
+              </div>
+            ) : (
+              <div className="no-entry">
+                <div className="no-entry-icon">📝</div>
+                <h4>Nu ai logged mood-ul azi</h4>
+                <p>Durează doar 2 minute să îți trackezi starea emoțională</p>
+                <button 
+                  onClick={() => setShowEntryForm(true)}
+                  className="log-now-btn"
+                >
+                  📊 Log Acum
+                </button>
+              </div>
+            )}
+          </div>
+          
+          {/* Quick Stats */}
+          {moodStats && (
+            <div className="quick-stats">
+              <div className="stat-card">
+                <div className="stat-value">{moodStats.weeklyAverage}</div>
+                <div className="stat-label">Medie {selectedTimeframe === 'week' ? 'Săptămână' : selectedTimeframe === 'month' ? 'Lună' : 'An'}</div>
+                <div className={`stat-trend ${moodStats.monthlyTrend}`}>
+                  {moodStats.monthlyTrend === 'improving' ? '📈 Îmbunătățire' : 
+                   moodStats.monthlyTrend === 'declining' ? '📉 Scădere' : '📊 Stabil'}
+                </div>
+              </div>
+              
+              <div className="stat-card">
+                <div className="stat-value">{moodStats.streakDays}</div>
+                <div className="stat-label">Zile Consecutive</div>
+                <div className="stat-trend positive">🔥 Mood Bun</div>
+              </div>
+              
+              <div className="stat-card">
+                <div className="stat-value">{moodHistory.length}</div>
+                <div className="stat-label">Total Entries</div>
+                <div className="stat-trend neutral">📝 Tracked</div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Charts & Analytics */}
+        <div className="analytics-section">
+          <div className="mood-chart-card">
+            <div className="card-header">
+              <h3>📈 Mood Evolution - Ultimele {getTimeframeDays()} zile</h3>
+            </div>
+            
+            <div className="mood-chart">
+              <div className="chart-container">
+                {moodHistory.slice(-getTimeframeDays()).map((entry, index) => (
+                  <div key={entry.id} className="chart-bar">
+                    <div 
+                      className="bar mood"
+                      style={{ 
+                        height: `${entry.mood * 10}%`,
+                        backgroundColor: getMoodColor(entry.mood)
+                      }}
+                      title={`${entry.date}: Mood ${entry.mood}/10`}
+                    ></div>
+                    <div className="bar-label">
+                      {new Date(entry.date).getDate()}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+              <div className="chart-legend">
+                <div className="legend-item">
+                  <div className="legend-color" style={{backgroundColor: '#ef4444'}}></div>
+                  <span>Scăzut (1-3)</span>
+                </div>
+                <div className="legend-item">
+                  <div className="legend-color" style={{backgroundColor: '#f59e0b'}}></div>
+                  <span>Moderat (4-5)</span>
+                </div>
+                <div className="legend-item">
+                  <div className="legend-color" style={{backgroundColor: '#06b6d4'}}></div>
+                  <span>Bun (6-7)</span>
+                </div>
+                <div className="legend-item">
+                  <div className="legend-color" style={{backgroundColor: '#22c55e'}}></div>
+                  <span>Excelent (8-10)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Correlations */}
+          <div className="correlations-card">
+            <div className="card-header">
+              <h3>🔗 Patterns & Correlations</h3>
+            </div>
+            
+            <div className="correlation-grid">
+              <div className="correlation-item">
+                <h4>😴 Somn vs Mood</h4>
+                <div className="correlation-chart">
+                  {moodHistory.slice(-7).map((entry, index) => (
+                    <div key={index} className="correlation-point">
+                      <div className="point-sleep" style={{height: `${entry.sleep * 10}%`}}></div>
+                      <div className="point-mood" style={{height: `${entry.mood * 10}%`}}></div>
+                    </div>
+                  ))}
+                </div>
+                <div className="correlation-legend">
+                  <span>🟡 Somn</span>
+                  <span>🟢 Mood</span>
+                </div>
+              </div>
+              
+              <div className="correlation-item">
+                <h4>💆‍♀️ Stress vs Mood</h4>
+                <div className="correlation-chart">
+                  {moodHistory.slice(-7).map((entry, index) => (
+                    <div key={index} className="correlation-point">
+                      <div className="point-stress" style={{height: `${entry.stress * 10}%`}}></div>
+                      <div className="point-mood" style={{height: `${entry.mood * 10}%`}}></div>
+                    </div>
+                  ))}
+                </div>
+                <div className="correlation-legend">
+                  <span>🔴 Stress</span>
+                  <span>🟢 Mood</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
         {/* AI Insights */}
-        {aiInsights && (
-          <div className="mb-6 bg-gradient-to-r from-purple-500/10 to-cyan-500/10 backdrop-blur-lg border border-purple-500/30 rounded-2xl p-6">
-            <h3 className="text-lg font-semibold text-purple-400 mb-3 flex items-center gap-2">
-              🧠 AI Insights
-            </h3>
-            <p className="text-gray-300 leading-relaxed">{aiInsights}</p>
+        <div className="insights-section">
+          <div className="insights-header">
+            <h3>🧠 AI Insights - Personalizate pentru tine</h3>
+            <p>Analize avansate bazate pe patterns și comportamente</p>
+          </div>
+          
+          <div className="insights-grid">
+            {aiInsights.map(insight => (
+              <div key={insight.id} className={`insight-card ${insight.type}`}>
+                <div className="insight-header">
+                  <h4>{insight.title}</h4>
+                  <div className="confidence-badge">
+                    {Math.round(insight.confidence * 100)}% confident
+                  </div>
+                </div>
+                <p className="insight-message">{insight.message}</p>
+                {insight.actionable && (
+                  <div className="insight-actions">
+                    <Link href="/dashboard/por-well/ai-therapist" className="action-link">
+                      🤖 Discută cu AI Therapist
+                    </Link>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Triggers & Activities Analysis */}
+        {moodStats && (
+          <div className="analysis-section">
+            <div className="triggers-card">
+              <div className="card-header">
+                <h3>⚠️ Common Triggers</h3>
+              </div>
+              <div className="triggers-list">
+                {moodStats.commonTriggers.length > 0 ? (
+                  moodStats.commonTriggers.map((trigger, index) => (
+                    <div key={index} className="trigger-item">
+                      <span className="trigger-name">{trigger}</span>
+                      <span className="trigger-frequency">
+                        {moodHistory.filter(entry => entry.triggers.includes(trigger)).length} zile
+                      </span>
+                    </div>
+                  ))
+                ) : (
+                  <div className="no-data">
+                    <p>🎉 Nu ai triggers frecvente identificate!</p>
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            <div className="activities-card">
+              <div className="card-header">
+                <h3>🌟 Top Activities</h3>
+              </div>
+              <div className="activities-list">
+                {moodStats.topActivities.length > 0 ? (
+                  moodStats.topActivities.map((activity, index) => (
+                    <div key={index} className="activity-item">
+                      <span className="activity-name">{activity}</span>
+                      <span className="activity-frequency">
+                        {moodHistory.filter(entry => entry.activities.includes(activity)).length} zile
+                      </span>
+                    </div>
+                  ))
+                ) : (
+                  <div className="no-data">
+                    <p>📝 Adaugă activități pentru a vedea patterns</p>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         )}
+      </div>
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6 text-center">
-            <div className="text-3xl font-bold text-purple-400">
-              {stats?.weeklyAverage.toFixed(1)}/5
+      {/* Mood Entry Modal */}
+      {showEntryForm && (
+        <div className="mood-entry-modal">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h3>📝 {hasLoggedToday ? 'Editează' : 'Log'} Mood-ul de Azi</h3>
+              <button 
+                onClick={() => setShowEntryForm(false)}
+                className="close-btn"
+              >
+                ✕
+              </button>
             </div>
-            <div className="text-gray-300 text-sm">Medie Săptămână</div>
-          </div>
-          
-          <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6 text-center">
-            <div className="text-3xl font-bold text-cyan-400">
-              {stats?.streakDays}
-            </div>
-            <div className="text-gray-300 text-sm">Zile Consecutiv</div>
-          </div>
-          
-          <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6 text-center">
-            <div className="text-3xl font-bold text-green-400">
-              {stats?.monthlyTrend === 'improving' ? '📈' : stats?.monthlyTrend === 'declining' ? '📉' : '📊'}
-            </div>
-            <div className="text-gray-300 text-sm">Trend Luna</div>
-          </div>
-          
-          <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6 text-center">
-            <div className="text-3xl font-bold text-yellow-400">
-              {moodOptions.find(m => m.value === stats?.dominantMood)?.emoji || '😐'}
-            </div>
-            <div className="text-gray-300 text-sm">Mood Dominant</div>
-          </div>
-        </div>
-
-        {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Charts */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* View Toggle */}
-            <div className="flex gap-2 justify-center">
-              {(['today', 'week', 'month'] as const).map((viewOption) => (
-                <button
-                  key={viewOption}
-                  onClick={() => setView(viewOption)}
-                  className={`px-4 py-2 rounded-lg font-semibold transition-all duration-300 ${
-                    view === viewOption
-                      ? 'bg-purple-500 text-white'
-                      : 'bg-white/10 text-gray-300 hover:bg-white/20'
-                  }`}
-                >
-                  {viewOption === 'today' ? 'Astăzi' : viewOption === 'week' ? 'Săptămâna' : 'Luna'}
-                </button>
-              ))}
-            </div>
-
-            {/* Mood Trend Chart */}
-            <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6">
-              <h3 className="text-lg font-semibold text-white mb-4">📈 Trend Mood & Energie</h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={getChartData()}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                  <XAxis dataKey="date" stroke="#9CA3AF" />
-                  <YAxis domain={[0, 10]} stroke="#9CA3AF" />
-                  <Tooltip 
-                    contentStyle={{
-                      backgroundColor: 'rgba(17, 24, 39, 0.9)',
-                      border: '1px solid rgba(139, 92, 246, 0.3)',
-                      borderRadius: '12px',
-                      color: '#fff'
-                    }}
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="mood" 
-                    stroke="#8b5cf6" 
-                    strokeWidth={3}
-                    name="Mood (1-5)"
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="energy" 
-                    stroke="#06b6d4" 
-                    strokeWidth={3}
-                    name="Energie (1-10)"
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-
-            {/* Mood Distribution */}
-            <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6">
-              <h3 className="text-lg font-semibold text-white mb-4">🎯 Distribuția Mood-urilor</h3>
-              <ResponsiveContainer width="100%" height={250}>
-                <PieChart>
-                  <Pie
-                    data={getMoodDistribution()}
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={80}
-                    dataKey="value"
-                    label={({ name, value }) => `${name}: ${value}`}
-                  >
-                    {getMoodDistribution().map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Recent Entries */}
-            <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6">
-              <h3 className="text-lg font-semibold text-white mb-4">📝 Înregistrări Recente</h3>
-              <div className="space-y-3 max-h-60 overflow-y-auto">
-                {moodEntries.slice(0, 5).map((entry) => {
-                  const moodOption = moodOptions.find(m => m.value === entry.mood);
-                  return (
-                    <div key={entry.id} className="bg-white/5 rounded-lg p-3">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-2xl">{moodOption?.emoji}</span>
-                        <span className="text-xs text-gray-400">{entry.date}</span>
-                      </div>
-                      <div className="text-sm text-gray-300">
-                        Energie: {entry.energy}/10
-                      </div>
-                      {entry.notes && (
-                        <div className="text-xs text-gray-400 mt-1">
-                          "{entry.notes}"
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Factor Analysis */}
-            <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6">
-              <h3 className="text-lg font-semibold text-white mb-4">🔍 Analiza Factorilor</h3>
-              <div className="space-y-3">
-                {getFactorAnalysis().map((factor, index) => (
-                  <div key={factor.name} className="flex items-center justify-between bg-white/5 rounded-lg p-3">
-                    <div className="flex items-center gap-2">
-                      <span className="text-lg">{factor.icon}</span>
-                      <span className="text-sm text-gray-300">{factor.name}</span>
-                    </div>
-                    <span className="text-purple-400 font-semibold">{factor.count}</span>
+            
+            <div className="modal-body">
+              {/* Mood Slider */}
+              <div className="mood-input-section">
+                <label>😊 Cum te simți? ({currentMood}/10)</label>
+                <div className="mood-slider-container">
+                  <div className="mood-emoji-display">
+                    {moodEmojis[currentMood - 1]}
                   </div>
-                ))}
+                  <input
+                    type="range"
+                    min="1"
+                    max="10"
+                    value={currentMood}
+                    onChange={(e) => setCurrentMood(Number(e.target.value))}
+                    className="mood-slider"
+                  />
+                  <div className="slider-labels">
+                    <span>😢 Foarte trist</span>
+                    <span>🌟 Fantastic</span>
+                  </div>
+                </div>
               </div>
-            </div>
 
-            {/* Quick Actions */}
-            <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6">
-              <h3 className="text-lg font-semibold text-white mb-4">⚡ Acțiuni Rapide</h3>
-              <div className="space-y-2">
-                <button
-                  onClick={() => router.push('/dashboard/por-well/chat')}
-                  className="w-full p-3 bg-purple-500/20 border border-purple-500/30 rounded-lg text-left text-sm text-purple-300 hover:bg-purple-500/30 transition-all duration-300"
-                >
-                  🤖 Vorbește cu AI Therapist
-                </button>
-                <button
-                  onClick={() => router.push('/dashboard/por-well/meditation')}
-                  className="w-full p-3 bg-cyan-500/20 border border-cyan-500/30 rounded-lg text-left text-sm text-cyan-300 hover:bg-cyan-500/30 transition-all duration-300"
-                >
-                  🧘 Sesiune de Meditație
-                </button>
-                <button
-                  onClick={() => router.push('/dashboard/por-well/stress-management')}
-                  className="w-full p-3 bg-green-500/20 border border-green-500/30 rounded-lg text-left text-sm text-green-300 hover:bg-green-500/30 transition-all duration-300"
-                >
-                  💆 Stress Management
-                </button>
+              {/* Energy Slider */}
+              <div className="mood-input-section">
+                <label>⚡ Nivel energie ({currentEnergy}/10)</label>
+                <input
+                  type="range"
+                  min="1"
+                  max="10"
+                  value={currentEnergy}
+                  onChange={(e) => setCurrentEnergy(Number(e.target.value))}
+                  className="energy-slider"
+                />
               </div>
-            </div>
-          </div>
-        </div>
 
-        {/* Add Mood Modal */}
-        {showAddForm && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-slate-900/95 border border-white/20 rounded-2xl p-8 max-w-md w-full max-h-[90vh] overflow-y-auto">
-              <h2 className="text-2xl font-bold text-white mb-6">Adaugă Mood-ul Tău</h2>
-              
-              {/* Mood Selection */}
-              <div className="mb-6">
-                <label className="text-white font-semibold mb-3 block">Cum te simți?</label>
-                <div className="grid grid-cols-5 gap-2">
-                  {moodOptions.map((option) => (
+              {/* Stress Slider */}
+              <div className="mood-input-section">
+                <label>💆‍♀️ Nivel stress ({currentStress}/10)</label>
+                <input
+                  type="range"
+                  min="1"
+                  max="10"
+                  value={currentStress}
+                  onChange={(e) => setCurrentStress(Number(e.target.value))}
+                  className="stress-slider"
+                />
+              </div>
+
+              {/* Sleep Input */}
+              <div className="mood-input-section">
+                <label>😴 Ore de somn noaptea trecută</label>
+                <input
+                  type="number"
+                  min="0"
+                  max="12"
+                  step="0.5"
+                  value={currentSleep}
+                  onChange={(e) => setCurrentSleep(Number(e.target.value))}
+                  className="sleep-input"
+                />
+              </div>
+
+              {/* Triggers */}
+              <div className="mood-input-section">
+                <label>⚠️ Triggers de azi (opțional)</label>
+                <div className="triggers-grid">
+                  {commonTriggers.map(trigger => (
                     <button
-                      key={option.value}
-                      onClick={() => setSelectedMood(option.value)}
-                      className={`p-3 rounded-lg text-center transition-all duration-300 ${
-                        selectedMood === option.value
-                          ? 'bg-purple-500 border-2 border-purple-400'
-                          : 'bg-white/10 border-2 border-white/20 hover:bg-white/20'
-                      }`}
+                      key={trigger}
+                      onClick={() => toggleTrigger(trigger)}
+                      className={`trigger-btn ${selectedTriggers.includes(trigger) ? 'selected' : ''}`}
                     >
-                      <div className="text-2xl mb-1">{option.emoji}</div>
-                      <div className="text-xs text-gray-300">{option.label}</div>
+                      {trigger}
                     </button>
                   ))}
                 </div>
               </div>
 
-              {/* Energy Level */}
-              <div className="mb-6">
-                <label className="text-white font-semibold mb-3 block">
-                  Nivel Energie: {energy}/10
-                </label>
-                <input
-                  type="range"
-                  min="1"
-                  max="10"
-                  value={energy}
-                  onChange={(e) => setEnergy(Number(e.target.value))}
-                  className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer slider"
-                />
-              </div>
-
-              {/* Factors */}
-              <div className="mb-6">
-                <label className="text-white font-semibold mb-3 block">Factori de influență</label>
-                <div className="grid grid-cols-2 gap-2">
-                  {moodFactors.map((factor) => (
+              {/* Activities */}
+              <div className="mood-input-section">
+                <label>🌟 Activități de azi (opțional)</label>
+                <div className="activities-grid">
+                  {positiveActivities.map(activity => (
                     <button
-                      key={factor.id}
-                      onClick={() => toggleFactor(factor.id)}
-                      className={`p-2 rounded-lg text-left text-sm transition-all duration-300 ${
-                        selectedFactors.includes(factor.id)
-                          ? 'bg-purple-500/30 border border-purple-500/50'
-                          : 'bg-white/10 border border-white/20 hover:bg-white/20'
-                      }`}
+                      key={activity}
+                      onClick={() => toggleActivity(activity)}
+                      className={`activity-btn ${selectedActivities.includes(activity) ? 'selected' : ''}`}
                     >
-                      <span className="mr-2">{factor.icon}</span>
-                      {factor.label}
+                      {activity}
                     </button>
                   ))}
                 </div>
               </div>
 
               {/* Notes */}
-              <div className="mb-6">
-                <label className="text-white font-semibold mb-3 block">Note (opțional)</label>
+              <div className="mood-input-section">
+                <label>📝 Note despre ziua de azi (opțional)</label>
                 <textarea
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Descrie cum te simți sau ce s-a întâmplat astăzi..."
-                  className="w-full bg-white/10 border border-white/20 rounded-lg p-3 text-white placeholder-gray-400 resize-none focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20"
+                  value={todayNotes}
+                  onChange={(e) => setTodayNotes(e.target.value)}
+                  placeholder="Cum a fost ziua ta? Ce te-a influențat mood-ul..."
+                  className="notes-textarea"
                   rows={3}
                 />
               </div>
-
-              {/* Actions */}
-              <div className="flex gap-3">
-                <button
-                  onClick={() => setShowAddForm(false)}
-                  className="flex-1 px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white font-semibold hover:bg-white/20 transition-all duration-300"
-                >
-                  Anulează
-                </button>
-                <button
-                  onClick={saveMoodEntry}
-                  disabled={!selectedMood}
-                  className="flex-1 px-4 py-3 bg-gradient-to-r from-purple-500 to-cyan-500 text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-                >
-                  Salvează
-                </button>
-              </div>
+            </div>
+            
+            <div className="modal-footer">
+              <button 
+                onClick={() => setShowEntryForm(false)}
+                className="cancel-btn"
+              >
+                Anulează
+              </button>
+              <button 
+                onClick={saveMoodEntry}
+                className="save-btn"
+              >
+                💾 {hasLoggedToday ? 'Actualizează' : 'Salvează'} Entry
+              </button>
             </div>
           </div>
-        )}
-      </div>
-
-      <style jsx>{`
-        .slider::-webkit-slider-thumb {
-          appearance: none;
-          height: 20px;
-          width: 20px;
-          border-radius: 50%;
-          background: linear-gradient(135deg, #8b5cf6, #06b6d4);
-          cursor: pointer;
-          box-shadow: 0 4px 8px rgba(139, 92, 246, 0.3);
-        }
-
-        .slider::-moz-range-thumb {
-          height: 20px;
-          width: 20px;
-          border-radius: 50%;
-          background: linear-gradient(135deg, #8b5cf6, #06b6d4);
-          cursor: pointer;
-          border: none;
-          box-shadow: 0 4px 8px rgba(139, 92, 246, 0.3);
-        }
-      `}</style>
+        </div>
+      )}
     </div>
   );
 }
