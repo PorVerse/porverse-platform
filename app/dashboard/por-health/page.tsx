@@ -1,7 +1,7 @@
 'use client';
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
-import './style.css';
+import './style.module.css';
 
 export default function PorHealthDashboard() {
   const [chatOpen, setChatOpen] = useState(false);
