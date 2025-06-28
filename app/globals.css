@@ -1,3 +1,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Custom CSS Variables */
+:root {
+  --health-primary: #00ff88;
+  --health-bg: #f0fdf4;
+  --health-accent: #007f5f;
+}

@@ -1,17 +1,13 @@
-
-export const metadata = {
-  title: 'PorVerse',
-  description: 'Platforma ta de evoluție AI',
-};
+import './globals.css'
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
   return (
-    <html lang="ro">
+    <html lang="en">
       <body>{children}</body>
     </html>
-  );
+  )
 }

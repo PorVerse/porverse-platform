@@ -2,9 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import styles from './style.css';
-
-// Types
+import './style.css';  // ✅ CORECT - CSS normal// Types
 interface FinancialGoal {
   id: string;
   name: string;
