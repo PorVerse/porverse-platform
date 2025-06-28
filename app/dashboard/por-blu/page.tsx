@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import styles from '.app/dashboard/por-blu/style.css';
+import './style.css';
 
 // Types
 interface LifeGoal {
@@ -342,9 +342,9 @@ export default function PorBluDashboard() {
 
   if (loading) {
     return (
-      <div className={styles.dashboard}>
-        <div className={styles.loadingScreen}>
-          <div className={styles.loadingSpinner}></div>
+      <div className="dashboard">
+        <div className="loadingScreen">
+          <div className="loadingSpinner"></div>
           <h2>Analizez strategia ta de viață...</h2>
           <p>Calculez obiective, oportunități și planul optim</p>
         </div>
@@ -353,177 +353,177 @@ export default function PorBluDashboard() {
   }
 
   return (
-    <div className={styles.dashboard}>
+    <div className="dashboard">
       {/* SIDEBAR */}
-      <nav className={styles.sidebar}>
-        <div className={styles.sidebarLogo}>
-          <Link href="/" className={styles.logo}>💧 PorBlu</Link>
+      <nav className="sidebar">
+        <div className="sidebarLogo">
+          <Link href="/" className="logo">💧 PorBlu</Link>
         </div>
 
-        <div className={styles.navSection}>
-          <div className={styles.navSectionTitle}>Strategic Planning</div>
+        <div className="navSection">
+          <div className="navSectionTitle">Strategic Planning</div>
           <button 
-            className={`${styles.navItem} ${activeView === 'overview' ? styles.active : ''}`}
+            className={`navItem ${activeView === 'overview' ? 'active' : ''}`}
             onClick={() => setActiveView('overview')}
           >
-            <span className={styles.navItemIcon}>🎯</span>
+            <span className="navItemIcon">🎯</span>
             Strategic Overview
           </button>
           <button 
-            className={`${styles.navItem} ${activeView === 'goals' ? styles.active : ''}`}
+            className={`navItem ${activeView === 'goals' ? 'active' : ''}`}
             onClick={() => setActiveView('goals')}
           >
-            <span className={styles.navItemIcon}>🏆</span>
+            <span className="navItemIcon">🏆</span>
             Life Goals
           </button>
           <button 
-            className={`${styles.navItem} ${activeView === 'vision' ? styles.active : ''}`}
+            className={`navItem ${activeView === 'vision' ? 'active' : ''}`}
             onClick={() => setActiveView('vision')}
           >
-            <span className={styles.navItemIcon}>🔮</span>
+            <span className="navItemIcon">🔮</span>
             Vision Board
           </button>
           <button 
-            className={`${styles.navItem} ${activeView === 'decisions' ? styles.active : ''}`}
+            className={`navItem ${activeView === 'decisions' ? 'active' : ''}`}
             onClick={() => setActiveView('decisions')}
           >
-            <span className={styles.navItemIcon}>⚖️</span>
+            <span className="navItemIcon">⚖️</span>
             Decision Matrix
           </button>
         </div>
 
-        <div className={styles.navSection}>
-          <div className={styles.navSectionTitle}>AI Executive Tools</div>
+        <div className="navSection">
+          <div className="navSectionTitle">AI Executive Tools</div>
           <button 
-            className={`${styles.navItem} ${activeView === 'coach' ? styles.active : ''}`}
+            className={`navItem ${activeView === 'coach' ? 'active' : ''}`}
             onClick={() => setActiveView('coach')}
           >
-            <span className={styles.navItemIcon}>🤖</span>
+            <span className="navItemIcon">🤖</span>
             AI Executive Coach
           </button>
           <button 
-            className={`${styles.navItem} ${activeView === 'insights' ? styles.active : ''}`}
+            className={`navItem ${activeView === 'insights' ? 'active' : ''}`}
             onClick={() => setActiveView('insights')}
           >
-            <span className={styles.navItemIcon}>🧠</span>
+            <span className="navItemIcon">🧠</span>
             Strategic Insights
           </button>
           <button 
-            className={`${styles.navItem} ${activeView === 'scenarios' ? styles.active : ''}`}
+            className={`navItem ${activeView === 'scenarios' ? 'active' : ''}`}
             onClick={() => setActiveView('scenarios')}
           >
-            <span className={styles.navItemIcon}>🎲</span>
+            <span className="navItemIcon">🎲</span>
             Scenario Planning
           </button>
         </div>
 
-        <div className={styles.navSection}>
-          <div className={styles.navSectionTitle}>Leadership</div>
+        <div className="navSection">
+          <div className="navSectionTitle">Leadership</div>
           <button 
-            className={`${styles.navItem} ${activeView === 'leadership' ? styles.active : ''}`}
+            className={`navItem ${activeView === 'leadership' ? 'active' : ''}`}
             onClick={() => setActiveView('leadership')}
           >
-            <span className={styles.navItemIcon}>👑</span>
+            <span className="navItemIcon">👑</span>
             Leadership Dev
           </button>
           <button 
-            className={`${styles.navItem} ${activeView === 'legacy' ? styles.active : ''}`}
+            className={`navItem ${activeView === 'legacy' ? 'active' : ''}`}
             onClick={() => setActiveView('legacy')}
           >
-            <span className={styles.navItemIcon}>🏛️</span>
+            <span className="navItemIcon">🏛️</span>
             Legacy Planning
           </button>
         </div>
       </nav>
 
       {/* HEADER */}
-      <header className={styles.header}>
-        <div className={styles.headerLeft}>
+      <header className="header">
+        <div className="headerLeft">
           <h1>👑 Executive Strategy Center</h1>
-          <p>Leadership Score: <span className={styles.leadershipScore}>{leadershipScore}%</span> • Strategic Thinking: <span className={styles.strategicScore}>{strategicThinking}%</span></p>
+          <p>Leadership Score: <span className="leadershipScore">{leadershipScore}%</span> • Strategic Thinking: <span className="strategicScore">{strategicThinking}%</span></p>
         </div>
-        <div className={styles.headerRight}>
-          <div className={styles.headerStats}>
-            <div className={styles.statItem}>
-              <div className={styles.statValue}>{lifeGoals.filter(g => g.status === 'in-progress').length}</div>
-              <div className={styles.statLabel}>Active Goals</div>
+        <div className="headerRight">
+          <div className="headerStats">
+            <div className="statItem">
+              <div className="statValue">{lifeGoals.filter(g => g.status === 'in-progress').length}</div>
+              <div className="statLabel">Active Goals</div>
             </div>
-            <div className={styles.statItem}>
-              <div className={styles.statValue}>{Math.round(lifeGoals.reduce((sum, g) => sum + g.progress, 0) / lifeGoals.length)}%</div>
-              <div className={styles.statLabel}>Avg Progress</div>
+            <div className="statItem">
+              <div className="statValue">{Math.round(lifeGoals.reduce((sum, g) => sum + g.progress, 0) / lifeGoals.length)}%</div>
+              <div className="statLabel">Avg Progress</div>
             </div>
-            <div className={styles.statItem}>
-              <div className={styles.statValue}>{lifeBalance}%</div>
-              <div className={styles.statLabel}>Life Balance</div>
+            <div className="statItem">
+              <div className="statValue">{lifeBalance}%</div>
+              <div className="statLabel">Life Balance</div>
             </div>
           </div>
-          <div className={styles.headerActions}>
-            <button className={styles.headerBtn} title="Strategic Alerts">🔔</button>
-            <button className={styles.headerBtn} title="Calendar">📅</button>
-            <button className={styles.headerBtn} title="Settings">⚙️</button>
-            <button className={styles.headerBtn} title="Profile">👤</button>
+          <div className="headerActions">
+            <button className="headerBtn" title="Strategic Alerts">🔔</button>
+            <button className="headerBtn" title="Calendar">📅</button>
+            <button className="headerBtn" title="Settings">⚙️</button>
+            <button className="headerBtn" title="Profile">👤</button>
           </div>
         </div>
       </header>
 
       {/* MAIN CONTENT */}
-      <main className={styles.mainContent}>
+      <main className="mainContent">
         {activeView === 'overview' && (
           <>
             {/* Welcome Section */}
-            <section className={styles.welcomeSection}>
+            <section className="welcomeSection">
               <h2>🌟 Welcome to Your Strategic Command Center, Alex</h2>
               <p>Transformă-ți viziunea în realitate prin planning strategic și execuție disciplinată. Today's focus: Leadership development și progress review.</p>
             </section>
 
             {/* Strategic Metrics */}
-            <section className={styles.metricsGrid}>
-              <div className={styles.metricCard}>
-                <div className={styles.metricIcon}>👑</div>
-                <div className={styles.metricInfo}>
+            <section className="metricsGrid">
+              <div className="metricCard">
+                <div className="metricIcon">👑</div>
+                <div className="metricInfo">
                   <h3>Leadership Score</h3>
-                  <div className={styles.metricValue}>{leadershipScore}%</div>
-                  <div className={styles.metricChange}>+8% din luna trecută</div>
-                  <div className={styles.metricBar}>
-                    <div className={styles.metricFill} style={{ width: `${leadershipScore}%` }}></div>
+                  <div className="metricValue">{leadershipScore}%</div>
+                  <div className="metricChange">+8% din luna trecută</div>
+                  <div className="metricBar">
+                    <div className="metricFill" style={{ width: `${leadershipScore}%` }}></div>
                   </div>
                 </div>
               </div>
 
-              <div className={styles.metricCard}>
-                <div className={styles.metricIcon}>🧠</div>
-                <div className={styles.metricInfo}>
+              <div className="metricCard">
+                <div className="metricIcon">🧠</div>
+                <div className="metricInfo">
                   <h3>Strategic Thinking</h3>
-                  <div className={styles.metricValue}>{strategicThinking}%</div>
-                  <div className={styles.metricChange}>+12% din luna trecută</div>
-                  <div className={styles.metricBar}>
-                    <div className={styles.metricFill} style={{ width: `${strategicThinking}%` }}></div>
+                  <div className="metricValue">{strategicThinking}%</div>
+                  <div className="metricChange">+12% din luna trecută</div>
+                  <div className="metricBar">
+                    <div className="metricFill" style={{ width: `${strategicThinking}%` }}></div>
                   </div>
                 </div>
               </div>
 
-              <div className={styles.metricCard}>
-                <div className={styles.metricIcon}>⚖️</div>
-                <div className={styles.metricInfo}>
+              <div className="metricCard">
+                <div className="metricIcon">⚖️</div>
+                <div className="metricInfo">
                   <h3>Life Balance</h3>
-                  <div className={styles.metricValue}>{lifeBalance}%</div>
-                  <div className={styles.metricChange}>-3% din luna trecută</div>
-                  <div className={styles.metricBar}>
-                    <div className={styles.metricFill} style={{ width: `${lifeBalance}%` }}></div>
+                  <div className="metricValue">{lifeBalance}%</div>
+                  <div className="metricChange">-3% din luna trecută</div>
+                  <div className="metricBar">
+                    <div className="metricFill" style={{ width: `${lifeBalance}%` }}></div>
                   </div>
                 </div>
               </div>
 
-              <div className={styles.metricCard}>
-                <div className={styles.metricIcon}>🎯</div>
-                <div className={styles.metricInfo}>
+              <div className="metricCard">
+                <div className="metricIcon">🎯</div>
+                <div className="metricInfo">
                   <h3>Goal Achievement</h3>
-                  <div className={styles.metricValue}>
+                  <div className="metricValue">
                     {Math.round(lifeGoals.reduce((sum, g) => sum + g.progress, 0) / lifeGoals.length)}%
                   </div>
-                  <div className={styles.metricChange}>+15% din luna trecută</div>
-                  <div className={styles.metricBar}>
-                    <div className={styles.metricFill} style={{ 
+                  <div className="metricChange">+15% din luna trecută</div>
+                  <div className="metricBar">
+                    <div className="metricFill" style={{ 
                       width: `${Math.round(lifeGoals.reduce((sum, g) => sum + g.progress, 0) / lifeGoals.length)}%` 
                     }}></div>
                   </div>
@@ -532,59 +532,59 @@ export default function PorBluDashboard() {
             </section>
 
             {/* AI Executive Insight */}
-            <section className={styles.aiInsightSection}>
-              <div className={styles.aiInsightCard}>
-                <div className={styles.aiAvatar}>🤖</div>
-                <div className={styles.aiContent}>
+            <section className="aiInsightSection">
+              <div className="aiInsightCard">
+                <div className="aiAvatar">🤖</div>
+                <div className="aiContent">
                   <h3>AI Executive Insight</h3>
                   <p>{generateStrategicAdvice()}</p>
                 </div>
-                <button className={styles.detailsBtn}>Vezi detalii</button>
+                <button className="detailsBtn">Vezi detalii</button>
               </div>
             </section>
 
             {/* Critical Goals */}
-            <section className={styles.criticalGoalsSection}>
+            <section className="criticalGoalsSection">
               <h3>🔥 Critical & High Priority Goals</h3>
-              <div className={styles.goalsGrid}>
+              <div className="goalsGrid">
                 {lifeGoals
                   .filter(goal => goal.priority === 'critical' || goal.priority === 'high')
                   .map(goal => (
-                    <div key={goal.id} className={styles.goalCard}>
-                      <div className={styles.goalHeader}>
-                        <span className={styles.goalIcon}>{getCategoryIcon(goal.category)}</span>
+                    <div key={goal.id} className="goalCard">
+                      <div className="goalHeader">
+                        <span className="goalIcon">{getCategoryIcon(goal.category)}</span>
                         <h4>{goal.title}</h4>
                         <div 
-                          className={styles.goalPriority}
+                          className="goalPriority"
                           style={{ backgroundColor: getPriorityColor(goal.priority) }}
                         >
                           {goal.priority}
                         </div>
                       </div>
-                      <p className={styles.goalDescription}>{goal.description}</p>
+                      <p className="goalDescription">{goal.description}</p>
                       
-                      <div className={styles.goalProgress}>
-                        <div className={styles.progressHeader}>
+                      <div className="goalProgress">
+                        <div className="progressHeader">
                           <span>Progress: {goal.progress}%</span>
                           <span>🤖 {goal.strategicValue}/10</span>
                         </div>
-                        <div className={styles.progressBar}>
+                        <div className="progressBar">
                           <div 
-                            className={styles.progressFill}
+                            className="progressFill"
                             style={{ width: `${goal.progress}%` }}
                           ></div>
                         </div>
                       </div>
 
-                      <div className={styles.goalMeta}>
-                        <span className={styles.goalTimeline}>🕐 {goal.timeline}</span>
-                        <span className={styles.goalStatus}>{goal.status}</span>
+                      <div className="goalMeta">
+                        <span className="goalTimeline">🕐 {goal.timeline}</span>
+                        <span className="goalStatus">{goal.status}</span>
                       </div>
 
                       {goal.milestones.length > 0 && (
-                        <div className={styles.goalMilestones}>
-                          <span className={styles.milestonesLabel}>Next milestone:</span>
-                          <span className={styles.nextMilestone}>
+                        <div className="goalMilestones">
+                          <span className="milestonesLabel">Next milestone:</span>
+                          <span className="nextMilestone">
                             {goal.milestones[0].title}
                           </span>
                         </div>
@@ -595,21 +595,21 @@ export default function PorBluDashboard() {
             </section>
 
             {/* Strategic Insights Preview */}
-            <section className={styles.insightsPreview}>
+            <section className="insightsPreview">
               <h3>🧠 Latest Strategic Insights</h3>
-              <div className={styles.insightsGrid}>
+              <div className="insightsGrid">
                 {strategicInsights.slice(0, 3).map(insight => (
-                  <div key={insight.id} className={`${styles.insightCard} ${styles[insight.type]}`}>
-                    <div className={styles.insightHeader}>
-                      <span className={styles.insightIcon}>{getInsightIcon(insight.type)}</span>
+                  <div key={insight.id} className={`insightCard ${insight.type}`}>
+                    <div className="insightHeader">
+                      <span className="insightIcon">{getInsightIcon(insight.type)}</span>
                       <h4>{insight.title}</h4>
-                      <span className={`${styles.insightImpact} ${styles[insight.impact]}`}>
+                      <span className={`insightImpact ${insight.impact}`}>
                         {insight.impact}
                       </span>
                     </div>
                     <p>{insight.description}</p>
                     {insight.recommendation && (
-                      <div className={styles.insightRecommendation}>
+                      <div className="insightRecommendation">
                         <strong>Recommendation:</strong> {insight.recommendation}
                       </div>
                     )}
@@ -619,27 +619,27 @@ export default function PorBluDashboard() {
             </section>
 
             {/* Quick Actions */}
-            <section className={styles.quickActionsSection}>
+            <section className="quickActionsSection">
               <h3>⚡ Quick Strategic Actions</h3>
-              <div className={styles.quickActions}>
-                <button className={styles.actionBtn}>
-                  <span className={styles.actionIcon}>🎯</span>
+              <div className="quickActions">
+                <button className="actionBtn">
+                  <span className="actionIcon">🎯</span>
                   Create New Goal
                 </button>
-                <button className={styles.actionBtn}>
-                  <span className={styles.actionIcon}>⚖️</span>
+                <button className="actionBtn">
+                  <span className="actionIcon">⚖️</span>
                   Decision Analysis
                 </button>
-                <button className={styles.actionBtn}>
-                  <span className={styles.actionIcon}>📊</span>
+                <button className="actionBtn">
+                  <span className="actionIcon">📊</span>
                   Progress Review
                 </button>
-                <button className={styles.actionBtn}>
-                  <span className={styles.actionIcon}>🔮</span>
+                <button className="actionBtn">
+                  <span className="actionIcon">🔮</span>
                   Update Vision
                 </button>
-                <button className={styles.actionBtn}>
-                  <span className={styles.actionIcon}>🧠</span>
+                <button className="actionBtn">
+                  <span className="actionIcon">🧠</span>
                   AI Strategy Session
                 </button>
               </div>
@@ -648,125 +648,125 @@ export default function PorBluDashboard() {
         )}
 
         {activeView === 'coach' && (
-          <section className={styles.aiCoachSection}>
-            <div className={styles.coachHeader}>
+          <section className="aiCoachSection">
+            <div className="coachHeader">
               <h2>🤖 AI Executive Coach</h2>
               <p>Your personal strategic advisor for leadership and life optimization</p>
             </div>
 
-            <div className={styles.coachInterface}>
-              <div className={styles.coachChat}>
-                <div className={styles.chatMessage}>
-                  <div className={styles.aiAvatar}>🤖</div>
-                  <div className={styles.messageContent}>
+            <div className="coachInterface">
+              <div className="coachChat">
+                <div className="chatMessage">
+                  <div className="aiAvatar">🤖</div>
+                  <div className="messageContent">
                     <p>Bună, Alex! Am analizat progresul tău recent și am identificat 3 oportunități cheie pentru următoarea fază de growth. Vrei să discutăm strategia pentru poziția de CTO?</p>
-                    <span className={styles.messageTime}>Acum 5 minute</span>
+                    <span className="messageTime">Acum 5 minute</span>
                   </div>
                 </div>
               </div>
 
-              <div className={styles.coachSuggestions}>
+              <div className="coachSuggestions">
                 <h3>🎯 Suggested Discussion Topics</h3>
-                <div className={styles.suggestionCards}>
-                  <button className={styles.suggestionCard}>
+                <div className="suggestionCards">
+                  <button className="suggestionCard">
                     <h4>Leadership Development Plan</h4>
                     <p>Strategii pentru a ajunge la scorul de leadership 90%+</p>
                   </button>
-                  <button className={styles.suggestionCard}>
+                  <button className="suggestionCard">
                     <h4>Career Acceleration</h4>
                     <p>Planul optim pentru poziția de CTO în următorii 2 ani</p>
                   </button>
-                  <button className={styles.suggestionCard}>
+                  <button className="suggestionCard">
                     <h4>Work-Life Integration</h4>
                     <p>Cum să îmbunătățești life balance fără să îți afectezi obiectivele</p>
                   </button>
-                  <button className={styles.suggestionCard}>
+                  <button className="suggestionCard">
                     <h4>Strategic Network Building</h4>
                     <p>Construiește relațiile care te vor duce la următorul nivel</p>
                   </button>
                 </div>
               </div>
 
-              <div className={styles.chatInput}>
+              <div className="chatInput">
                 <input 
                   type="text" 
                   placeholder="Întreabă-mă orice despre strategie, leadership sau decizii..."
-                  className={styles.chatInputField}
+                  className="chatInputField"
                 />
-                <button className={styles.sendBtn}>Trimite</button>
+                <button className="sendBtn">Trimite</button>
               </div>
             </div>
           </section>
         )}
 
         {activeView === 'decisions' && currentDecision && (
-          <section className={styles.decisionsSection}>
+          <section className="decisionsSection">
             <h2>⚖️ AI Decision Matrix</h2>
             
-            <div className={styles.decisionHeader}>
+            <div className="decisionHeader">
               <h3>{currentDecision.title}</h3>
-              <div className={styles.decisionStatus}>
-                Status: <span className={styles.statusBadge}>{currentDecision.status}</span>
+              <div className="decisionStatus">
+                Status: <span className="statusBadge">{currentDecision.status}</span>
               </div>
             </div>
 
             {currentDecision.aiRecommendation && (
-              <div className={styles.aiRecommendation}>
-                <div className={styles.recommendationHeader}>
-                  <span className={styles.aiIcon}>🤖</span>
+              <div className="aiRecommendation">
+                <div className="recommendationHeader">
+                  <span className="aiIcon">🤖</span>
                   <h4>AI Recommendation</h4>
                 </div>
                 <p>{currentDecision.aiRecommendation}</p>
               </div>
             )}
 
-            <div className={styles.decisionMatrix}>
-              <div className={styles.matrixHeader}>
-                <div className={styles.optionsLabel}>Options</div>
+            <div className="decisionMatrix">
+              <div className="matrixHeader">
+                <div className="optionsLabel">Options</div>
                 {currentDecision.criteria.map(criterion => (
-                  <div key={criterion.id} className={styles.criterionHeader}>
+                  <div key={criterion.id} className="criterionHeader">
                     <span>{criterion.name}</span>
-                    <span className={styles.weight}>({criterion.weight}/10)</span>
+                    <span className="weight">({criterion.weight}/10)</span>
                   </div>
                 ))}
-                <div className={styles.scoreLabel}>AI Score</div>
+                <div className="scoreLabel">AI Score</div>
               </div>
 
               {currentDecision.options.map(option => (
-                <div key={option.id} className={styles.matrixRow}>
-                  <div className={styles.optionInfo}>
+                <div key={option.id} className="matrixRow">
+                  <div className="optionInfo">
                     <h4>{option.name}</h4>
                     <p>{option.description}</p>
                   </div>
                   {currentDecision.criteria.map(criterion => (
-                    <div key={criterion.id} className={styles.scoreCell}>
-                      <div className={styles.scoreValue}>{option.scores[criterion.id]}/10</div>
-                      <div className={styles.scoreBar}>
+                    <div key={criterion.id} className="scoreCell">
+                      <div className="scoreValue">{option.scores[criterion.id]}/10</div>
+                      <div className="scoreBar">
                         <div 
-                          className={styles.scoreFill}
+                          className="scoreFill"
                           style={{ width: `${option.scores[criterion.id] * 10}%` }}
                         ></div>
                       </div>
                     </div>
                   ))}
-                  <div className={styles.totalScore}>
+                  <div className="totalScore">
                     {calculateDecisionScore(option, currentDecision.criteria)}
                   </div>
                 </div>
               ))}
             </div>
 
-            <div className={styles.decisionActions}>
-              <button className={styles.actionBtn}>
-                <span className={styles.actionIcon}>🔄</span>
+            <div className="decisionActions">
+              <button className="actionBtn">
+                <span className="actionIcon">🔄</span>
                 Recalculează Scoring
               </button>
-              <button className={styles.actionBtn}>
-                <span className={styles.actionIcon}>📊</span>
+              <button className="actionBtn">
+                <span className="actionIcon">📊</span>
                 Scenario Analysis
               </button>
-              <button className={styles.actionBtn}>
-                <span className={styles.actionIcon}>✅</span>
+              <button className="actionBtn">
+                <span className="actionIcon">✅</span>
                 Finalizează Decizia
               </button>
             </div>
@@ -774,31 +774,31 @@ export default function PorBluDashboard() {
         )}
 
         {activeView === 'vision' && (
-          <section className={styles.visionSection}>
+          <section className="visionSection">
             <h2>🔮 AI Vision Board</h2>
-            <p className={styles.visionDescription}>
+            <p className="visionDescription">
               Vizualizează-ți viitorul și creează un plan strategic pentru a-l atinge. AI-ul analizează relevența fiecărui obiectiv.
             </p>
 
-            <div className={styles.visionBoard}>
+            <div className="visionBoard">
               {visionBoard.map(item => (
-                <div key={item.id} className={styles.visionCard}>
-                  <div className={styles.visionImage}>
-                    <span className={styles.visionPlaceholder}>📸</span>
+                <div key={item.id} className="visionCard">
+                  <div className="visionImage">
+                    <span className="visionPlaceholder">📸</span>
                   </div>
-                  <div className={styles.visionContent}>
+                  <div className="visionContent">
                     <h4>{item.title}</h4>
                     <p>{item.description}</p>
-                    <div className={styles.visionMeta}>
-                      <span className={styles.visionYear}>Target: {item.targetYear}</span>
-                      <span className={styles.visionCategory}>{item.category}</span>
+                    <div className="visionMeta">
+                      <span className="visionYear">Target: {item.targetYear}</span>
+                      <span className="visionCategory">{item.category}</span>
                     </div>
-                    <div className={styles.aiRelevance}>
+                    <div className="aiRelevance">
                       <span>AI Relevance Score:</span>
-                      <span className={styles.relevanceScore}>{item.aiRelevanceScore}/10</span>
-                      <div className={styles.relevanceBar}>
+                      <span className="relevanceScore">{item.aiRelevanceScore}/10</span>
+                      <div className="relevanceBar">
                         <div 
-                          className={styles.relevanceFill}
+                          className="relevanceFill"
                           style={{ width: `${item.aiRelevanceScore * 10}%` }}
                         ></div>
                       </div>
@@ -808,17 +808,17 @@ export default function PorBluDashboard() {
               ))}
             </div>
 
-            <div className={styles.visionActions}>
-              <button className={styles.actionBtn}>
-                <span className={styles.actionIcon}>➕</span>
+            <div className="visionActions">
+              <button className="actionBtn">
+                <span className="actionIcon">➕</span>
                 Add Vision Item
               </button>
-              <button className={styles.actionBtn}>
-                <span className={styles.actionIcon}>🎯</span>
+              <button className="actionBtn">
+                <span className="actionIcon">🎯</span>
                 Convert to Goals
               </button>
-              <button className={styles.actionBtn}>
-                <span className={styles.actionIcon}>📊</span>
+              <button className="actionBtn">
+                <span className="actionIcon">📊</span>
                 Timeline Analysis
               </button>
             </div>
@@ -826,53 +826,53 @@ export default function PorBluDashboard() {
         )}
 
         {activeView === 'goals' && (
-          <section className={styles.goalsSection}>
-            <div className={styles.goalsHeader}>
+          <section className="goalsSection">
+            <div className="goalsHeader">
               <h2>🏆 Strategic Life Goals</h2>
-              <button className={styles.addGoalBtn}>+ Create New Goal</button>
+              <button className="addGoalBtn">+ Create New Goal</button>
             </div>
 
-            <div className={styles.goalsFilters}>
-              <button className={styles.filterBtn}>All Goals</button>
-              <button className={styles.filterBtn}>Critical</button>
-              <button className={styles.filterBtn}>High Priority</button>
-              <button className={styles.filterBtn}>In Progress</button>
-              <button className={styles.filterBtn}>By Category</button>
+            <div className="goalsFilters">
+              <button className="filterBtn">All Goals</button>
+              <button className="filterBtn">Critical</button>
+              <button className="filterBtn">High Priority</button>
+              <button className="filterBtn">In Progress</button>
+              <button className="filterBtn">By Category</button>
             </div>
 
-            <div className={styles.goalsDetailedGrid}>
+            <div className="goalsDetailedGrid">
               {lifeGoals.map(goal => (
-                <div key={goal.id} className={styles.goalDetailedCard}>
-                  <div className={styles.goalCardHeader}>
-                    <div className={styles.goalTitleSection}>
-                      <span className={styles.goalIcon}>{getCategoryIcon(goal.category)}</span>
+                <div key={goal.id} className="goalDetailedCard">
+                  <div className="goalCardHeader">
+                    <div className="goalTitleSection">
+                      <span className="goalIcon">{getCategoryIcon(goal.category)}</span>
                       <div>
                         <h3>{goal.title}</h3>
-                        <span className={styles.goalCategory}>{goal.category}</span>
+                        <span className="goalCategory">{goal.category}</span>
                       </div>
                     </div>
-                    <div className={styles.goalMeta}>
+                    <div className="goalMeta">
                       <div 
-                        className={styles.goalPriority}
+                        className="goalPriority"
                         style={{ backgroundColor: getPriorityColor(goal.priority) }}
                       >
                         {goal.priority}
                       </div>
-                      <span className={styles.goalTimeline}>🕐 {goal.timeline}</span>
+                      <span className="goalTimeline">🕐 {goal.timeline}</span>
                     </div>
                   </div>
 
-                  <p className={styles.goalDescription}>{goal.description}</p>
+                  <p className="goalDescription">{goal.description}</p>
 
-                  <div className={styles.goalMetrics}>
-                    <div className={styles.progressSection}>
-                      <div className={styles.progressHeader}>
+                  <div className="goalMetrics">
+                    <div className="progressSection">
+                      <div className="progressHeader">
                         <span>Progress: {goal.progress}%</span>
                         <span>Strategic Value: 🤖 {goal.strategicValue}/10</span>
                       </div>
-                      <div className={styles.progressBar}>
+                      <div className="progressBar">
                         <div 
-                          className={styles.progressFill}
+                          className="progressFill"
                           style={{ width: `${goal.progress}%` }}
                         ></div>
                       </div>
@@ -880,18 +880,18 @@ export default function PorBluDashboard() {
                   </div>
 
                   {goal.milestones.length > 0 && (
-                    <div className={styles.milestonesSection}>
+                    <div className="milestonesSection">
                       <h4>🎯 Milestones</h4>
-                      <div className={styles.milestonesList}>
+                      <div className="milestonesList">
                         {goal.milestones.map(milestone => (
-                          <div key={milestone.id} className={styles.milestoneItem}>
-                            <div className={styles.milestoneHeader}>
-                              <span className={styles.milestoneTitle}>{milestone.title}</span>
-                              <span className={`${styles.milestoneStatus} ${styles[milestone.status]}`}>
+                          <div key={milestone.id} className="milestoneItem">
+                            <div className="milestoneHeader">
+                              <span className="milestoneTitle">{milestone.title}</span>
+                              <span className={`milestoneStatus ${milestone.status}`}>
                                 {milestone.status}
                               </span>
                             </div>
-                            <div className={styles.milestoneDetails}>
+                            <div className="milestoneDetails">
                               <span>Target: {new Date(milestone.targetDate).toLocaleDateString('ro-RO')}</span>
                               <span>Importance: {milestone.importance}/10</span>
                             </div>
@@ -901,10 +901,10 @@ export default function PorBluDashboard() {
                     </div>
                   )}
 
-                  <div className={styles.goalActions}>
-                    <button className={styles.goalActionBtn}>📝 Edit</button>
-                    <button className={styles.goalActionBtn}>📊 Analytics</button>
-                    <button className={styles.goalActionBtn}>🎯 Add Milestone</button>
+                  <div className="goalActions">
+                    <button className="goalActionBtn">📝 Edit</button>
+                    <button className="goalActionBtn">📊 Analytics</button>
+                    <button className="goalActionBtn">🎯 Add Milestone</button>
                   </div>
                 </div>
               ))}

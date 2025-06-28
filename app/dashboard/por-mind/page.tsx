@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import './style.css';  // ✅ CORECT - CSS normal// Types
+import './style.css';  // ✅ CORECT - CSS normal
+
+// Types
 interface FinancialGoal {
   id: string;
   name: string;
@@ -190,9 +192,9 @@ export default function PorMindDashboard() {
 
   if (loading) {
     return (
-      <div className={styles.dashboard}>
-        <div className={styles.loadingScreen}>
-          <div className={styles.loadingSpinner}></div>
+      <div className="dashboard">
+        <div className="loadingScreen">
+          <div className="loadingSpinner"></div>
           <h2>Calculez situația ta financiară...</h2>
           <p>Analizez veniturile, cheltuielile și investițiile</p>
         </div>
@@ -201,175 +203,175 @@ export default function PorMindDashboard() {
   }
 
   return (
-    <div className={styles.dashboard}>
+    <div className="dashboard">
       {/* SIDEBAR */}
-      <nav className={styles.sidebar}>
-        <div className={styles.sidebarLogo}>
-          <Link href="/" className={styles.logo}>🧠 PorMind</Link>
+      <nav className="sidebar">
+        <div className="sidebarLogo">
+          <Link href="/" className="logo">🧠 PorMind</Link>
         </div>
 
-        <div className={styles.navSection}>
-          <div className={styles.navSectionTitle}>Dashboard</div>
+        <div className="navSection">
+          <div className="navSectionTitle">Dashboard</div>
           <button 
-            className={`${styles.navItem} ${activeView === 'overview' ? styles.active : ''}`}
+            className={`navItem ${activeView === 'overview' ? 'active' : ''}`}
             onClick={() => setActiveView('overview')}
           >
-            <span className={styles.navItemIcon}>📊</span>
+            <span className="navItemIcon">📊</span>
             Prezentare generală
           </button>
           <button 
-            className={`${styles.navItem} ${activeView === 'budget' ? styles.active : ''}`}
+            className={`navItem ${activeView === 'budget' ? 'active' : ''}`}
             onClick={() => setActiveView('budget')}
           >
-            <span className={styles.navItemIcon}>💰</span>
+            <span className="navItemIcon">💰</span>
             Buget & Cheltuieli
           </button>
           <button 
-            className={`${styles.navItem} ${activeView === 'investments' ? styles.active : ''}`}
+            className={`navItem ${activeView === 'investments' ? 'active' : ''}`}
             onClick={() => setActiveView('investments')}
           >
-            <span className={styles.navItemIcon}>📈</span>
+            <span className="navItemIcon">📈</span>
             Investiții
           </button>
           <button 
-            className={`${styles.navItem} ${activeView === 'goals' ? styles.active : ''}`}
+            className={`navItem ${activeView === 'goals' ? 'active' : ''}`}
             onClick={() => setActiveView('goals')}
           >
-            <span className={styles.navItemIcon}>🎯</span>
+            <span className="navItemIcon">🎯</span>
             Obiective financiare
           </button>
         </div>
 
-        <div className={styles.navSection}>
-          <div className={styles.navSectionTitle}>AI Tools</div>
+        <div className="navSection">
+          <div className="navSectionTitle">AI Tools</div>
           <button 
-            className={`${styles.navItem} ${activeView === 'coach' ? styles.active : ''}`}
+            className={`navItem ${activeView === 'coach' ? 'active' : ''}`}
             onClick={() => setActiveView('coach')}
           >
-            <span className={styles.navItemIcon}>🤖</span>
+            <span className="navItemIcon">🤖</span>
             AI Money Coach
           </button>
           <button 
-            className={`${styles.navItem} ${activeView === 'optimizer' ? styles.active : ''}`}
+            className={`navItem ${activeView === 'optimizer' ? 'active' : ''}`}
             onClick={() => setActiveView('optimizer')}
           >
-            <span className={styles.navItemIcon}>⚡</span>
+            <span className="navItemIcon">⚡</span>
             Budget Optimizer
           </button>
           <button 
-            className={`${styles.navItem} ${activeView === 'analyzer' ? styles.active : ''}`}
+            className={`navItem ${activeView === 'analyzer' ? 'active' : ''}`}
             onClick={() => setActiveView('analyzer')}
           >
-            <span className={styles.navItemIcon}>🔍</span>
+            <span className="navItemIcon">🔍</span>
             Spending Analyzer
           </button>
         </div>
 
-        <div className={styles.navSection}>
-          <div className={styles.navSectionTitle}>Education</div>
+        <div className="navSection">
+          <div className="navSectionTitle">Education</div>
           <button 
-            className={`${styles.navItem} ${activeView === 'learn' ? styles.active : ''}`}
+            className={`navItem ${activeView === 'learn' ? 'active' : ''}`}
             onClick={() => setActiveView('learn')}
           >
-            <span className={styles.navItemIcon}>🎓</span>
+            <span className="navItemIcon">🎓</span>
             Financial Learning
           </button>
           <button 
-            className={`${styles.navItem} ${activeView === 'mindset' ? styles.active : ''}`}
+            className={`navItem ${activeView === 'mindset' ? 'active' : ''}`}
             onClick={() => setActiveView('mindset')}
           >
-            <span className={styles.navItemIcon}>🧘</span>
+            <span className="navItemIcon">🧘</span>
             Money Mindset
           </button>
         </div>
       </nav>
 
       {/* HEADER */}
-      <header className={styles.header}>
-        <div className={styles.headerLeft}>
+      <header className="header">
+        <div className="headerLeft">
           <h1>💎 Wealth Builder Dashboard</h1>
-          <p>Valoarea netă: <span className={styles.netWorth}>{formatCurrency(netWorth)}</span> • Rata economisire: <span className={styles.savingsRate}>{savingsRate.toFixed(1)}%</span></p>
+          <p>Valoarea netă: <span className="netWorth">{formatCurrency(netWorth)}</span> • Rata economisire: <span className="savingsRate">{savingsRate.toFixed(1)}%</span></p>
         </div>
-        <div className={styles.headerRight}>
-          <div className={styles.headerStats}>
-            <div className={styles.statItem}>
-              <div className={styles.statValue}>{formatCurrency(monthlyIncome)}</div>
-              <div className={styles.statLabel}>Venituri luna</div>
+        <div className="headerRight">
+          <div className="headerStats">
+            <div className="statItem">
+              <div className="statValue">{formatCurrency(monthlyIncome)}</div>
+              <div className="statLabel">Venituri luna</div>
             </div>
-            <div className={styles.statItem}>
-              <div className={styles.statValue}>{formatCurrency(monthlyExpenses)}</div>
-              <div className={styles.statLabel}>Cheltuieli luna</div>
+            <div className="statItem">
+              <div className="statValue">{formatCurrency(monthlyExpenses)}</div>
+              <div className="statLabel">Cheltuieli luna</div>
             </div>
-            <div className={styles.statItem}>
-              <div className={styles.statValue}>{formatCurrency(monthlyIncome - monthlyExpenses)}</div>
-              <div className={styles.statLabel}>Surplus</div>
+            <div className="statItem">
+              <div className="statValue">{formatCurrency(monthlyIncome - monthlyExpenses)}</div>
+              <div className="statLabel">Surplus</div>
             </div>
           </div>
-          <div className={styles.headerActions}>
-            <button className={styles.headerBtn} title="Notificări">🔔</button>
-            <button className={styles.headerBtn} title="Setări">⚙️</button>
-            <button className={styles.headerBtn} title="Profil">👤</button>
+          <div className="headerActions">
+            <button className="headerBtn" title="Notificări">🔔</button>
+            <button className="headerBtn" title="Setări">⚙️</button>
+            <button className="headerBtn" title="Profil">👤</button>
           </div>
         </div>
       </header>
 
       {/* MAIN CONTENT */}
-      <main className={styles.mainContent}>
+      <main className="mainContent">
         {activeView === 'overview' && (
           <>
             {/* Welcome Section */}
-            <section className={styles.welcomeSection}>
+            <section className="welcomeSection">
               <h2>🌟 Bună ziua, Alex!</h2>
               <p>Astăzi ai o oportunitate să îți optimizezi portofoliul. Situația financiară arată promițător!</p>
             </section>
 
             {/* Quick Stats Grid */}
-            <div className={styles.statsGrid}>
-              <div className={styles.statCard}>
-                <div className={styles.statIcon}>💰</div>
-                <div className={styles.statInfo}>
+            <div className="statsGrid">
+              <div className="statCard">
+                <div className="statIcon">💰</div>
+                <div className="statInfo">
                   <h3>Valoare netă</h3>
-                  <div className={styles.statValue}>{formatCurrency(netWorth)}</div>
-                  <div className={styles.statChange}>+12.5% față de luna trecută</div>
+                  <div className="statValue">{formatCurrency(netWorth)}</div>
+                  <div className="statChange">+12.5% față de luna trecută</div>
                 </div>
               </div>
 
-              <div className={styles.statCard}>
-                <div className={styles.statIcon}>📈</div>
-                <div className={styles.statInfo}>
+              <div className="statCard">
+                <div className="statIcon">📈</div>
+                <div className="statInfo">
                   <h3>ROI Investiții</h3>
-                  <div className={styles.statValue}>+8.2%</div>
-                  <div className={styles.statChange}>Performanță anuală</div>
+                  <div className="statValue">+8.2%</div>
+                  <div className="statChange">Performanță anuală</div>
                 </div>
               </div>
 
-              <div className={styles.statCard}>
-                <div className={styles.statIcon}>🎯</div>
-                <div className={styles.statInfo}>
+              <div className="statCard">
+                <div className="statIcon">🎯</div>
+                <div className="statInfo">
                   <h3>Obiective</h3>
-                  <div className={styles.statValue}>3/5</div>
-                  <div className={styles.statChange}>În progres</div>
+                  <div className="statValue">3/5</div>
+                  <div className="statChange">În progres</div>
                 </div>
               </div>
 
-              <div className={styles.statCard}>
-                <div className={styles.statIcon}>💳</div>
-                <div className={styles.statInfo}>
+              <div className="statCard">
+                <div className="statIcon">💳</div>
+                <div className="statInfo">
                   <h3>Credit Score</h3>
-                  <div className={styles.statValue}>795</div>
-                  <div className={styles.statChange}>Excelent</div>
+                  <div className="statValue">795</div>
+                  <div className="statChange">Excelent</div>
                 </div>
               </div>
             </div>
 
             {/* AI Insights Section */}
-            <section className={styles.aiInsightsSection}>
+            <section className="aiInsightsSection">
               <h3>🤖 AI Financial Insights</h3>
-              <div className={styles.insightsGrid}>
+              <div className="insightsGrid">
                 {aiInsights.map(insight => (
-                  <div key={insight.id} className={`${styles.insightCard} ${styles[insight.type]} ${styles[insight.priority]}`}>
-                    <div className={styles.insightHeader}>
-                      <span className={styles.insightType}>
+                  <div key={insight.id} className={`insightCard ${insight.type} ${insight.priority}`}>
+                    <div className="insightHeader">
+                      <span className="insightType">
                         {insight.type === 'warning' && '⚠️'}
                         {insight.type === 'saving' && '💡'}
                         {insight.type === 'investing' && '📈'}
@@ -379,7 +381,7 @@ export default function PorMindDashboard() {
                     </div>
                     <p>{insight.message}</p>
                     {insight.action && (
-                      <button className={styles.insightAction}>{insight.action}</button>
+                      <button className="insightAction">{insight.action}</button>
                     )}
                   </div>
                 ))}
@@ -387,55 +389,55 @@ export default function PorMindDashboard() {
             </section>
 
             {/* Quick Actions */}
-            <section className={styles.quickActionsSection}>
+            <section className="quickActionsSection">
               <h3>⚡ Quick Actions</h3>
-              <div className={styles.quickActions}>
-                <button className={styles.actionBtn}>
-                  <span className={styles.actionIcon}>📊</span>
+              <div className="quickActions">
+                <button className="actionBtn">
+                  <span className="actionIcon">📊</span>
                   Generează raport lunar
                 </button>
-                <button className={styles.actionBtn}>
-                  <span className={styles.actionIcon}>💰</span>
+                <button className="actionBtn">
+                  <span className="actionIcon">💰</span>
                   Adaugă venit/cheltuială
                 </button>
-                <button className={styles.actionBtn}>
-                  <span className={styles.actionIcon}>🎯</span>
+                <button className="actionBtn">
+                  <span className="actionIcon">🎯</span>
                   Creează obiectiv nou
                 </button>
-                <button className={styles.actionBtn}>
-                  <span className={styles.actionIcon}>📈</span>
+                <button className="actionBtn">
+                  <span className="actionIcon">📈</span>
                   Analizează investiții
                 </button>
               </div>
             </section>
 
             {/* Financial Goals Progress */}
-            <section className={styles.goalsSection}>
+            <section className="goalsSection">
               <h3>🎯 Progres Obiective Financiare</h3>
-              <div className={styles.goalsGrid}>
+              <div className="goalsGrid">
                 {financialGoals.map(goal => (
-                  <div key={goal.id} className={styles.goalCard}>
-                    <div className={styles.goalHeader}>
+                  <div key={goal.id} className="goalCard">
+                    <div className="goalHeader">
                       <h4>{goal.name}</h4>
-                      <span className={styles.goalCategory}>
+                      <span className="goalCategory">
                         {goal.category === 'emergency' && '🚨'}
                         {goal.category === 'investment' && '📈'}
                         {goal.category === 'debt' && '💳'}
                         {goal.category === 'purchase' && '🏠'}
                       </span>
                     </div>
-                    <div className={styles.goalProgress}>
-                      <div className={styles.goalProgressBar}>
+                    <div className="goalProgress">
+                      <div className="goalProgressBar">
                         <div 
-                          className={styles.goalProgressFill}
+                          className="goalProgressFill"
                           style={{ width: `${calculateGoalProgress(goal)}%` }}
                         ></div>
                       </div>
-                      <span className={styles.goalPercentage}>{calculateGoalProgress(goal).toFixed(1)}%</span>
+                      <span className="goalPercentage">{calculateGoalProgress(goal).toFixed(1)}%</span>
                     </div>
-                    <div className={styles.goalDetails}>
+                    <div className="goalDetails">
                       <span>{formatCurrency(goal.current)} / {formatCurrency(goal.target)}</span>
-                      <span className={styles.goalDeadline}>Deadline: {new Date(goal.deadline).toLocaleDateString('ro-RO')}</span>
+                      <span className="goalDeadline">Deadline: {new Date(goal.deadline).toLocaleDateString('ro-RO')}</span>
                     </div>
                   </div>
                 ))}
@@ -445,94 +447,94 @@ export default function PorMindDashboard() {
         )}
 
         {activeView === 'coach' && (
-          <section className={styles.aiCoachSection}>
-            <div className={styles.coachHeader}>
+          <section className="aiCoachSection">
+            <div className="coachHeader">
               <h2>🤖 AI Money Coach</h2>
               <p>Consilierul tău personal pentru educație financiară și luarea deciziilor</p>
             </div>
 
-            <div className={styles.coachInterface}>
-              <div className={styles.coachChat}>
-                <div className={styles.chatMessage}>
-                  <div className={styles.aiAvatar}>🤖</div>
-                  <div className={styles.messageContent}>
+            <div className="coachInterface">
+              <div className="coachChat">
+                <div className="chatMessage">
+                  <div className="aiAvatar">🤖</div>
+                  <div className="messageContent">
                     <p>{generateAIRecommendation()}</p>
-                    <span className={styles.messageTime}>Acum 2 minute</span>
+                    <span className="messageTime">Acum 2 minute</span>
                   </div>
                 </div>
               </div>
 
-              <div className={styles.coachActions}>
-                <button className={styles.coachBtn}>Analizează situația mea financiară</button>
-                <button className={styles.coachBtn}>Ce investiții îmi recomanzi?</button>
-                <button className={styles.coachBtn}>Cum să îmi optimizez bugetul?</button>
-                <button className={styles.coachBtn}>Strategii de economisire</button>
+              <div className="coachActions">
+                <button className="coachBtn">Analizează situația mea financiară</button>
+                <button className="coachBtn">Ce investiții îmi recomanzi?</button>
+                <button className="coachBtn">Cum să îmi optimizez bugetul?</button>
+                <button className="coachBtn">Strategii de economisire</button>
               </div>
 
-              <div className={styles.chatInput}>
+              <div className="chatInput">
                 <input 
                   type="text" 
                   placeholder="Întreabă AI Money Coach orice despre finanțe..."
-                  className={styles.chatInputField}
+                  className="chatInputField"
                 />
-                <button className={styles.sendBtn}>Trimite</button>
+                <button className="sendBtn">Trimite</button>
               </div>
             </div>
           </section>
         )}
 
         {activeView === 'budget' && (
-          <section className={styles.budgetSection}>
+          <section className="budgetSection">
             <h2>💰 Budget & Spending Analysis</h2>
             
-            <div className={styles.budgetOverview}>
-              <div className={styles.budgetSummary}>
+            <div className="budgetOverview">
+              <div className="budgetSummary">
                 <h3>Rezumat luna curentă</h3>
-                <div className={styles.budgetStats}>
-                  <div className={styles.budgetStat}>
+                <div className="budgetStats">
+                  <div className="budgetStat">
                     <span>Total bugetat:</span>
-                    <span className={styles.budgetAmount}>{formatCurrency(budgetCategories.reduce((sum, cat) => sum + cat.budgeted, 0))}</span>
+                    <span className="budgetAmount">{formatCurrency(budgetCategories.reduce((sum, cat) => sum + cat.budgeted, 0))}</span>
                   </div>
-                  <div className={styles.budgetStat}>
+                  <div className="budgetStat">
                     <span>Total cheltuit:</span>
-                    <span className={styles.spentAmount}>{formatCurrency(budgetCategories.reduce((sum, cat) => sum + cat.spent, 0))}</span>
+                    <span className="spentAmount">{formatCurrency(budgetCategories.reduce((sum, cat) => sum + cat.spent, 0))}</span>
                   </div>
-                  <div className={styles.budgetStat}>
+                  <div className="budgetStat">
                     <span>Rămas:</span>
-                    <span className={styles.remainingAmount}>{formatCurrency(budgetCategories.reduce((sum, cat) => sum + (cat.budgeted - cat.spent), 0))}</span>
+                    <span className="remainingAmount">{formatCurrency(budgetCategories.reduce((sum, cat) => sum + (cat.budgeted - cat.spent), 0))}</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className={styles.categoriesGrid}>
+            <div className="categoriesGrid">
               {budgetCategories.map(category => {
                 const percentage = (category.spent / category.budgeted) * 100;
                 const isOverBudget = percentage > 100;
                 
                 return (
-                  <div key={category.id} className={`${styles.categoryCard} ${isOverBudget ? styles.overBudget : ''}`}>
-                    <div className={styles.categoryHeader}>
-                      <span className={styles.categoryIcon}>{category.icon}</span>
+                  <div key={category.id} className={`categoryCard ${isOverBudget ? 'overBudget' : ''}`}>
+                    <div className="categoryHeader">
+                      <span className="categoryIcon">{category.icon}</span>
                       <h4>{category.name}</h4>
                     </div>
-                    <div className={styles.categoryAmount}>
-                      <span className={styles.spent}>{formatCurrency(category.spent)}</span>
-                      <span className={styles.budgeted}>/ {formatCurrency(category.budgeted)}</span>
+                    <div className="categoryAmount">
+                      <span className="spent">{formatCurrency(category.spent)}</span>
+                      <span className="budgeted">/ {formatCurrency(category.budgeted)}</span>
                     </div>
-                    <div className={styles.categoryProgress}>
-                      <div className={styles.categoryProgressBar}>
+                    <div className="categoryProgress">
+                      <div className="categoryProgressBar">
                         <div 
-                          className={`${styles.categoryProgressFill} ${isOverBudget ? styles.overBudgetFill : ''}`}
+                          className={`categoryProgressFill ${isOverBudget ? 'overBudgetFill' : ''}`}
                           style={{ width: `${Math.min(percentage, 100)}%` }}
                         ></div>
                       </div>
-                      <span className={`${styles.categoryPercentage} ${isOverBudget ? styles.overBudgetText : ''}`}>
+                      <span className={`categoryPercentage ${isOverBudget ? 'overBudgetText' : ''}`}>
                         {percentage.toFixed(1)}%
                       </span>
                     </div>
                     {isOverBudget && (
-                      <div className={styles.overBudgetWarning}>
+                      <div className="overBudgetWarning">
                         ⚠️ Depășit cu {formatCurrency(category.spent - category.budgeted)}
                       </div>
                     )}
@@ -544,28 +546,28 @@ export default function PorMindDashboard() {
         )}
 
         {activeView === 'investments' && (
-          <section className={styles.investmentsSection}>
+          <section className="investmentsSection">
             <h2>📈 Portofoliu Investiții</h2>
             
-            <div className={styles.portfolioOverview}>
-              <div className={styles.portfolioSummary}>
+            <div className="portfolioOverview">
+              <div className="portfolioSummary">
                 <h3>Valoare totală portofoliu</h3>
-                <div className={styles.portfolioValue}>
+                <div className="portfolioValue">
                   {formatCurrency(investments.reduce((sum, inv) => sum + inv.currentValue, 0))}
                 </div>
-                <div className={styles.portfolioChange}>
+                <div className="portfolioChange">
                   +{formatCurrency(investments.reduce((sum, inv) => sum + inv.change, 0))} 
                   ({((investments.reduce((sum, inv) => sum + inv.change, 0) / investments.reduce((sum, inv) => sum + inv.amount, 0)) * 100).toFixed(2)}%)
                 </div>
               </div>
             </div>
 
-            <div className={styles.investmentsGrid}>
+            <div className="investmentsGrid">
               {investments.map(investment => (
-                <div key={investment.id} className={styles.investmentCard}>
-                  <div className={styles.investmentHeader}>
+                <div key={investment.id} className="investmentCard">
+                  <div className="investmentHeader">
                     <h4>{investment.name}</h4>
-                    <span className={styles.investmentType}>
+                    <span className="investmentType">
                       {investment.type === 'stocks' && '📊'}
                       {investment.type === 'crypto' && '₿'}
                       {investment.type === 'bonds' && '🏛️'}
@@ -573,12 +575,12 @@ export default function PorMindDashboard() {
                     </span>
                   </div>
                   
-                  <div className={styles.investmentValue}>
-                    <div className={styles.currentValue}>{formatCurrency(investment.currentValue)}</div>
-                    <div className={styles.originalValue}>din {formatCurrency(investment.amount)}</div>
+                  <div className="investmentValue">
+                    <div className="currentValue">{formatCurrency(investment.currentValue)}</div>
+                    <div className="originalValue">din {formatCurrency(investment.amount)}</div>
                   </div>
                   
-                  <div className={`${styles.investmentChange} ${investment.change >= 0 ? styles.positive : styles.negative}`}>
+                  <div className={`investmentChange ${investment.change >= 0 ? 'positive' : 'negative'}`}>
                     <span>{investment.change >= 0 ? '+' : ''}{formatCurrency(investment.change)}</span>
                     <span>({investment.changePercent >= 0 ? '+' : ''}{investment.changePercent.toFixed(2)}%)</span>
                   </div>
@@ -586,17 +588,17 @@ export default function PorMindDashboard() {
               ))}
             </div>
 
-            <div className={styles.investmentActions}>
-              <button className={styles.actionBtn}>
-                <span className={styles.actionIcon}>💰</span>
+            <div className="investmentActions">
+              <button className="actionBtn">
+                <span className="actionIcon">💰</span>
                 Adaugă investiție nouă
               </button>
-              <button className={styles.actionBtn}>
-                <span className={styles.actionIcon}>📊</span>
+              <button className="actionBtn">
+                <span className="actionIcon">📊</span>
                 Rebalansează portofoliul
               </button>
-              <button className={styles.actionBtn}>
-                <span className={styles.actionIcon}>🎯</span>
+              <button className="actionBtn">
+                <span className="actionIcon">🎯</span>
                 Setează target profit
               </button>
             </div>

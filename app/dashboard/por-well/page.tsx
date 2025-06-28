@@ -1,395 +1,550 @@
+// app/dashboard/por-well/page.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import './style.css';
+import AIChat from '../../../components/ai-chat/AIChat';
+
+interface WellnessMetrics {
+  moodScore: number;
+  stressLevel: number;
+  anxietyLevel: number;
+  sleepQuality: number;
+  mindfulnessStreak: number;
+  meditationMinutes: number;
+}
+
+interface QuickAction {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  href: string;
+  gradient: string;
+  isPrimary?: boolean;
+}
+
+interface AIInsight {
+  id: string;
+  type: 'recommendation' | 'warning' | 'celebration';
+  title: string;
+  message: string;
+  icon: string;
+  action?: {
+    text: string;
+    href: string;
+  };
+}
 
 export default function PorWellDashboard() {
-  const [wellnessData, setWellnessData] = useState(null);
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [chatOpen, setChatOpen] = useState(false);
-  const [chatMessage, setChatMessage] = useState('');
-  const [chatHistory, setChatHistory] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+  const [wellnessMetrics, setWellnessMetrics] = useState<WellnessMetrics>({
+    moodScore: 0,
+    stressLevel: 0,
+    anxietyLevel: 0,
+    sleepQuality: 0,
+    mindfulnessStreak: 0,
+    meditationMinutes: 0
+  });
 
   useEffect(() => {
-    // Simulare încărcare date
-    setTimeout(() => {
-      setWellnessData({
-        moodScore: 7.8,
-        stressLevel: 3,
-        meditationStreak: 15,
-        sleepQuality: 8.5,
-        anxietyLevel: 2,
-        energyLevel: 8.2,
-        wellnessScore: 85
-      });
-      setLoading(false);
-    }, 1500);
-
-    const timer = setInterval(() => setCurrentTime(new Date()), 60000);
+    setIsClient(true);
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
 
+  useEffect(() => {
+    setTimeout(() => {
+      setWellnessMetrics({
+        moodScore: 7.8,
+        stressLevel: 3.2,
+        anxietyLevel: 2.1,
+        sleepQuality: 8.4,
+        mindfulnessStreak: 12,
+        meditationMinutes: 145
+      });
+    }, 1000);
+  }, []);
+
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString('ro-RO', { 
+      hour: '2-digit', 
+      minute: '2-digit',
+      second: '2-digit'
+    });
+  };
+
   const getGreeting = () => {
     const hour = currentTime.getHours();
-    if (hour < 12) return '🌅 Bună dimineața';
-    if (hour < 17) return '☀️ Bună ziua';
-    return '🌙 Bună seara';
+    if (hour < 12) return 'Bună dimineața';
+    if (hour < 18) return 'Bună ziua';
+    return 'Bună seara';
   };
 
-  const sendMessage = () => {
-    if (!chatMessage.trim()) return;
+  const quickActions: QuickAction[] = [
+    {
+      id: 'anxiety-helper',
+      title: 'Anxiety Helper',
+      description: 'Toolkit pentru gestionarea anxietății acute',
+      icon: '🌸',
+      href: '/dashboard/por-well/anxiety-helper',
+      gradient: 'from-purple-500 to-purple-600',
+      isPrimary: true
+    },
+    {
+      id: 'mood-tracker',
+      title: 'Mood Tracker',
+      description: 'Înregistrează și analizează starea emoțională',
+      icon: '📊',
+      href: '/dashboard/por-well/mood-tracker',
+      gradient: 'from-emerald-500 to-emerald-600'
+    },
+    {
+      id: 'meditation',
+      title: 'Guided Meditation',
+      description: 'Sesiuni de meditație personalizate',
+      icon: '🧘‍♀️',
+      href: '/dashboard/por-well/meditation',
+      gradient: 'from-blue-500 to-blue-600'
+    },
+    {
+      id: 'sleep-therapy',
+      title: 'Sleep Therapy',
+      description: 'CBT-I și optimizarea somnului',
+      icon: '😴',
+      href: '/dashboard/por-well/sleep-therapy',
+      gradient: 'from-indigo-500 to-indigo-600'
+    },
+    {
+      id: 'stress-management',
+      title: 'Stress Management',
+      description: 'Tehnici pentru reducerea stresului',
+      icon: '🛡️',
+      href: '/dashboard/por-well/stress-management',
+      gradient: 'from-rose-500 to-rose-600'
+    },
+    {
+      id: 'mindfulness',
+      title: 'Mindfulness Daily',
+      description: 'Practici mindfulness pentru zi de zi',
+      icon: '🌱',
+      href: '/dashboard/por-well/mindfulness',
+      gradient: 'from-green-500 to-green-600'
+    }
+  ];
 
-    const userMessage = chatMessage;
-    setChatMessage('');
-    setChatHistory(prev => [...prev, { role: 'user', message: userMessage }]);
-
-    setTimeout(() => {
-      let response = '🌿 Îți înțeleg starea. Să explorăm împreună ce te poate ajuta cel mai mult.';
-      
-      if (userMessage.toLowerCase().includes('stres')) {
-        response = '💆‍♀️ Pentru stres rapid, încearcă respirația 4-7-8: inspiră 4 sec, ține 7 sec, expiră 8 sec. Repetă de 3 ori. Funcționează instant!';
-      } else if (userMessage.toLowerCase().includes('trist')) {
-        response = '💙 Îmi pare rău că te simți așa. Tristețea face parte din experiența umană. Vrei să explorăm exerciții de gratitudine?';
-      } else if (userMessage.toLowerCase().includes('somn')) {
-        response = '😴 Somnul afectează masiv mood-ul. Oprește ecranele cu 1h înainte, cameră răcoroasă (18-20°C), meditation de 10 min.';
-      } else if (userMessage.toLowerCase().includes('anxios')) {
-        response = '🧘‍♀️ Pentru anxietate: numără 5 lucruri pe care le vezi, 4 pe care le auzi, 3 pe care le atingi, 2 pe care le miroși, 1 pe care îl guști.';
+  const aiInsights: AIInsight[] = [
+    {
+      id: '1',
+      type: 'celebration',
+      title: 'Felicitări! 🎉',
+      message: 'Ai menținut o stare emoțională stabilă timp de 12 zile consecutive. Mindfulness-ul pare să funcționeze excelent pentru tine!',
+      icon: '🏆',
+      action: {
+        text: 'Vezi progresul complet',
+        href: '/dashboard/por-well/progress'
       }
-      
-      setChatHistory(prev => [...prev, { role: 'ai', message: response }]);
-    }, 1200);
+    },
+    {
+      id: '2',
+      type: 'recommendation',
+      title: 'Recomandare personalizată',
+      message: 'Pe baza analizei tale de somn, îți recomand o sesiune de breathing exercises înainte de culcare pentru îmbunătățirea calității somnului.',
+      icon: '💡',
+      action: {
+        text: 'Start breathing session',
+        href: '/dashboard/por-well/breathing'
+      }
+    },
+    {
+      id: '3',
+      type: 'warning',
+      title: 'Atenție la stres',
+      message: 'Nivelul de stres a crescut cu 15% în ultimele 3 zile. Să explorăm împreună niste tehnici de relaxare?',
+      icon: '⚠️',
+      action: {
+        text: 'Exerciții de relaxare',
+        href: '/dashboard/por-well/stress-management'
+      }
+    }
+  ];
+
+  const getMetricColor = (value: number, isReverse: boolean = false) => {
+    if (isReverse) {
+      if (value <= 3) return 'text-emerald-400';
+      if (value <= 6) return 'text-amber-400';
+      return 'text-red-400';
+    } else {
+      if (value >= 8) return 'text-emerald-400';
+      if (value >= 6) return 'text-amber-400';
+      return 'text-red-400';
+    }
   };
 
-  if (loading) {
-    return (
-      <div className="loading-screen">
-        <div className="loading-content">
-          <div className="loading-spinner"></div>
-          <h2>Se încarcă PorWell...</h2>
-          <p>Pregătim experiența ta de wellness 🌸</p>
-        </div>
-      </div>
-    );
-  }
+  const getMetricBgColor = (value: number, isReverse: boolean = false) => {
+    if (isReverse) {
+      if (value <= 3) return 'bg-emerald-500';
+      if (value <= 6) return 'bg-amber-500';
+      return 'bg-red-500';
+    } else {
+      if (value >= 8) return 'bg-emerald-500';
+      if (value >= 6) return 'bg-amber-500';
+      return 'bg-red-500';
+    }
+  };
+
+  const getMetricStatus = (value: number, isReverse: boolean = false) => {
+    if (isReverse) {
+      if (value <= 3) return 'Excelent';
+      if (value <= 6) return 'Moderat';
+      return 'Ridicat';
+    } else {
+      if (value >= 8) return 'Excelent';
+      if (value >= 6) return 'Bun';
+      return 'Necesită atenție';
+    }
+  };
 
   return (
-    <div className="dashboard">
-      {/* Sidebar */}
-      <aside className="sidebar">
-        <div className="sidebar-logo">
-          <div className="logo">🌸 PorWell</div>
-          <div className="logo-subtitle">Mental Wellness</div>
-        </div>
-        
-        <nav className="sidebar-nav">
-          <div className="nav-section">
-            <div className="nav-section-title">📊 Dashboard</div>
-            <a href="#" className="nav-item active">
-              <span className="nav-item-icon">🏠</span>Overview
-            </a>
-            <Link href="/dashboard/por-well/mood-tracker" className="nav-item">
-              <span className="nav-item-icon">😊</span>Mood Tracker
-            </Link>
-            <Link href="/dashboard/por-well/meditation" className="nav-item">
-              <span className="nav-item-icon">🧘‍♀️</span>Meditație
-            </Link>
-            <Link href="/dashboard/por-well/stress-management" className="nav-item">
-              <span className="nav-item-icon">💆‍♀️</span>Anti-Stress
-            </Link>
-            <Link href="/dashboard/por-well/sleep-therapy" className="nav-item">
-              <span className="nav-item-icon">😴</span>Sleep Therapy
-            </Link>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-800 text-white">
+      {/* Animated Background */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-900/30 via-slate-900/20 to-indigo-900/30"></div>
+        {isClient && (
+          <div className="absolute inset-0">
+            {[...Array(30)].map((_, i) => (
+              <div
+                key={i}
+                className="absolute w-1 h-1 bg-purple-400 rounded-full animate-pulse"
+                style={{
+                  left: `${Math.random() * 100}%`,
+                  top: `${Math.random() * 100}%`,
+                  animationDelay: `${Math.random() * 3}s`,
+                  animationDuration: `${2 + Math.random() * 3}s`
+                }}
+              ></div>
+            ))}
           </div>
-          
-          <div className="nav-section">
-            <div className="nav-section-title">🤖 AI Tools</div>
-            <Link href="/dashboard/por-well/ai-therapist" className="nav-item">
-              <span className="nav-item-icon">🎯</span>AI Therapist
-            </Link>
-            <Link href="/dashboard/por-well/emotional-journal" className="nav-item">
-              <span className="nav-item-icon">📝</span>Jurnal Emoțional
-            </Link>
-            <Link href="/dashboard/por-well/anxiety-helper" className="nav-item">
-              <span className="nav-item-icon">🛡️</span>Anxiety Helper
-            </Link>
-          </div>
-          
-          <div className="nav-section">
-            <div className="nav-section-title">🌿 Alte Ecosisteme</div>
-            <Link href="/dashboard/por-health" className="nav-item">
-              <span className="nav-item-icon">💚</span>PorHealth
-            </Link>
-            <Link href="/dashboard/por-mind" className="nav-item">
-              <span className="nav-item-icon">🧠</span>PorMind
-            </Link>
-            <Link href="/dashboard/por-flow" className="nav-item">
-              <span className="nav-item-icon">⚡</span>PorFlow
-            </Link>
-          </div>
-        </nav>
-        
-        <div className="sidebar-footer">
-          <div className="upgrade-card">
-            <h4>✨ Wellness Premium</h4>
-            <p>AI therapist avansat și analize profunde</p>
-            <button className="upgrade-btn">🚀 Upgrade Acum</button>
-          </div>
-        </div>
-      </aside>
+        )}
+      </div>
 
       {/* Header */}
-      <header className="header">
-        <div className="header-left">
-          <h1>{getGreeting()}, Sofia!</h1>
-          <p>Wellness Score: <span className="wellness-score">85/100</span> 🎯</p>
-        </div>
-        <div className="header-right">
-          <div className="header-stats">
-            <div className="stat-item">
-              <span className="stat-value">{wellnessData?.meditationStreak || 0}</span>
-              <span className="stat-label">Streak Meditație 🔥</span>
+      <header className="relative z-10 border-b border-white/10 backdrop-blur-xl bg-white/5">
+        <div className="max-w-7xl mx-auto px-6 py-6">
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-3xl font-black bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent flex items-center">
+                🌻 PorWell Dashboard
+              </h1>
+              <p className="text-white/80 mt-1">
+                {getGreeting()}! Wellness score-ul tău este{' '}
+                <span className="font-bold text-purple-400">{wellnessMetrics.moodScore.toFixed(1)}/10</span>
+              </p>
             </div>
-            <div className="stat-item">
-              <span className="stat-value">{wellnessData?.moodScore || 0}/10</span>
-              <span className="stat-label">Mood Azi 😊</span>
+            
+            <div className="flex items-center space-x-6">
+              <div className="hidden md:flex space-x-6">
+                <div className="text-center">
+                  <div className="text-xl font-bold text-purple-400">{wellnessMetrics.mindfulnessStreak}</div>
+                  <div className="text-xs text-white/60">Zile mindful</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-xl font-bold text-purple-400">{wellnessMetrics.meditationMinutes}</div>
+                  <div className="text-xs text-white/60">Min meditație</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-xl font-bold text-purple-400">{wellnessMetrics.sleepQuality.toFixed(1)}</div>
+                  <div className="text-xs text-white/60">Calitatea somnului</div>
+                </div>
+              </div>
+              
+              <div className="px-4 py-2 bg-purple-500/20 border border-purple-500/30 rounded-xl backdrop-blur-sm text-purple-300 font-mono" suppressHydrationWarning>
+                {formatTime(currentTime)}
+              </div>
             </div>
-          </div>
-          <div className="header-time">
-            {currentTime.toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })}
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="main-content">
-        <div className="welcome-section">
-          <h2>🌿 Centrul tău de wellness mental</h2>
-          <p>Urmărește mood-ul, reduce stresul și dezvoltă obiceiuri sănătoase cu ajutorul AI-ului.</p>
+      <div className="relative z-10 max-w-7xl mx-auto px-6 py-8">
+        {/* Welcome Section */}
+        <div className="text-center mb-12">
+          <h2 className="text-4xl font-black mb-4">Centrul tău de echilibru interior</h2>
+          <p className="text-lg text-white/80 max-w-3xl mx-auto">
+            Monitorizează starea emoțională, practică mindfulness și construiește 
+            obiceiuri sănătoase pentru mental wellness cu ghidajul AI personalizat.
+          </p>
         </div>
 
-        <div className="dashboard-grid">
-          {/* Wellness Score Principal */}
-          <div className="dashboard-card featured">
-            <div className="card-header">
-              <span className="card-title">🎯 Wellness Score</span>
-              <span className="card-icon">✨</span>
-            </div>
-            <div className="score-display">
-              <div className="score-number">85</div>
-              <div className="score-label">din 100</div>
-              <div className="score-trend positive">↗ +12 puncte această săptămână</div>
-            </div>
-            <div className="score-breakdown">
-              <div className="breakdown-item">
-                <span>Mood</span>
-                <div className="breakdown-bar">
-                  <div className="breakdown-fill" style={{width: '78%'}}></div>
-                </div>
-                <span>78%</span>
-              </div>
-              <div className="breakdown-item">
-                <span>Sleep</span>
-                <div className="breakdown-bar">
-                  <div className="breakdown-fill" style={{width: '85%'}}></div>
-                </div>
-                <span>85%</span>
-              </div>
-              <div className="breakdown-item">
-                <span>Stress</span>
-                <div className="breakdown-bar stress">
-                  <div className="breakdown-fill" style={{width: '30%'}}></div>
-                </div>
-                <span>30%</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Mood Azi */}
-          <div className="dashboard-card">
-            <div className="card-header">
-              <span className="card-title">😊 Mood Azi</span>
-              <span className="card-icon">💫</span>
-            </div>
-            <div className="mood-display">
-              <div className="mood-emoji">😊</div>
-              <div className="mood-score">7.8<span>/10</span></div>
-              <div className="mood-label">Foarte Bun</div>
-              <div className="mood-note">+0.8 față de ieri</div>
-            </div>
-          </div>
-
-          {/* Stress Level */}
-          <div className="dashboard-card">
-            <div className="card-header">
-              <span className="card-title">💆‍♀️ Nivel Stress</span>
-              <span className="card-icon">🌊</span>
-            </div>
-            <div className="stress-display">
-              <div className="stress-meter">
-                <div className="stress-fill" style={{width: '30%'}}></div>
-              </div>
-              <div className="stress-level">3<span>/10</span></div>
-              <div className="stress-label">Scăzut</div>
-              <div className="stress-advice">Excelent! Continuă cu respirațiile profunde</div>
-            </div>
-          </div>
-
-          {/* Meditație Streak */}
-          <div className="dashboard-card">
-            <div className="card-header">
-              <span className="card-title">🧘‍♀️ Meditație</span>
-              <span className="card-icon">🔥</span>
-            </div>
-            <div className="meditation-display">
-              <div className="streak-number">{wellnessData?.meditationStreak}</div>
-              <div className="streak-label">zile consecutive</div>
-              <div className="streak-achievement">🏆 Ai deblocat "Zen Master"!</div>
-            </div>
-          </div>
-
-          {/* Energy Level */}
-          <div className="dashboard-card">
-            <div className="card-header">
-              <span className="card-title">⚡ Energie</span>
-              <span className="card-icon">💪</span>
-            </div>
-            <div className="energy-display">
-              <div className="energy-meter">
-                <div className="energy-fill" style={{width: '82%'}}></div>
-              </div>
-              <div className="energy-level">8.2<span>/10</span></div>
-              <div className="energy-label">Înaltă</div>
-              <div className="energy-tip">Perfect pentru antrenament!</div>
-            </div>
-          </div>
-
-          {/* Sleep Quality */}
-          <div className="dashboard-card">
-            <div className="card-header">
-              <span className="card-title">😴 Calitatea Somnului</span>
-              <span className="card-icon">🌙</span>
-            </div>
-            <div className="sleep-display">
-              <div className="sleep-score">8.5<span>/10</span></div>
-              <div className="sleep-hours">7h 23min noaptea trecută</div>
-              <div className="sleep-phases">
-                <div className="phase">
-                  <span>REM</span>
-                  <div className="phase-bar">
-                    <div className="phase-fill rem" style={{width: '22%'}}></div>
+        {/* Wellness Metrics Dashboard */}
+        <div className="mb-12">
+          <h3 className="text-2xl font-bold mb-6 flex items-center">
+            📊 Wellness Metrics Azi
+          </h3>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center space-x-3">
+                  <span className="text-3xl">😊</span>
+                  <div>
+                    <h4 className="font-bold text-white">Mood Score</h4>
+                    <div className="flex items-baseline">
+                      <span className={`text-2xl font-bold ${getMetricColor(wellnessMetrics.moodScore)}`}>
+                        {wellnessMetrics.moodScore.toFixed(1)}
+                      </span>
+                      <span className="text-white/60 ml-1">/10</span>
+                    </div>
+                    <span className="text-xs text-white/60">{getMetricStatus(wellnessMetrics.moodScore)}</span>
                   </div>
-                  <span>22%</span>
                 </div>
-                <div className="phase">
-                  <span>Deep</span>
-                  <div className="phase-bar">
-                    <div className="phase-fill deep" style={{width: '18%'}}></div>
+              </div>
+              <div className="w-full bg-white/10 rounded-full h-2">
+                <div 
+                  className={`h-2 rounded-full transition-all duration-1000 ${getMetricBgColor(wellnessMetrics.moodScore)}`}
+                  style={{ width: `${(wellnessMetrics.moodScore / 10) * 100}%` }}
+                ></div>
+              </div>
+            </div>
+
+            <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center space-x-3">
+                  <span className="text-3xl">😰</span>
+                  <div>
+                    <h4 className="font-bold text-white">Nivel Stres</h4>
+                    <div className="flex items-baseline">
+                      <span className={`text-2xl font-bold ${getMetricColor(wellnessMetrics.stressLevel, true)}`}>
+                        {wellnessMetrics.stressLevel.toFixed(1)}
+                      </span>
+                      <span className="text-white/60 ml-1">/10</span>
+                    </div>
+                    <span className="text-xs text-white/60">{getMetricStatus(wellnessMetrics.stressLevel, true)}</span>
                   </div>
-                  <span>18%</span>
                 </div>
+              </div>
+              <div className="w-full bg-white/10 rounded-full h-2">
+                <div 
+                  className={`h-2 rounded-full transition-all duration-1000 ${getMetricBgColor(wellnessMetrics.stressLevel, true)}`}
+                  style={{ width: `${(wellnessMetrics.stressLevel / 10) * 100}%` }}
+                ></div>
+              </div>
+            </div>
+
+            <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center space-x-3">
+                  <span className="text-3xl">😟</span>
+                  <div>
+                    <h4 className="font-bold text-white">Anxietate</h4>
+                    <div className="flex items-baseline">
+                      <span className={`text-2xl font-bold ${getMetricColor(wellnessMetrics.anxietyLevel, true)}`}>
+                        {wellnessMetrics.anxietyLevel.toFixed(1)}
+                      </span>
+                      <span className="text-white/60 ml-1">/10</span>
+                    </div>
+                    <span className="text-xs text-white/60">{getMetricStatus(wellnessMetrics.anxietyLevel, true)}</span>
+                  </div>
+                </div>
+              </div>
+              <div className="w-full bg-white/10 rounded-full h-2">
+                <div 
+                  className={`h-2 rounded-full transition-all duration-1000 ${getMetricBgColor(wellnessMetrics.anxietyLevel, true)}`}
+                  style={{ width: `${(wellnessMetrics.anxietyLevel / 10) * 100}%` }}
+                ></div>
+              </div>
+            </div>
+
+            <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center space-x-3">
+                  <span className="text-3xl">😴</span>
+                  <div>
+                    <h4 className="font-bold text-white">Calitatea Somnului</h4>
+                    <div className="flex items-baseline">
+                      <span className={`text-2xl font-bold ${getMetricColor(wellnessMetrics.sleepQuality)}`}>
+                        {wellnessMetrics.sleepQuality.toFixed(1)}
+                      </span>
+                      <span className="text-white/60 ml-1">/10</span>
+                    </div>
+                    <span className="text-xs text-white/60">{getMetricStatus(wellnessMetrics.sleepQuality)}</span>
+                  </div>
+                </div>
+              </div>
+              <div className="w-full bg-white/10 rounded-full h-2">
+                <div 
+                  className={`h-2 rounded-full transition-all duration-1000 ${getMetricBgColor(wellnessMetrics.sleepQuality)}`}
+                  style={{ width: `${(wellnessMetrics.sleepQuality / 10) * 100}%` }}
+                ></div>
               </div>
             </div>
           </div>
         </div>
 
         {/* Quick Actions */}
-        <div className="quick-actions-section">
-          <h3>⚡ Acțiuni Rapide</h3>
-          <div className="quick-actions">
-            <Link href="/dashboard/por-well/ai-therapist" className="action-btn primary">
-              <span className="action-icon">🤖</span>
-              <span>Conversație AI</span>
-            </Link>
-            <Link href="/dashboard/por-well/meditation" className="action-btn">
-              <span className="action-icon">🎧</span>
-              <span>Meditație 5min</span>
-            </Link>
-            <Link href="/dashboard/por-well/mood-tracker" className="action-btn">
-              <span className="action-icon">😊</span>
-              <span>Log Mood</span>
-            </Link>
-            <button onClick={() => setChatOpen(true)} className="action-btn">
-              <span className="action-icon">💬</span>
-              <span>Chat Rapid</span>
-            </button>
-            <Link href="/dashboard/por-well/breathing" className="action-btn">
-              <span className="action-icon">🫁</span>
-              <span>Exerciții Respirație</span>
-            </Link>
+        <div className="mb-12">
+          <h3 className="text-2xl font-bold mb-6 flex items-center">
+            🚀 Acțiuni Rapide
+          </h3>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {quickActions.map((action) => (
+              <Link 
+                key={action.id} 
+                href={action.href} 
+                className={`group block bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all hover:scale-105 ${action.isPrimary ? 'border-purple-500/50 bg-purple-500/10' : ''}`}
+              >
+                <div className="flex items-start space-x-4">
+                  <span className="text-3xl group-hover:scale-110 transition-transform">{action.icon}</span>
+                  <div className="flex-1">
+                    <h4 className="font-bold text-white mb-2">{action.title}</h4>
+                    <p className="text-sm text-white/70 leading-relaxed">{action.description}</p>
+                  </div>
+                </div>
+                {action.isPrimary && (
+                  <div className="mt-4 px-3 py-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full text-xs font-bold text-center">
+                    RECOMANDAT
+                  </div>
+                )}
+              </Link>
+            ))}
           </div>
         </div>
 
-        {/* Today's Insights */}
-        <div className="insights-section">
-          <h3>🔮 Insights Personalizate</h3>
-          <div className="insights-grid">
-            <div className="insight-card">
-              <div className="insight-icon">🌟</div>
-              <div className="insight-content">
-                <h4>Progres Excelent!</h4>
-                <p>Mood-ul tău a crescut cu 15% în ultima săptămână. Meditația zilnică își arată efectele!</p>
-              </div>
-            </div>
-            <div className="insight-card">
-              <div className="insight-icon">💡</div>
-              <div className="insight-content">
-                <h4>Recomandare</h4>
-                <p>La ora aceasta ai energia maximă. E momentul perfect pentru task-uri creative!</p>
-              </div>
-            </div>
-            <div className="insight-card">
-              <div className="insight-icon">🎯</div>
-              <div className="insight-content">
-                <h4>Obiectiv Săptămânal</h4>
-                <p>Ești la 80% din targetul de meditație. Încă 2 sesiuni și atingi obiectivul!</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
-
-      {/* AI Chat */}
-      {chatOpen && (
-        <div className="ai-chat active">
-          <div className="chat-header">
-            <span>💬 AI Wellness Assistant</span>
-            <button onClick={() => setChatOpen(false)}>✕</button>
-          </div>
-          <div className="chat-messages">
-            {chatHistory.length === 0 && (
-              <div className="message ai">
-                👋 Salut! Sunt asistentul tău pentru wellness mental. Cu ce te pot ajuta astăzi?
-              </div>
-            )}
-            {chatHistory.map((chat, index) => (
-              <div key={index} className={`message ${chat.role}`}>
-                {chat.message}
+        {/* AI Insights */}
+        <div className="mb-12">
+          <h3 className="text-2xl font-bold mb-6 flex items-center">
+            🤖 AI Insights Personalizate
+          </h3>
+          <div className="grid md:grid-cols-3 gap-6">
+            {aiInsights.map((insight) => (
+              <div 
+                key={insight.id} 
+                className={`bg-white/5 backdrop-blur-xl border rounded-2xl p-6 hover:bg-white/10 transition-all hover:scale-105 ${
+                  insight.type === 'celebration' ? 'border-emerald-500/50 bg-emerald-500/10' :
+                  insight.type === 'warning' ? 'border-amber-500/50 bg-amber-500/10' :
+                  'border-blue-500/50 bg-blue-500/10'
+                }`}
+              >
+                <div className="flex items-center space-x-3 mb-4">
+                  <span className="text-2xl">{insight.icon}</span>
+                  <h4 className="font-bold text-white">{insight.title}</h4>
+                </div>
+                <p className="text-sm text-white/80 leading-relaxed mb-4">{insight.message}</p>
+                {insight.action && (
+                  <Link 
+                    href={insight.action.href} 
+                    className="inline-flex items-center text-sm font-semibold text-white hover:text-white/80 transition-colors"
+                  >
+                    {insight.action.text} →
+                  </Link>
+                )}
               </div>
             ))}
           </div>
-          <div className="chat-input">
-            <input 
-              type="text" 
-              value={chatMessage}
-              onChange={(e) => setChatMessage(e.target.value)}
-              placeholder="Scrie mesajul tău aici..."
-              onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-            />
-            <button onClick={sendMessage}>
-              <span>📤</span>
-            </button>
+        </div>
+
+        {/* Daily Mindfulness Challenge */}
+        <div className="mb-12">
+          <div className="bg-gradient-to-br from-purple-600/20 to-indigo-600/20 backdrop-blur-xl border border-purple-500/30 rounded-3xl p-8">
+            <div className="flex items-center space-x-4 mb-6">
+              <span className="text-4xl">🌟</span>
+              <div>
+                <h3 className="text-2xl font-bold text-white">Provocarea Zilei</h3>
+                <p className="text-purple-300">Mindfulness în activitățile cotidiene</p>
+              </div>
+            </div>
+            
+            <div className="mb-6">
+              <p className="text-white/90 leading-relaxed">
+                Astăzi, practică mindfulness în timp ce bei ceaiul sau cafeaua de dimineață. 
+                Observă temperatura, aroma, gustul și senzațiile din corp în timp ce bei încet.
+              </p>
+            </div>
+            
+            <div className="mb-6">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-sm font-semibold text-white">Progres azi:</span>
+                <span className="text-sm font-semibold text-purple-300">65% completat</span>
+              </div>
+              <div className="w-full bg-white/20 rounded-full h-2">
+                <div className="w-[65%] bg-gradient-to-r from-purple-400 to-pink-400 h-2 rounded-full transition-all duration-1000"></div>
+              </div>
+            </div>
+            
+            <div className="flex space-x-4">
+              <button className="flex-1 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 rounded-xl font-bold transition-all hover:scale-105">
+                ✅ Marchează ca finalizat
+              </button>
+              <button className="flex-1 py-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl font-semibold transition-all hover:scale-105">
+                📝 Adaugă notițe
+              </button>
+            </div>
           </div>
         </div>
-      )}
 
-      {/* Chat Toggle */}
-      {!chatOpen && (
-        <button className="chat-toggle" onClick={() => setChatOpen(true)}>
-          💬
-        </button>
-      )}
+        {/* Recent Activities */}
+        <div className="mb-12">
+          <h3 className="text-2xl font-bold mb-6 flex items-center">
+            📈 Activități Recente
+          </h3>
+          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+            <div className="space-y-4">
+              <div className="flex items-center space-x-4 p-4 bg-white/5 rounded-xl hover:bg-white/10 transition-all">
+                <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center text-xl">
+                  🧘‍♀️
+                </div>
+                <div className="flex-1">
+                  <div className="font-semibold text-white">Sesiune de meditație completată</div>
+                  <div className="text-sm text-white/60">15 minute • Acum 2 ore</div>
+                </div>
+                <div className="text-sm font-semibold text-emerald-400">+0.3 mood score</div>
+              </div>
+              
+              <div className="flex items-center space-x-4 p-4 bg-white/5 rounded-xl hover:bg-white/10 transition-all">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-xl">
+                  📊
+                </div>
+                <div className="flex-1">
+                  <div className="font-semibold text-white">Mood check-in înregistrat</div>
+                  <div className="text-sm text-white/60">Stare bună • Acum 4 ore</div>
+                </div>
+                <div className="text-sm font-semibold text-purple-400">Streak menținut</div>
+              </div>
+              
+              <div className="flex items-center space-x-4 p-4 bg-white/5 rounded-xl hover:bg-white/10 transition-all">
+                <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center text-xl">
+                  🌱
+                </div>
+                <div className="flex-1">
+                  <div className="font-semibold text-white">Exercițiu de mindfulness</div>
+                  <div className="text-sm text-white/60">Respirație conștientă • Ieri</div>
+                </div>
+                <div className="text-sm font-semibold text-emerald-400">+0.2 wellness</div>
+              </div>
+              
+              <div className="flex items-center space-x-4 p-4 bg-white/5 rounded-xl hover:bg-white/10 transition-all">
+                <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-full flex items-center justify-center text-xl">
+                  😴
+                </div>
+                <div className="flex-1">
+                  <div className="font-semibold text-white">Analiza somnului</div>
+                  <div className="text-sm text-white/60">7h 45min • Ieri noapte</div>
+                </div>
+                <div className="text-sm font-semibold text-blue-400">Calitate bună</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* AI Chat Integration */}
+      <AIChat 
+        ecosystem="por-well"
+        isOpen={isChatOpen}
+        onToggle={() => setIsChatOpen(!isChatOpen)}
+      />
     </div>
   );
 }

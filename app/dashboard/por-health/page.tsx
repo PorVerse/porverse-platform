@@ -1,683 +1,312 @@
-/* style.css pentru PorHealth Dashboard */
-
-/* Variables */
-:root {
-  /* Color Palette */
-  --health-primary: #00ff88;
-  --health-secondary: #00d4aa;
-  --health-gradient: linear-gradient(135deg, #00ff88 0%, #00d4aa 50%, #667eea 100%);
-  --text-primary: #ffffff;
-  --text-secondary: rgba(255, 255, 255, 0.8);
-  --text-muted: rgba(255, 255, 255, 0.6);
-  --glass: rgba(255, 255, 255, 0.1);
-  --glass-strong: rgba(255, 255, 255, 0.15);
-  --glass-border: rgba(255, 255, 255, 0.2);
-  --shadow-light: 0 8px 32px rgba(31, 38, 135, 0.37);
-  --shadow-heavy: 0 20px 60px rgba(0, 0, 0, 0.3);
-  --radius: 20px;
-  --radius-small: 12px;
-  --transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  --sidebar-width: 280px;
-}
-
-/* Reset */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-/* Body & Background */
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: var(--health-gradient);
-  background-size: 400% 400%;
-  animation: gradientShift 20s ease infinite;
-  color: var(--text-primary);
-  line-height: 1.6;
-  overflow-x: hidden;
-}
-
-/* Animated Background Layers */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background:
-    radial-gradient(circle at 20% 80%, rgba(0,255,136,0.4) 0%, transparent 60%),
-    radial-gradient(circle at 80% 20%, rgba(0,212,170,0.4) 0%, transparent 60%),
-    radial-gradient(circle at 40% 40%, rgba(102,126,234,0.3) 0%, transparent 60%);
-  pointer-events: none;
-  z-index: 0;
-  animation: backgroundPulse 8s ease-in-out infinite;
-}
-
-/* Dashboard Layout */
-.dashboard {
-  display: grid;
-  grid-template-columns: var(--sidebar-width) 1fr;
-  grid-template-rows: auto 1fr;
-  min-height: 100vh;
-  position: relative;
-  z-index: 1;
-}
-
-/* Sidebar */
-.sidebar {
-  grid-row: 1 / -1;
-  position: fixed;
-  top: 0; left: 0;
-  width: var(--sidebar-width);
-  height: 100vh;
-  background: var(--glass);
-  backdrop-filter: blur(20px);
-  border-right: 1px solid var(--glass-border);
-  display: flex;
-  flex-direction: column;
-  z-index: 100;
-}
-
-.sidebar-logo {
-  padding: 2rem;
-  border-bottom: 1px solid var(--glass-border);
-}
-
-.logo {
-  font-size: 1.5rem;
-  font-weight: 700;
-  background: linear-gradient(135deg, var(--health-primary), var(--health-secondary));
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-/* Sidebar Navigation (scrollable) */
-.sidebar-nav {
-  flex: 1;
-  padding: 1rem;
-  overflow-y: auto;
-  max-height: calc(100vh - 200px); /* leave space for logo + footer */
-}
-
-.nav-section + .nav-section {
-  margin-top: 2rem;
-}
-
-.nav-section-title {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  padding-bottom: 0.5rem;
-}
-
-.nav-item {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 1rem;
-  margin: 0.25rem 0;
-  color: var(--text-secondary);
-  text-decoration: none;
-  border-radius: var(--radius-small);
-  transition: var(--transition);
-  font-weight: 500;
-}
-
-.nav-item:hover {
-  background: var(--glass-strong);
-  color: var(--text-primary);
-  transform: translateX(5px);
-}
-
-.nav-item.active {
-  background: linear-gradient(135deg, var(--health-primary), var(--health-secondary));
-  color: #fff;
-  box-shadow: var(--shadow-light);
-}
-
-.nav-item-icon {
-  font-size: 1.2rem;
-}
-
-/* Sidebar Footer */
-.sidebar-footer {
-  padding: 1rem;
-}
-
-.upgrade-card {
-  background: linear-gradient(135deg, var(--health-primary), var(--health-secondary));
-  border-radius: var(--radius-small);
-  padding: 1.5rem;
-  text-align: center;
-  box-shadow: var(--shadow-light);
-}
-
-.upgrade-card h4 {
-  margin-bottom: 0.5rem;
-  font-size: 0.9rem;
-}
-
-.upgrade-card p {
-  font-size: 0.8rem;
-  opacity: 0.9;
-  margin-bottom: 1rem;
-}
-
-.upgrade-btn {
-  background: #fff;
-  color: var(--health-primary);
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: var(--radius-small);
-  font-weight: 600;
-  font-size: 0.8rem;
-  cursor: pointer;
-  width: 100%;
-  transition: var(--transition);
-}
-
-.upgrade-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-heavy);
-}
-
-/* Header */
-.header {
-  grid-column: 2;
-  position: sticky;
-  top: 0;
-  background: var(--glass);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--glass-border);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.5rem 2rem;
-  z-index: 90;
-}
-
-.header-left h1 {
-  font-size: 1.8rem;
-  font-weight: 700;
-  margin-bottom: 0.25rem;
-}
-
-.header-left p {
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.header-stats {
-  display: flex;
-  gap: 2rem;
-  background: var(--glass);
-  padding: 1rem 1.5rem;
-  border-radius: var(--radius-small);
-  border: 1px solid var(--glass-border);
-}
-
-.stat-item {
-  text-align: center;
-}
-
-.stat-value {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--health-primary);
-}
-
-.stat-label {
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-}
-
-.notification-btn,
-.profile-btn {
-  background: var(--glass);
-  border: 1px solid var(--glass-border);
-  border-radius: 50%;
-  width: 40px; height: 40px;
-  display: flex; align-items: center; justify-content: center;
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: var(--transition);
-}
-
-.notification-btn:hover,
-.profile-btn:hover {
-  background: var(--glass-strong);
-  color: var(--text-primary);
-}
-
-/* Main Content */
-.main-content {
-  grid-column: 2;
-  padding: 2rem;
-  padding-bottom: 120px; /* space for chat-toggle */
-  overflow-y: auto;
-}
-
-/* Dashboard Grid & Cards */
-.dashboard-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-}
-
-.dashboard-card {
-  background: var(--glass);
-  backdrop-filter: blur(20px);
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius);
-  padding: 1.5rem;
-  box-shadow: var(--shadow-light);
-  transition: var(--transition);
-}
-
-.dashboard-card:hover {
-  transform: translateY(-5px);
-  box-shadow: var(--shadow-heavy);
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.card-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--health-primary);
-}
-
-.card-icon {
-  font-size: 1.5rem;
-}
-
-.card-value {
-  font-size: 2rem;
-  font-weight: 800;
-  margin-bottom: 0.5rem;
-}
-
-.card-change {
-  font-size: 0.9rem;
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-}
-
-.card-change.positive {
-  color: var(--health-primary);
-}
-
-.card-change.negative {
-  color: var(--error);
-}
-
-/* Progress Bars */
-.progress-bar {
-  background: rgba(255,255,255,0.1);
-  border-radius: 10px;
-  height: 8px;
-  margin: 1rem 0 0.5rem;
-  overflow: hidden;
-}
-
-.progress-fill {
-  background: linear-gradient(135deg, var(--health-primary), var(--health-secondary));
-  height: 100%;
-  border-radius: 10px;
-  transition: width 0.6s ease;
-}
-
-.progress-text {
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-}
-
-/* Nutrition Tracking */
-.nutrition-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
-  margin-top: 1rem;
-}
-
-.nutrition-item {
-  background: var(--glass-strong);
-  padding: 1rem;
-  border-radius: var(--radius-small);
-  text-align: center;
-  border: 1px solid var(--glass-border);
-}
-
-.nutrition-label {
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-  margin-bottom: 0.5rem;
-}
-
-.nutrition-value {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--health-primary);
-}
-
-.nutrition-target {
-  font-size: 0.7rem;
-  color: var(--text-muted);
-}
-
-/* Workout Section */
-.workout-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-top: 1rem;
-}
-
-.workout-item {
-  background: var(--glass-strong);
-  padding: 1rem;
-  border-radius: var(--radius-small);
-  border: 1px solid var(--glass-border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.workout-info {
-  flex: 1;
-}
-
-.workout-name {
-  font-weight: 600;
-  margin-bottom: 0.25rem;
-}
-
-.workout-details {
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-}
-
-.workout-status {
-  background: var(--health-primary);
-  color: #fff;
-  padding: 0.25rem 0.75rem;
-  border-radius: var(--radius-small);
-  font-size: 0.8rem;
-  font-weight: 600;
-}
-
-/* Recent Activities */
-.activity-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  margin-top: 1rem;
-}
-
-.activity-item {
-  background: var(--glass-strong);
-  padding: 1rem;
-  border-radius: var(--radius-small);
-  border: 1px solid var(--glass-border);
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.activity-icon {
-  background: linear-gradient(135deg, var(--health-primary), var(--health-secondary));
-  width: 40px; height: 40px;
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.2rem;
-}
-
-.activity-content {
-  flex: 1;
-}
-
-.activity-title {
-  font-weight: 600;
-  margin-bottom: 0.25rem;
-}
-
-.activity-time {
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-}
-
-/* Quick Actions */
-.quick-actions {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
-  margin-top: 2rem;
-}
-
-.action-btn {
-  background: var(--glass);
-  backdrop-filter: blur(20px);
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius-small);
-  padding: 1rem;
-  color: var(--text-primary);
-  text-decoration: none;
-  text-align: center;
-  transition: var(--transition);
-  cursor: pointer;
-}
-
-.action-btn:hover {
-  background: var(--glass-strong);
-  transform: translateY(-3px);
-}
-
-.action-btn-icon {
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
-  display: block;
-}
-
-.action-btn-text {
-  font-weight: 600;
-  font-size: 0.9rem;
-}
-
-/* AI Chat Widget */
-.ai-chat {
-  position: fixed;
-  bottom: 3rem;
-  right: 2rem;
-  width: 350px;
-  max-height: 80vh;
-  background: var(--glass);
-  backdrop-filter: blur(20px);
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius);
-  display: flex;
-  flex-direction: column;
-  transform: translateY(100%);
-  transition: var(--transition);
-  z-index: 200;
-}
-
-.ai-chat.open {
-  transform: translateY(0);
-}
-
-.chat-header {
-  background: linear-gradient(135deg, var(--health-primary), var(--health-secondary));
-  padding: 1rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.chat-close {
-  background: none;
-  border: none;
-  color: #fff;
-  font-size: 1.2rem;
-  cursor: pointer;
-}
-
-.chat-messages {
-  flex: 1;
-  padding: 1rem;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.chat-input {
-  padding: 1rem;
-  border-top: 1px solid var(--glass-border);
-  display: flex;
-  gap: 0.5rem;
-}
-
-.chat-input input {
-  flex: 1;
-  background: var(--glass);
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius-small);
-  padding: 0.75rem;
-  color: var(--text-primary);
-  font-size: 0.9rem;
-}
-
-.chat-send {
-  background: linear-gradient(135deg, var(--health-primary), var(--health-secondary));
-  border: none;
-  border-radius: var(--radius-small);
-  padding: 0.75rem 1rem;
-  color: #fff;
-  cursor: pointer;
-  transition: var(--transition);
-}
-
-.chat-send:hover {
-  transform: translateY(-2px);
-}
-
-/* Chat Toggle Button */
-.chat-toggle {
-  position: fixed;
-  bottom: 1rem;
-  right: 1rem;
-  width: 50px;
-  height: 50px;
-  background: linear-gradient(135deg, var(--health-primary), var(--health-secondary));
-  border: none;
-  border-radius: 50%;
-  color: #fff;
-  font-size: 1.5rem;
-  cursor: pointer;
-  z-index: 210;
-  transition: var(--transition);
-}
-
-.chat-toggle.hidden {
-  display: none;
-}
-
-/* Animations */
-@keyframes gradientShift {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-}
-
-@keyframes backgroundPulse {
-  0%, 100% { opacity: 0.5; }
-  50% { opacity: 0.8; }
-}
-
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-.fade-in-up {
-  opacity: 0;
-  animation: fadeInUp 0.6s ease-out forwards;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .dashboard {
-    grid-template-columns: 1fr;
+'use client';
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import './style.css';
+
+// Types
+interface HealthMetric {
+  id: string;
+  name: string;
+  value: number;
+  unit: string;
+  target: number;
+  progress: number;
+}
+
+export default function PorHealthDashboard() {
+  const [healthMetrics, setHealthMetrics] = useState<HealthMetric[]>([]);
+  const [chatOpen, setChatOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  // Mock data
+  useEffect(() => {
+    setTimeout(() => {
+      setHealthMetrics([
+        { id: '1', name: 'Weight', value: 72.5, unit: 'kg', target: 70, progress: 75 },
+        { id: '2', name: 'Steps', value: 8543, unit: 'steps', target: 10000, progress: 85 },
+        { id: '3', name: 'Sleep', value: 7.2, unit: 'hours', target: 8, progress: 90 },
+        { id: '4', name: 'Water', value: 2.1, unit: 'liters', target: 2.5, progress: 84 }
+      ]);
+      setLoading(false);
+    }, 1000);
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="dashboard">
+        <div className="main-content">
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '400px' }}>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ 
+                width: '50px', 
+                height: '50px', 
+                border: '4px solid rgba(0,255,136,0.3)', 
+                borderTop: '4px solid #00ff88',
+                borderRadius: '50%',
+                animation: 'spin 1s linear infinite',
+                margin: '0 auto 1rem'
+              }}></div>
+              <p>Loading PorHealth Dashboard...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
-  .sidebar {
-    transform: translateX(-100%);
-    transition: transform 0.3s ease;
-  }
-  .sidebar.open {
-    transform: translateX(0);
-  }
-  .header {
-    grid-column: 1;
-  }
-  .main-content {
-    padding: 1rem;
-  }
-  .dashboard-grid {
-    grid-template-columns: 1fr;
-  }
-  .ai-chat {
-    width: calc(100% - 2rem);
-    right: 1rem;
-    left: 1rem;
-  }
-  .chat-toggle {
-    bottom: 0.5rem;
-    right: 0.5rem;
-  }
-}
-/* Custom scrollbar pentru meniul din sidebar */
-.sidebar-nav {
-  /* Firefox */
-  scrollbar-width: thin;
-  scrollbar-color: var(--glass-border) var(--glass-strong);
-}
 
-/* WebKit browsers (Chrome, Safari, Edge) */
-.sidebar-nav::-webkit-scrollbar {
-  width: 6px;
-}
+  return (
+    <div className="dashboard">
+      {/* Sidebar */}
+      <div className="sidebar">
+        <div className="sidebar-logo">
+          <div className="logo">🌿 PorHealth</div>
+        </div>
+        
+        <nav className="sidebar-nav">
+          <div className="nav-section">
+            <div className="nav-section-title">Dashboard</div>
+            <Link href="/dashboard/por-health" className="nav-item active">
+              <span className="nav-item-icon">📊</span>
+              Overview
+            </Link>
+            <Link href="/dashboard/por-health/nutrition" className="nav-item">
+              <span className="nav-item-icon">🍎</span>
+              Nutrition
+            </Link>
+            <Link href="/dashboard/por-health/workouts" className="nav-item">
+              <span className="nav-item-icon">💪</span>
+              Workouts
+            </Link>
+            <Link href="/dashboard/por-health/biometrics" className="nav-item">
+              <span className="nav-item-icon">⚖️</span>
+              Biometrics
+            </Link>
+          </div>
 
-.sidebar-nav::-webkit-scrollbar-track {
-  background: var(--glass-strong);
-  border-radius: 3px;
-}
+          <div className="nav-section">
+            <div className="nav-section-title">Tools</div>
+            <Link href="/dashboard/por-health/meal-planner" className="nav-item">
+              <span className="nav-item-icon">🥗</span>
+              Meal Planner
+            </Link>
+            <Link href="/dashboard/por-health/supplements" className="nav-item">
+              <span className="nav-item-icon">💊</span>
+              Supplements
+            </Link>
+            <Link href="/dashboard/por-health/progress" className="nav-item">
+              <span className="nav-item-icon">📈</span>
+              Progress
+            </Link>
+          </div>
 
-.sidebar-nav::-webkit-scrollbar-thumb {
-  background: var(--glass-border);
-  border-radius: 3px;
-  border: 1px solid var(--glass-strong);
-}
+          <div className="nav-section">
+            <div className="nav-section-title">Other Ecosystems</div>
+            <Link href="/dashboard/por-mind" className="nav-item">
+              <span className="nav-item-icon">💰</span>
+              PorMind
+            </Link>
+            <Link href="/dashboard/por-well" className="nav-item">
+              <span className="nav-item-icon">🌻</span>
+              PorWell
+            </Link>
+            <Link href="/dashboard/por-flow" className="nav-item">
+              <span className="nav-item-icon">🌊</span>
+              PorFlow
+            </Link>
+          </div>
+        </nav>
 
-.sidebar-nav::-webkit-scrollbar-thumb:hover {
-  background: var(--glass);
-}
+        <div className="sidebar-footer">
+          <div className="upgrade-card">
+            <h4>Upgrade to Premium</h4>
+            <p>Unlock advanced AI features and detailed analytics</p>
+            <button className="upgrade-btn">Upgrade Now</button>
+          </div>
+        </div>
+      </div>
 
-/* Ca să se vadă mai bine în schemele întunecate */
-.sidebar-nav:hover::-webkit-scrollbar-thumb {
-  background: var(--glass-border);
-}
+      {/* Header */}
+      <header className="header">
+        <div className="header-left">
+          <h1>Health Dashboard</h1>
+          <p>Welcome back! Here's your health overview for today.</p>
+        </div>
+        <div className="header-right">
+          <div className="header-stats">
+            <div className="stat-item">
+              <div className="stat-value">85%</div>
+              <div className="stat-label">Daily Goal</div>
+            </div>
+            <div className="stat-item">
+              <div className="stat-value">7</div>
+              <div className="stat-label">Streak Days</div>
+            </div>
+          </div>
+          <button className="notification-btn">🔔</button>
+          <button className="profile-btn">👤</button>
+        </div>
+      </header>
 
+      {/* Main Content */}
+      <main className="main-content">
+        {/* Dashboard Grid */}
+        <div className="dashboard-grid">
+          {/* Health Metrics Cards */}
+          {healthMetrics.map((metric) => (
+            <div key={metric.id} className="dashboard-card fade-in-up">
+              <div className="card-header">
+                <div className="card-title">{metric.name}</div>
+                <div className="card-icon">
+                  {metric.name === 'Weight' && '⚖️'}
+                  {metric.name === 'Steps' && '👟'}
+                  {metric.name === 'Sleep' && '😴'}
+                  {metric.name === 'Water' && '💧'}
+                </div>
+              </div>
+              <div className="card-value">
+                {metric.value} <span style={{fontSize: '0.6em', fontWeight: 'normal'}}>{metric.unit}</span>
+              </div>
+              <div className="progress-bar">
+                <div className="progress-fill" style={{width: `${metric.progress}%`}}></div>
+              </div>
+              <div className="progress-text">
+                {metric.progress}% of target ({metric.target} {metric.unit})
+              </div>
+            </div>
+          ))}
+
+          {/* Nutrition Overview */}
+          <div className="dashboard-card fade-in-up">
+            <div className="card-header">
+              <div className="card-title">Today's Nutrition</div>
+              <div className="card-icon">🍎</div>
+            </div>
+            <div className="nutrition-grid">
+              <div className="nutrition-item">
+                <div className="nutrition-label">Calories</div>
+                <div className="nutrition-value">1,847</div>
+                <div className="nutrition-target">/ 2,200</div>
+              </div>
+              <div className="nutrition-item">
+                <div className="nutrition-label">Protein</div>
+                <div className="nutrition-value">98g</div>
+                <div className="nutrition-target">/ 140g</div>
+              </div>
+              <div className="nutrition-item">
+                <div className="nutrition-label">Carbs</div>
+                <div className="nutrition-value">205g</div>
+                <div className="nutrition-target">/ 275g</div>
+              </div>
+              <div className="nutrition-item">
+                <div className="nutrition-label">Fat</div>
+                <div className="nutrition-value">67g</div>
+                <div className="nutrition-target">/ 85g</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Workout Plan */}
+          <div className="dashboard-card fade-in-up">
+            <div className="card-header">
+              <div className="card-title">Today's Workout</div>
+              <div className="card-icon">💪</div>
+            </div>
+            <div className="workout-list">
+              <div className="workout-item">
+                <div className="workout-info">
+                  <div className="workout-name">Upper Body Strength</div>
+                  <div className="workout-details">45 min • Intermediate • 320 cal</div>
+                </div>
+                <div className="workout-status">Scheduled</div>
+              </div>
+              <div className="workout-item">
+                <div className="workout-info">
+                  <div className="workout-name">Evening Yoga</div>
+                  <div className="workout-details">30 min • Beginner • 150 cal</div>
+                </div>
+                <div className="workout-status">Optional</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Recent Activities */}
+          <div className="dashboard-card fade-in-up">
+            <div className="card-header">
+              <div className="card-title">Recent Activities</div>
+              <div className="card-icon">📝</div>
+            </div>
+            <div className="activity-list">
+              <div className="activity-item">
+                <div className="activity-icon">🥗</div>
+                <div className="activity-content">
+                  <div className="activity-title">Quinoa Salad logged</div>
+                  <div className="activity-time">2 hours ago</div>
+                </div>
+              </div>
+              <div className="activity-item">
+                <div className="activity-icon">💪</div>
+                <div className="activity-content">
+                  <div className="activity-title">Morning Workout completed</div>
+                  <div className="activity-time">5 hours ago</div>
+                </div>
+              </div>
+              <div className="activity-item">
+                <div className="activity-icon">💧</div>
+                <div className="activity-content">
+                  <div className="activity-title">Water goal reached</div>
+                  <div className="activity-time">Yesterday</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="quick-actions">
+          <button className="action-btn" onClick={() => setChatOpen(true)}>
+            <span className="action-btn-icon">🤖</span>
+            <span className="action-btn-text">AI Health Coach</span>
+          </button>
+          <Link href="/dashboard/por-health/nutrition" className="action-btn">
+            <span className="action-btn-icon">🍎</span>
+            <span className="action-btn-text">Log Food</span>
+          </Link>
+          <Link href="/dashboard/por-health/workouts" className="action-btn">
+            <span className="action-btn-icon">🏋️</span>
+            <span className="action-btn-text">Start Workout</span>
+          </Link>
+          <Link href="/dashboard/por-health/biometrics" className="action-btn">
+            <span className="action-btn-icon">⚖️</span>
+            <span className="action-btn-text">Log Weight</span>
+          </Link>
+        </div>
+      </main>
+
+      {/* AI Chat Widget */}
+      {chatOpen && (
+        <div className="ai-chat open">
+          <div className="chat-header">
+            <span>🤖 AI Health Coach</span>
+            <button className="chat-close" onClick={() => setChatOpen(false)}>×</button>
+          </div>
+          <div className="chat-messages">
+            <div style={{background: 'rgba(0,255,136,0.1)', padding: '1rem', borderRadius: '10px', marginBottom: '1rem'}}>
+              👋 Hi! I'm your AI Health Coach. I can help you with nutrition advice, workout plans, and health insights. What would you like to know?
+            </div>
+          </div>
+          <div className="chat-input">
+            <input type="text" placeholder="Ask me about your health goals..." />
+            <button className="chat-send">Send</button>
+          </div>
+        </div>
+      )}
+
+      {/* Chat Toggle */}
+      {!chatOpen && (
+        <button className="chat-toggle" onClick={() => setChatOpen(true)}>
+          💬
+        </button>
+      )}
+    </div>
+  );
+}
