@@ -1,1 +1,8 @@
-ECHO is off.
+@import './variables.css';
+
+/* Stiluri globale de bază */
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background-color: var(--health-bg);
+}

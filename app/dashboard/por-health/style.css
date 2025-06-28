@@ -1,23 +1,10 @@
-/* style.module.css pentru PorHealth Dashboard */
+/* style.css pentru PorHealth Dashboard */
 
 /* Variables */
 :root {
-  /* Color Palette */
   --health-primary: #00ff88;
-  --health-secondary: #00d4aa;
-  --health-gradient: linear-gradient(135deg, #00ff88 0%, #00d4aa 50%, #667eea 100%);
-  --text-primary: #ffffff;
-  --text-secondary: rgba(255, 255, 255, 0.8);
-  --text-muted: rgba(255, 255, 255, 0.6);
-  --glass: rgba(255, 255, 255, 0.1);
-  --glass-strong: rgba(255, 255, 255, 0.15);
-  --glass-border: rgba(255, 255, 255, 0.2);
-  --shadow-light: 0 8px 32px rgba(31, 38, 135, 0.37);
-  --shadow-heavy: 0 20px 60px rgba(0, 0, 0, 0.3);
-  --radius: 20px;
-  --radius-small: 12px;
-  --transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  --sidebar-width: 280px;
+  --health-bg: #f0fdf4;
+  --health-accent: #007f5f;
 }
 
 /* Reset */

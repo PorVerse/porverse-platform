@@ -1,0 +1,1361 @@
+/* PorFlow Dashboard - Complete CSS Module */
+
+:root {
+  /* PorFlow Brand Colors */
+  --pf-primary: #06b6d4;
+  --pf-secondary: #0891b2;
+  --pf-accent: #0e7490;
+  --pf-success: #10b981;
+  --pf-warning: #f59e0b;
+  --pf-error: #ef4444;
+  --pf-info: #3b82f6;
+  
+  /* Task Priority Colors */
+  --pf-urgent: #ef4444;
+  --pf-high: #f59e0b;
+  --pf-medium: #06b6d4;
+  --pf-low: #10b981;
+  
+  /* Focus Session Colors */
+  --pf-pomodoro: #dc2626;
+  --pf-deep-work: #7c3aed;
+  --pf-flow-state: #059669;
+  
+  /* Glass & Effects */
+  --pf-glass: rgba(6, 182, 212, 0.1);
+  --pf-glass-strong: rgba(6, 182, 212, 0.15);
+  --pf-glass-border: rgba(6, 182, 212, 0.3);
+  
+  /* Background System */
+  --pf-bg: linear-gradient(135deg, #0a0a0f 0%, #0a1f2e 50%, #0f1419 100%);
+  --pf-card-bg: rgba(6, 182, 212, 0.05);
+  
+  /* Text Colors */
+  --pf-text-primary: #ffffff;
+  --pf-text-secondary: #22d3ee;
+  --pf-text-muted: #94a3b8;
+  
+  /* Shadows & Effects */
+  --pf-shadow-light: 0 4px 20px rgba(6, 182, 212, 0.1);
+  --pf-shadow-heavy: 0 10px 40px rgba(6, 182, 212, 0.2);
+  --pf-shadow-glow: 0 0 30px rgba(6, 182, 212, 0.3);
+  
+  /* Layout */
+  --pf-radius: 16px;
+  --pf-radius-small: 12px;
+  --pf-sidebar-width: 280px;
+  --pf-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Z-Index */
+  --z-sidebar: 100;
+  --z-header: 90;
+  --z-modal: 1000;
+  --z-focus: 500;
+}
+
+/* Reset & Base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Loading Screen */
+.loadingScreen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: var(--pf-bg);
+  color: var(--pf-text-primary);
+}
+
+.loadingSpinner {
+  width: 60px;
+  height: 60px;
+  border: 4px solid rgba(6, 182, 212, 0.2);
+  border-top: 4px solid var(--pf-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 2rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loadingScreen h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, var(--pf-primary), var(--pf-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.loadingScreen p {
+  color: var(--pf-text-muted);
+  font-size: 1.1rem;
+}
+
+/* Dashboard Layout */
+.dashboard {
+  display: grid;
+  grid-template-columns: var(--pf-sidebar-width) 1fr;
+  grid-template-rows: auto 1fr;
+  min-height: 100vh;
+  background: var(--pf-bg);
+  color: var(--pf-text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Sidebar */
+.sidebar {
+  grid-row: 1 / -1;
+  background: var(--pf-glass);
+  backdrop-filter: blur(20px);
+  border-right: 1px solid var(--pf-glass-border);
+  padding: 2rem 1rem;
+  z-index: var(--z-sidebar);
+  overflow-y: auto;
+}
+
+.sidebarLogo {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.logo {
+  font-size: 1.8rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--pf-primary), var(--pf-accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-decoration: none;
+}
+
+.navSection {
+  margin-bottom: 2rem;
+}
+
+.navSectionTitle {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--pf-text-muted);
+  margin-bottom: 1rem;
+  letter-spacing: 1px;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--pf-radius-small);
+  color: var(--pf-text-secondary);
+  text-decoration: none;
+  transition: var(--pf-transition);
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  font-size: 0.95rem;
+}
+
+.navItem:hover {
+  background: var(--pf-glass-strong);
+  color: var(--pf-text-primary);
+  transform: translateX(5px);
+}
+
+.navItem.active {
+  background: linear-gradient(135deg, var(--pf-primary), var(--pf-secondary));
+  color: #000;
+  box-shadow: var(--pf-shadow-glow);
+}
+
+.navItemIcon {
+  font-size: 1.2rem;
+}
+
+/* Header */
+.header {
+  grid-column: 2;
+  background: var(--pf-glass);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--pf-glass-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  z-index: var(--z-header);
+}
+
+.headerLeft h1 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--pf-primary), var(--pf-accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0.25rem;
+}
+
+.headerLeft p {
+  color: var(--pf-text-muted);
+  font-size: 0.95rem;
+}
+
+.productivityScore {
+  color: var(--pf-primary);
+  font-weight: 700;
+}
+
+.focusTime {
+  color: var(--pf-success);
+  font-weight: 700;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.headerStats {
+  display: flex;
+  gap: 2rem;
+  background: var(--pf-glass);
+  padding: 1rem 1.5rem;
+  border-radius: var(--pf-radius-small);
+  border: 1px solid var(--pf-glass-border);
+}
+
+.statItem {
+  text-align: center;
+}
+
+.statValue {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--pf-primary);
+  line-height: 1;
+}
+
+.statLabel {
+  font-size: 0.8rem;
+  color: var(--pf-text-muted);
+  margin-top: 0.25rem;
+}
+
+.headerActions {
+  display: flex;
+  gap: 1rem;
+}
+
+.headerBtn {
+  background: var(--pf-glass);
+  border: 1px solid var(--pf-glass-border);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--pf-text-secondary);
+  cursor: pointer;
+  transition: var(--pf-transition);
+  font-size: 1.1rem;
+}
+
+.headerBtn:hover {
+  background: var(--pf-glass-strong);
+  color: var(--pf-text-primary);
+  transform: translateY(-2px);
+}
+
+.headerBtn.activeFocus {
+  background: linear-gradient(135deg, var(--pf-primary), var(--pf-secondary));
+  color: #000;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* Main Content */
+.mainContent {
+  grid-column: 2;
+  padding: 2rem;
+  overflow-y: auto;
+  padding-bottom: 120px;
+}
+
+/* Welcome Section */
+.welcomeSection {
+  background: var(--pf-card-bg);
+  border: 1px solid rgba(6, 182, 212, 0.2);
+  border-radius: var(--pf-radius);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.welcomeSection h2 {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, var(--pf-primary), var(--pf-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.welcomeSection p {
+  color: var(--pf-text-secondary);
+  font-size: 1.1rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* AI Suggestion Section */
+.aiSuggestionSection {
+  margin-bottom: 2rem;
+}
+
+.aiSuggestionCard {
+  background: var(--pf-glass);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--pf-glass-border);
+  border-radius: var(--pf-radius);
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  transition: var(--pf-transition);
+}
+
+.aiSuggestionCard:hover {
+  background: var(--pf-glass-strong);
+  transform: translateY(-2px);
+}
+
+.aiAvatar {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, var(--pf-primary), var(--pf-secondary));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.aiContent {
+  flex: 1;
+}
+
+.aiContent h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--pf-text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.aiContent p {
+  color: var(--pf-text-secondary);
+  line-height: 1.6;
+}
+
+.applySuggestion {
+  background: linear-gradient(135deg, var(--pf-primary), var(--pf-secondary));
+  color: #000;
+  border: none;
+  border-radius: var(--pf-radius-small);
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--pf-transition);
+  white-space: nowrap;
+}
+
+.applySuggestion:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--pf-shadow-light);
+}
+
+/* Focus Session Active */
+.focusSessionActive {
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(8, 145, 178, 0.05));
+  border: 2px solid var(--pf-primary);
+  border-radius: var(--pf-radius);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  box-shadow: var(--pf-shadow-glow);
+  z-index: var(--z-focus);
+  position: relative;
+}
+
+.focusHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.focusHeader h3 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--pf-text-primary);
+}
+
+.sessionType {
+  background: var(--pf-glass);
+  padding: 0.5rem 1rem;
+  border-radius: var(--pf-radius-small);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.focusTimer {
+  margin-bottom: 2rem;
+}
+
+.timerDisplay {
+  font-size: 3rem;
+  font-weight: 900;
+  color: var(--pf-primary);
+  margin-bottom: 1rem;
+  font-family: 'SF Mono', Monaco, monospace;
+}
+
+.timerProgress {
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.progressBar {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progressBar .progressBar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--pf-primary), var(--pf-secondary));
+  border-radius: 4px;
+  transition: width 1s ease;
+}
+
+.focusActions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.pauseBtn,
+.stopBtn,
+.distractionBtn {
+  background: var(--pf-glass);
+  border: 1px solid var(--pf-glass-border);
+  border-radius: var(--pf-radius-small);
+  padding: 0.75rem 1.5rem;
+  color: var(--pf-text-primary);
+  cursor: pointer;
+  transition: var(--pf-transition);
+  font-weight: 600;
+}
+
+.pauseBtn:hover,
+.stopBtn:hover,
+.distractionBtn:hover {
+  background: var(--pf-glass-strong);
+  transform: translateY(-1px);
+}
+
+.stopBtn {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: var(--pf-error);
+  color: var(--pf-error);
+}
+
+.distractionBtn {
+  background: rgba(245, 158, 11, 0.1);
+  border-color: var(--pf-warning);
+  color: var(--pf-warning);
+}
+
+/* Priority Tasks Section */
+.priorityTasksSection {
+  margin-bottom: 2rem;
+}
+
+.priorityTasksSection h3 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--pf-text-primary);
+  margin-bottom: 1.5rem;
+}
+
+.priorityTasksGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 1.5rem;
+}
+
+.priorityTaskCard {
+  background: var(--pf-glass);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--pf-glass-border);
+  border-radius: var(--pf-radius);
+  padding: 1.5rem;
+  transition: var(--pf-transition);
+}
+
+.priorityTaskCard:hover {
+  background: var(--pf-glass-strong);
+  transform: translateY(-2px);
+}
+
+.taskHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.taskStatus {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.taskHeader h4 {
+  flex: 1;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--pf-text-primary);
+  line-height: 1.3;
+}
+
+.taskPriority {
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--pf-radius-small);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #000;
+  flex-shrink: 0;
+}
+
+.taskDescription {
+  color: var(--pf-text-secondary);
+  line-height: 1.5;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+}
+
+.taskMeta {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.taskTime,
+.taskAI,
+.taskDeadline {
+  font-size: 0.85rem;
+  color: var(--pf-text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.taskTags {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.taskTag {
+  background: var(--pf-glass-strong);
+  border: 1px solid var(--pf-glass-border);
+  border-radius: var(--pf-radius-small);
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8rem;
+  color: var(--pf-text-secondary);
+}
+
+/* Time Blocks Section */
+.timeBlocksSection {
+  margin-bottom: 2rem;
+}
+
+.timeBlocksSection h3 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--pf-text-primary);
+  margin-bottom: 1.5rem;
+}
+
+.timeBlocksTimeline {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.timeBlock {
+  background: var(--pf-glass);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--pf-glass-border);
+  border-radius: var(--pf-radius);
+  padding: 1.5rem;
+  display: flex;
+  gap: 1.5rem;
+  transition: var(--pf-transition);
+  position: relative;
+}
+
+.timeBlock:hover {
+  background: var(--pf-glass-strong);
+  transform: translateX(5px);
+}
+
+.timeBlock.focus {
+  border-left: 4px solid var(--pf-primary);
+}
+
+.timeBlock.meeting {
+  border-left: 4px solid var(--pf-warning);
+}
+
+.timeBlock.break {
+  border-left: 4px solid var(--pf-success);
+}
+
+.timeBlock.work {
+  border-left: 4px solid var(--pf-info);
+}
+
+.timeBlockTime {
+  font-weight: 700;
+  color: var(--pf-primary);
+  min-width: 120px;
+  font-family: 'SF Mono', Monaco, monospace;
+}
+
+.timeBlockContent {
+  flex: 1;
+}
+
+.timeBlockContent h4 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--pf-text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.productivityIndicator {
+  margin: 0.75rem 0;
+}
+
+.productivityIndicator span {
+  font-size: 0.85rem;
+  color: var(--pf-text-muted);
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.productivityBar {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+  max-width: 200px;
+}
+
+.productivityFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--pf-primary), var(--pf-secondary));
+  border-radius: 3px;
+  transition: width 1s ease;
+}
+
+.blockTasks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.blockTask {
+  background: var(--pf-glass-strong);
+  border: 1px solid var(--pf-glass-border);
+  border-radius: var(--pf-radius-small);
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8rem;
+  color: var(--pf-text-secondary);
+}
+
+/* Quick Actions */
+.quickActionsSection {
+  margin-bottom: 2rem;
+}
+
+.quickActionsSection h3 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--pf-text-primary);
+  margin-bottom: 1.5rem;
+}
+
+.quickActions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.actionBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--pf-glass);
+  border: 1px solid var(--pf-glass-border);
+  border-radius: var(--pf-radius);
+  padding: 1rem 1.5rem;
+  color: var(--pf-text-primary);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: var(--pf-transition);
+  cursor: pointer;
+  box-shadow: var(--pf-shadow-light);
+}
+
+.actionBtn:hover {
+  background: var(--pf-glass-strong);
+  transform: translateY(-2px);
+  box-shadow: var(--pf-shadow-heavy);
+  border-color: var(--pf-primary);
+}
+
+.actionIcon {
+  font-size: 1.2rem;
+}
+
+/* AI Optimizer Section */
+.aiOptimizerSection {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.optimizerHeader {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.optimizerHeader h2 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, var(--pf-primary), var(--pf-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.optimizerHeader p {
+  color: var(--pf-text-secondary);
+  font-size: 1.1rem;
+}
+
+.optimizerInterface {
+  margin-bottom: 2rem;
+}
+
+.optimizerCards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.optimizerCard {
+  background: var(--pf-glass);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--pf-glass-border);
+  border-radius: var(--pf-radius);
+  padding: 2rem;
+}
+
+.optimizerCard h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--pf-text-primary);
+  margin-bottom: 1.5rem;
+}
+
+.analysisMetrics {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.metric {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  background: var(--pf-glass-strong);
+  border-radius: var(--pf-radius-small);
+}
+
+.metricLabel {
+  color: var(--pf-text-secondary);
+}
+
+.metricValue {
+  color: var(--pf-primary);
+  font-weight: 700;
+}
+
+.optimizationSuggestions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.suggestion {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: var(--pf-glass-strong);
+  border-radius: var(--pf-radius-small);
+}
+
+.suggestionIcon {
+  font-size: 1.2rem;
+}
+
+.applyOptimization {
+  width: 100%;
+  background: linear-gradient(135deg, var(--pf-primary), var(--pf-secondary));
+  color: #000;
+  border: none;
+  border-radius: var(--pf-radius-small);
+  padding: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--pf-transition);
+}
+
+.applyOptimization:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--pf-shadow-light);
+}
+
+.optimizedSchedule {
+  background: var(--pf-glass);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--pf-glass-border);
+  border-radius: var(--pf-radius);
+  padding: 2rem;
+}
+
+.optimizedSchedule h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--pf-text-primary);
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.scheduleComparison {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+.scheduleColumn h4 {
+  text-align: center;
+  margin-bottom: 1rem;
+  color: var(--pf-text-secondary);
+}
+
+.taskList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.scheduleTask {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  background: var(--pf-glass-strong);
+  border-radius: var(--pf-radius-small);
+  gap: 1rem;
+}
+
+.taskTitle {
+  flex: 1;
+  color: var(--pf-text-primary);
+  font-weight: 500;
+}
+
+.taskDuration {
+  color: var(--pf-text-muted);
+  font-size: 0.85rem;
+}
+
+.aiImprovement {
+  color: var(--pf-success);
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.scheduleArrow {
+  font-size: 2rem;
+  color: var(--pf-primary);
+  align-self: center;
+}
+
+/* Focus Section */
+.focusSection {
+  margin-bottom: 2rem;
+}
+
+.focusSection h2 {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 2rem;
+  background: linear-gradient(135deg, var(--pf-primary), var(--pf-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.focusOptions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.focusCard {
+  background: var(--pf-glass);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--pf-glass-border);
+  border-radius: var(--pf-radius);
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: var(--pf-transition);
+}
+
+.focusCard:hover {
+  background: var(--pf-glass-strong);
+  transform: translateY(-3px);
+  box-shadow: var(--pf-shadow-heavy);
+}
+
+.focusIcon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.focusCard h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--pf-text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.focusCard p {
+  color: var(--pf-text-secondary);
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+.focusStats {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.focusStats span {
+  font-size: 0.85rem;
+  color: var(--pf-text-muted);
+}
+
+.focusHistory {
+  background: var(--pf-glass);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--pf-glass-border);
+  border-radius: var(--pf-radius);
+  padding: 2rem;
+}
+
+.focusHistory h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--pf-text-primary);
+  margin-bottom: 1.5rem;
+}
+
+.sessionHistory {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.historyItem {
+  display: grid;
+  grid-template-columns: auto auto 1fr auto;
+  gap: 1rem;
+  align-items: center;
+  padding: 1rem;
+  background: var(--pf-glass-strong);
+  border-radius: var(--pf-radius-small);
+}
+
+.historyTime {
+  font-family: 'SF Mono', Monaco, monospace;
+  font-weight: 600;
+  color: var(--pf-primary);
+  min-width: 120px;
+}
+
+.historyType {
+  font-weight: 600;
+  color: var(--pf-text-primary);
+  min-width: 120px;
+}
+
+.historyProductivity {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.historyProductivity span {
+  font-size: 0.85rem;
+  color: var(--pf-text-muted);
+}
+
+.historyDistractions {
+  font-size: 0.85rem;
+  color: var(--pf-text-muted);
+  text-align: right;
+}
+
+/* Tasks Section */
+.tasksSection {
+  margin-bottom: 2rem;
+}
+
+.tasksHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.tasksHeader h2 {
+  font-size: 2rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--pf-primary), var(--pf-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.addTaskBtn {
+  background: linear-gradient(135deg, var(--pf-primary), var(--pf-secondary));
+  color: #000;
+  border: none;
+  border-radius: var(--pf-radius-small);
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--pf-transition);
+}
+
+.addTaskBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--pf-shadow-light);
+}
+
+.tasksFilters {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.filterBtn {
+  background: var(--pf-glass);
+  border: 1px solid var(--pf-glass-border);
+  border-radius: var(--pf-radius-small);
+  padding: 0.5rem 1rem;
+  color: var(--pf-text-secondary);
+  cursor: pointer;
+  transition: var(--pf-transition);
+  font-size: 0.9rem;
+}
+
+.filterBtn:hover {
+  background: var(--pf-glass-strong);
+  border-color: var(--pf-primary);
+  color: var(--pf-text-primary);
+}
+
+.tasksKanban {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.kanbanColumn {
+  background: var(--pf-glass);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--pf-glass-border);
+  border-radius: var(--pf-radius);
+  padding: 1.5rem;
+  min-height: 500px;
+}
+
+.kanbanColumn h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--pf-text-primary);
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--pf-glass-border);
+}
+
+.kanbanTasks {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.kanbanTask {
+  background: var(--pf-glass-strong);
+  border: 1px solid var(--pf-glass-border);
+  border-radius: var(--pf-radius-small);
+  padding: 1rem;
+  transition: var(--pf-transition);
+  cursor: pointer;
+}
+
+.kanbanTask:hover {
+  background: rgba(6, 182, 212, 0.1);
+  border-color: var(--pf-primary);
+  transform: translateY(-1px);
+}
+
+.kanbanTask.completedTask {
+  opacity: 0.7;
+}
+
+.kanbanTask .taskHeader {
+  margin-bottom: 0.75rem;
+}
+
+.kanbanTask .taskHeader h4 {
+  margin-bottom: 0;
+}
+
+.kanbanTask p {
+  font-size: 0.9rem;
+  color: var(--pf-text-secondary);
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+
+.progressIndicator {
+  margin: 0.75rem 0;
+}
+
+.progressIndicator span {
+  font-size: 0.8rem;
+  color: var(--pf-text-muted);
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--pf-primary), var(--pf-secondary));
+  border-radius: 3px;
+  transition: width 1s ease;
+}
+
+.taskFooter {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--pf-text-muted);
+}
+
+.completedIcon {
+  color: var(--pf-success);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .dashboard {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto 1fr;
+  }
+  
+  .sidebar {
+    grid-row: auto;
+    grid-column: 1;
+    position: relative;
+    height: auto;
+    padding: 1rem;
+  }
+  
+  .header {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  
+  .mainContent {
+    grid-column: 1;
+    grid-row: 3;
+  }
+  
+  .headerStats {
+    display: none;
+  }
+  
+  .priorityTasksGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .optimizerCards {
+    grid-template-columns: 1fr;
+  }
+  
+  .scheduleComparison {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .scheduleArrow {
+    transform: rotate(90deg);
+  }
+  
+  .focusOptions {
+    grid-template-columns: 1fr;
+  }
+  
+  .tasksKanban {
+    grid-template-columns: 1fr;
+  }
+  
+  .quickActions {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 768px) {
+  .headerLeft h1 {
+    font-size: 1.4rem;
+  }
+  
+  .headerLeft p {
+    font-size: 0.85rem;
+  }
+  
+  .mainContent {
+    padding: 1rem;
+  }
+  
+  .welcomeSection {
+    padding: 1.5rem;
+  }
+  
+  .welcomeSection h2 {
+    font-size: 1.6rem;
+  }
+  
+  .aiSuggestionCard {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .timeBlock {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .timeBlockTime {
+    min-width: auto;
+  }
+  
+  .historyItem {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+    text-align: left;
+  }
+  
+  .tasksHeader {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fadeInUp {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Custom Scrollbar */
+.sidebar::-webkit-scrollbar,
+.mainContent::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track,
+.mainContent::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb,
+.mainContent::-webkit-scrollbar-thumb {
+  background: var(--pf-glass-border);
+  border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover,
+.mainContent::-webkit-scrollbar-thumb:hover {
+  background: var(--pf-primary);
+}
