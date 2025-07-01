@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import './style.css';
+import styles from './style.module.css'; // ✅ CSS Module import
 
 // Types
 interface Task {
@@ -38,15 +38,6 @@ interface FocusSession {
   isActive: boolean;
   productivity?: number;
   distractions: number;
-}
-
-interface ProductivityInsight {
-  id: string;
-  type: 'pattern' | 'suggestion' | 'achievement' | 'warning';
-  title: string;
-  description: string;
-  impact: 'low' | 'medium' | 'high';
-  actionable: boolean;
 }
 
 export default function PorFlowDashboard() {
@@ -248,9 +239,9 @@ export default function PorFlowDashboard() {
 
   if (loading) {
     return (
-      <div className="dashboard">
-        <div className="loadingScreen">
-          <div className="loadingSpinner"></div>
+      <div className={styles.dashboard}>
+        <div className={styles.loadingScreen}>
+          <div className={styles.loadingSpinner}></div>
           <h2>Optimizez workflow-ul tău...</h2>
           <p>Analizez taskurile și calculez prioritățile AI</p>
         </div>
@@ -259,114 +250,114 @@ export default function PorFlowDashboard() {
   }
 
   return (
-    <div className="dashboard">
+    <div className={styles.dashboard}>
       {/* SIDEBAR */}
-      <nav className="sidebar">
-        <div className="sidebarLogo">
-          <Link href="/" className="logo">🌊 PorFlow</Link>
+      <nav className={styles.sidebar}>
+        <div className={styles.sidebarLogo}>
+          <Link href="/" className={styles.logo}>🌊 PorFlow</Link>
         </div>
 
-        <div className="navSection">
-          <div className="navSectionTitle">Overview</div>
+        <div className={styles.navSection}>
+          <div className={styles.navSectionTitle}>Overview</div>
           <button 
-            className={`navItem ${activeView === 'dashboard' ? 'active' : ''}`}
+            className={`${styles.navItem} ${activeView === 'dashboard' ? styles.active : ''}`}
             onClick={() => setActiveView('dashboard')}
           >
-            <span className="navItemIcon">📊</span>
+            <span className={styles.navItemIcon}>📊</span>
             Dashboard
           </button>
           <button 
-            className={`navItem ${activeView === 'tasks' ? 'active' : ''}`}
+            className={`${styles.navItem} ${activeView === 'tasks' ? styles.active : ''}`}
             onClick={() => setActiveView('tasks')}
           >
-            <span className="navItemIcon">✅</span>
+            <span className={styles.navItemIcon}>✅</span>
             Task Management
           </button>
           <button 
-            className={`navItem ${activeView === 'calendar' ? 'active' : ''}`}
+            className={`${styles.navItem} ${activeView === 'calendar' ? styles.active : ''}`}
             onClick={() => setActiveView('calendar')}
           >
-            <span className="navItemIcon">📅</span>
+            <span className={styles.navItemIcon}>📅</span>
             Time Blocking
           </button>
           <button 
-            className={`navItem ${activeView === 'focus' ? 'active' : ''}`}
+            className={`${styles.navItem} ${activeView === 'focus' ? styles.active : ''}`}
             onClick={() => setActiveView('focus')}
           >
-            <span className="navItemIcon">🎯</span>
+            <span className={styles.navItemIcon}>🎯</span>
             Focus Sessions
           </button>
         </div>
 
-        <div className="navSection">
-          <div className="navSectionTitle">AI Tools</div>
+        <div className={styles.navSection}>
+          <div className={styles.navSectionTitle}>AI Tools</div>
           <button 
-            className={`navItem ${activeView === 'ai-optimizer' ? 'active' : ''}`}
+            className={`${styles.navItem} ${activeView === 'ai-optimizer' ? styles.active : ''}`}
             onClick={() => setActiveView('ai-optimizer')}
           >
-            <span className="navItemIcon">🤖</span>
+            <span className={styles.navItemIcon}>🤖</span>
             AI Task Optimizer
           </button>
           <button 
-            className={`navItem ${activeView === 'workflow' ? 'active' : ''}`}
+            className={`${styles.navItem} ${activeView === 'workflow' ? styles.active : ''}`}
             onClick={() => setActiveView('workflow')}
           >
-            <span className="navItemIcon">⚡</span>
+            <span className={styles.navItemIcon}>⚡</span>
             Workflow Builder
           </button>
           <button 
-            className={`navItem ${activeView === 'analytics' ? 'active' : ''}`}
+            className={`${styles.navItem} ${activeView === 'analytics' ? styles.active : ''}`}
             onClick={() => setActiveView('analytics')}
           >
-            <span className="navItemIcon">📈</span>
+            <span className={styles.navItemIcon}>📈</span>
             Productivity Analytics
           </button>
         </div>
 
-        <div className="navSection">
-          <div className="navSectionTitle">Integration</div>
+        <div className={styles.navSection}>
+          <div className={styles.navSectionTitle}>Integration</div>
           <button 
-            className={`navItem ${activeView === 'calendar-sync' ? 'active' : ''}`}
+            className={`${styles.navItem} ${activeView === 'calendar-sync' ? styles.active : ''}`}
             onClick={() => setActiveView('calendar-sync')}
           >
-            <span className="navItemIcon">🔄</span>
+            <span className={styles.navItemIcon}>🔄</span>
             Calendar Sync
           </button>
           <button 
-            className={`navItem ${activeView === 'automation' ? 'active' : ''}`}
+            className={`${styles.navItem} ${activeView === 'automation' ? styles.active : ''}`}
             onClick={() => setActiveView('automation')}
           >
-            <span className="navItemIcon">🔧</span>
+            <span className={styles.navItemIcon}>🔧</span>
             Automation
           </button>
         </div>
       </nav>
 
       {/* HEADER */}
-      <header className="header">
-        <div className="headerLeft">
+      <header className={styles.header}>
+        <div className={styles.headerLeft}>
           <h1>⚡ Flow State Dashboard</h1>
-          <p>Scor productivitate: <span className="productivityScore">{productivityScore}%</span> • Focus astăzi: <span className="focusTime">{focusTime}h</span></p>
+          <p>Scor productivitate: <span className={styles.productivityScore}>{productivityScore}%</span> • Focus astăzi: <span className={styles.focusTime}>{focusTime}h</span></p>
         </div>
-        <div className="headerRight">
-          <div className="headerStats">
-            <div className="statItem">
-              <div className="statValue">{completedTasks}</div>
-              <div className="statLabel">Taskuri finalizate</div>
+        <div className={styles.headerRight}>
+          <div className={styles.headerStats}>
+            <div className={styles.statItem}>
+              <div className={styles.statValue}>{completedTasks}</div>
+              <div className={styles.statLabel}>Taskuri finalizate</div>
             </div>
-            <div className="statItem">
-              <div className="statValue">{todayTasks.filter(t => t.status === 'in-progress').length}</div>
-              <div className="statLabel">În progres</div>
+            <div className={styles.statItem}>
+              <div className={styles.statValue}>{todayTasks.filter(t => t.status === 'in-progress').length}</div>
+              <div className={styles.statLabel}>În progres</div>
             </div>
-            <div className="statItem">
-              <div className="statValue">{todayTasks.filter(t => t.priority === 'high' || t.priority === 'urgent').length}</div>
-              <div className="statLabel">Prioritate mare</div>
+            <div className={styles.statItem}>
+              <div className={styles.statValue}>{todayTasks.filter(t => t.priority === 'high' || t.priority === 'urgent').length}</div>
+              <div className={styles.statLabel}>Prioritate mare</div>
             </div>
           </div>
-          <div className="headerActions">
+          <div className={styles.headerActions}>
             {currentFocusSession?.isActive ? (
               <button 
-                className={`headerBtn activeFocus`}
+                className={`${styles.headerBtn} ${styles.activeFocus}`}
                 onClick={stopFocusSession}
                 title="Stop Focus Session"
               >
@@ -374,98 +365,98 @@ export default function PorFlowDashboard() {
               </button>
             ) : (
               <button 
-                className="headerBtn"
+                className={styles.headerBtn}
                 onClick={() => startFocusSession('pomodoro', 25)}
                 title="Start Focus Session"
               >
                 🎯
               </button>
             )}
-            <button className="headerBtn" title="Notificări">🔔</button>
-            <button className="headerBtn" title="Setări">⚙️</button>
-            <button className="headerBtn" title="Profil">👤</button>
+            <button className={styles.headerBtn} title="Notificări">🔔</button>
+            <button className={styles.headerBtn} title="Setări">⚙️</button>
+            <button className={styles.headerBtn} title="Profil">👤</button>
           </div>
         </div>
       </header>
 
       {/* MAIN CONTENT */}
-      <main className="mainContent">
+      <main className={styles.mainContent}>
         {activeView === 'dashboard' && (
           <>
             {/* Welcome Section */}
-            <section className="welcomeSection">
+            <section className={styles.welcomeSection}>
               <h2>🌟 Bună dimineața, Alex!</h2>
               <p>Ziua ta este optimizată pentru productivitate maximă. Ai 5 taskuri planificate și 4.5h timp de deep work.</p>
             </section>
 
             {/* AI Suggestion Card */}
-            <section className="aiSuggestionSection">
-              <div className="aiSuggestionCard">
-                <div className="aiAvatar">🤖</div>
-                <div className="aiContent">
+            <section className={styles.aiSuggestionSection}>
+              <div className={styles.aiSuggestionCard}>
+                <div className={styles.aiAvatar}>🤖</div>
+                <div className={styles.aiContent}>
                   <h3>AI Productivity Insight</h3>
                   <p>{getAITaskSuggestion()}</p>
                 </div>
-                <button className="applySuggestion">Aplică</button>
+                <button className={styles.applySuggestion}>Aplică</button>
               </div>
             </section>
 
             {/* Current Focus Session */}
             {currentFocusSession?.isActive && (
-              <section className="focusSessionActive">
-                <div className="focusHeader">
+              <section className={styles.focusSessionActive}>
+                <div className={styles.focusHeader}>
                   <h3>🎯 Focus Session Activ</h3>
-                  <span className="sessionType">
+                  <span className={styles.sessionType}>
                     {currentFocusSession.type === 'pomodoro' && '🍅 Pomodoro'}
                     {currentFocusSession.type === 'deep-work' && '🧠 Deep Work'}
                     {currentFocusSession.type === 'flow-state' && '🌊 Flow State'}
                   </span>
                 </div>
-                <div className="focusTimer">
-                  <div className="timerDisplay">24:35</div>
-                  <div className="timerProgress">
-                    <div className="progressBar" style={{ width: '65%' }}></div>
+                <div className={styles.focusTimer}>
+                  <div className={styles.timerDisplay}>24:35</div>
+                  <div className={styles.timerProgress}>
+                    <div className={styles.progressBar} style={{ width: '65%' }}></div>
                   </div>
                 </div>
-                <div className="focusActions">
-                  <button className="pauseBtn">⏸️ Pauză</button>
-                  <button className="stopBtn" onClick={stopFocusSession}>⏹️ Stop</button>
-                  <button className="distractionBtn">📱 Distracție</button>
+                <div className={styles.focusActions}>
+                  <button className={styles.pauseBtn}>⏸️ Pauză</button>
+                  <button className={styles.stopBtn} onClick={stopFocusSession}>⏹️ Stop</button>
+                  <button className={styles.distractionBtn}>📱 Distracție</button>
                 </div>
               </section>
             )}
 
             {/* Today's Priority Tasks */}
-            <section className="priorityTasksSection">
+            <section className={styles.priorityTasksSection}>
               <h3>🎯 Taskuri Prioritare Astăzi</h3>
-              <div className="priorityTasksGrid">
+              <div className={styles.priorityTasksGrid}>
                 {todayTasks
                   .filter(task => task.priority === 'high' || task.priority === 'urgent')
                   .map(task => (
-                    <div key={task.id} className="priorityTaskCard">
-                      <div className="taskHeader">
-                        <span className="taskStatus">{getStatusIcon(task.status)}</span>
+                    <div key={task.id} className={styles.priorityTaskCard}>
+                      <div className={styles.taskHeader}>
+                        <span className={styles.taskStatus}>{getStatusIcon(task.status)}</span>
                         <h4>{task.title}</h4>
                         <div 
-                          className="taskPriority"
+                          className={styles.taskPriority}
                           style={{ backgroundColor: getPriorityColor(task.priority) }}
                         >
                           {task.priority}
                         </div>
                       </div>
-                      <p className="taskDescription">{task.description}</p>
-                      <div className="taskMeta">
-                        <span className="taskTime">⏱️ {formatTime(task.estimatedTime)}</span>
-                        <span className="taskAI">🤖 {task.aiScore}/10</span>
+                      <p className={styles.taskDescription}>{task.description}</p>
+                      <div className={styles.taskMeta}>
+                        <span className={styles.taskTime}>⏱️ {formatTime(task.estimatedTime)}</span>
+                        <span className={styles.taskAI}>🤖 {task.aiScore}/10</span>
                         {task.deadline && (
-                          <span className="taskDeadline">
+                          <span className={styles.taskDeadline}>
                             📅 {new Date(task.deadline).toLocaleDateString('ro-RO')}
                           </span>
                         )}
                       </div>
-                      <div className="taskTags">
+                      <div className={styles.taskTags}>
                         {task.tags.map(tag => (
-                          <span key={tag} className="taskTag">{tag}</span>
+                          <span key={tag} className={styles.taskTag}>{tag}</span>
                         ))}
                       </div>
                     </div>
@@ -474,33 +465,33 @@ export default function PorFlowDashboard() {
             </section>
 
             {/* Time Blocks Today */}
-            <section className="timeBlocksSection">
+            <section className={styles.timeBlocksSection}>
               <h3>📅 Programul de Astăzi</h3>
-              <div className="timeBlocksTimeline">
+              <div className={styles.timeBlocksTimeline}>
                 {timeBlocks.map(block => (
-                  <div key={block.id} className={`timeBlock ${block.type}`}>
-                    <div className="timeBlockTime">
+                  <div key={block.id} className={`${styles.timeBlock} ${styles[block.type]}`}>
+                    <div className={styles.timeBlockTime}>
                       {block.start} - {block.end}
                     </div>
-                    <div className="timeBlockContent">
+                    <div className={styles.timeBlockContent}>
                       <h4>{block.title}</h4>
                       {block.productivity && (
-                        <div className="productivityIndicator">
+                        <div className={styles.productivityIndicator}>
                           <span>Productivitate: {block.productivity}/10</span>
-                          <div className="productivityBar">
+                          <div className={styles.productivityBar}>
                             <div 
-                              className="productivityFill"
+                              className={styles.productivityFill}
                               style={{ width: `${block.productivity * 10}%` }}
                             ></div>
                           </div>
                         </div>
                       )}
                       {block.tasks && block.tasks.length > 0 && (
-                        <div className="blockTasks">
+                        <div className={styles.blockTasks}>
                           {block.tasks.map(taskId => {
                             const task = todayTasks.find(t => t.id === taskId);
                             return task ? (
-                              <span key={taskId} className="blockTask">
+                              <span key={taskId} className={styles.blockTask}>
                                 {task.title}
                               </span>
                             ) : null;
@@ -514,33 +505,33 @@ export default function PorFlowDashboard() {
             </section>
 
             {/* Quick Actions */}
-            <section className="quickActionsSection">
+            <section className={styles.quickActionsSection}>
               <h3>⚡ Quick Actions</h3>
-              <div className="quickActions">
+              <div className={styles.quickActions}>
                 <button 
-                  className="actionBtn"
+                  className={styles.actionBtn}
                   onClick={() => startFocusSession('pomodoro', 25)}
                 >
-                  <span className="actionIcon">🍅</span>
+                  <span className={styles.actionIcon}>🍅</span>
                   Start Pomodoro (25min)
                 </button>
                 <button 
-                  className="actionBtn"
+                  className={styles.actionBtn}
                   onClick={() => startFocusSession('deep-work', 90)}
                 >
-                  <span className="actionIcon">🧠</span>
+                  <span className={styles.actionIcon}>🧠</span>
                   Deep Work (90min)
                 </button>
-                <button className="actionBtn">
-                  <span className="actionIcon">📝</span>
+                <button className={styles.actionBtn}>
+                  <span className={styles.actionIcon}>📝</span>
                   Add Quick Task
                 </button>
-                <button className="actionBtn">
-                  <span className="actionIcon">📊</span>
+                <button className={styles.actionBtn}>
+                  <span className={styles.actionIcon}>📊</span>
                   View Analytics
                 </button>
-                <button className="actionBtn">
-                  <span className="actionIcon">🔄</span>
+                <button className={styles.actionBtn}>
+                  <span className={styles.actionIcon}>🔄</span>
                   Auto-Schedule
                 </button>
               </div>
@@ -549,83 +540,83 @@ export default function PorFlowDashboard() {
         )}
 
         {activeView === 'ai-optimizer' && (
-          <section className="aiOptimizerSection">
-            <div className="optimizerHeader">
+          <section className={styles.aiOptimizerSection}>
+            <div className={styles.optimizerHeader}>
               <h2>🤖 AI Task Optimizer</h2>
               <p>Algoritmul AI analizează taskurile tale și optimizează ordinea pentru productivitate maximă</p>
             </div>
 
-            <div className="optimizerInterface">
-              <div className="optimizerCards">
-                <div className="optimizerCard">
+            <div className={styles.optimizerInterface}>
+              <div className={styles.optimizerCards}>
+                <div className={styles.optimizerCard}>
                   <h3>📊 Analiză Curentă</h3>
-                  <div className="analysisMetrics">
-                    <div className="metric">
-                      <span className="metricLabel">Taskuri analizate:</span>
-                      <span className="metricValue">{todayTasks.length}</span>
+                  <div className={styles.analysisMetrics}>
+                    <div className={styles.metric}>
+                      <span className={styles.metricLabel}>Taskuri analizate:</span>
+                      <span className={styles.metricValue}>{todayTasks.length}</span>
                     </div>
-                    <div className="metric">
-                      <span className="metricLabel">Timp total estimat:</span>
-                      <span className="metricValue">
+                    <div className={styles.metric}>
+                      <span className={styles.metricLabel}>Timp total estimat:</span>
+                      <span className={styles.metricValue}>
                         {formatTime(todayTasks.reduce((sum, task) => sum + task.estimatedTime, 0))}
                       </span>
                     </div>
-                    <div className="metric">
-                      <span className="metricLabel">Scor AI mediu:</span>
-                      <span className="metricValue">
+                    <div className={styles.metric}>
+                      <span className={styles.metricLabel}>Scor AI mediu:</span>
+                      <span className={styles.metricValue}>
                         {(todayTasks.reduce((sum, task) => sum + (task.aiScore || 0), 0) / todayTasks.length).toFixed(1)}/10
                       </span>
                     </div>
                   </div>
                 </div>
 
-                <div className="optimizerCard">
+                <div className={styles.optimizerCard}>
                   <h3>⚡ Optimizare Sugerată</h3>
-                  <div className="optimizationSuggestions">
-                    <div className="suggestion">
-                      <span className="suggestionIcon">🎯</span>
+                  <div className={styles.optimizationSuggestions}>
+                    <div className={styles.suggestion}>
+                      <span className={styles.suggestionIcon}>🎯</span>
                       <span>Reprogramează taskurile în funcție de energia naturală</span>
                     </div>
-                    <div className="suggestion">
-                      <span className="suggestionIcon">⏰</span>
+                    <div className={styles.suggestion}>
+                      <span className={styles.suggestionIcon}>⏰</span>
                       <span>Grupează taskurile similare pentru eficiență maximă</span>
                     </div>
-                    <div className="suggestion">
-                      <span className="suggestionIcon">🧠</span>
+                    <div className={styles.suggestion}>
+                      <span className={styles.suggestionIcon}>🧠</span>
                       <span>Plasează taskurile complexe în orele de vârf</span>
                     </div>
                   </div>
-                  <button className="applyOptimization">Aplică Optimizarea</button>
+                  <button className={styles.applyOptimization}>Aplică Optimizarea</button>
                 </div>
               </div>
 
-              <div className="optimizedSchedule">
+              <div className={styles.optimizedSchedule}>
                 <h3>📋 Program Optimizat AI</h3>
-                <div className="scheduleComparison">
-                  <div className="scheduleColumn">
+                <div className={styles.scheduleComparison}>
+                  <div className={styles.scheduleColumn}>
                     <h4>Program Actual</h4>
-                    <div className="taskList">
+                    <div className={styles.taskList}>
                       {todayTasks.map(task => (
-                        <div key={task.id} className="scheduleTask">
-                          <span className="taskTitle">{task.title}</span>
-                          <span className="taskDuration">{formatTime(task.estimatedTime)}</span>
+                        <div key={task.id} className={styles.scheduleTask}>
+                          <span className={styles.taskTitle}>{task.title}</span>
+                          <span className={styles.taskDuration}>{formatTime(task.estimatedTime)}</span>
                         </div>
                       ))}
                     </div>
                   </div>
                   
-                  <div className="scheduleArrow">→</div>
+                  <div className={styles.scheduleArrow}>→</div>
                   
-                  <div className="scheduleColumn">
+                  <div className={styles.scheduleColumn}>
                     <h4>Program Optimizat AI</h4>
-                    <div className="taskList">
+                    <div className={styles.taskList}>
                       {[...todayTasks]
                         .sort((a, b) => (b.aiScore || 0) - (a.aiScore || 0))
                         .map(task => (
-                        <div key={task.id} className="scheduleTask">
-                          <span className="taskTitle">{task.title}</span>
-                          <span className="taskDuration">{formatTime(task.estimatedTime)}</span>
-                          <span className="aiImprovement">+{Math.floor(Math.random() * 20 + 10)}%</span>
+                        <div key={task.id} className={styles.scheduleTask}>
+                          <span className={styles.taskTitle}>{task.title}</span>
+                          <span className={styles.taskDuration}>{formatTime(task.estimatedTime)}</span>
+                          <span className={styles.aiImprovement}>+{Math.floor(Math.random() * 20 + 10)}%</span>
                         </div>
                       ))}
                     </div>
@@ -637,66 +628,66 @@ export default function PorFlowDashboard() {
         )}
 
         {activeView === 'focus' && (
-          <section className="focusSection">
+          <section className={styles.focusSection}>
             <h2>🎯 Focus Sessions & Deep Work</h2>
             
-            <div className="focusOptions">
-              <div className="focusCard" onClick={() => startFocusSession('pomodoro', 25)}>
-                <div className="focusIcon">🍅</div>
+            <div className={styles.focusOptions}>
+              <div className={styles.focusCard} onClick={() => startFocusSession('pomodoro', 25)}>
+                <div className={styles.focusIcon}>🍅</div>
                 <h3>Pomodoro</h3>
                 <p>25 minute focus + 5 minute break</p>
-                <div className="focusStats">
+                <div className={styles.focusStats}>
                   <span>Sessions astăzi: 3</span>
                   <span>Success rate: 85%</span>
                 </div>
               </div>
 
-              <div className="focusCard" onClick={() => startFocusSession('deep-work', 90)}>
-                <div className="focusIcon">🧠</div>
+              <div className={styles.focusCard} onClick={() => startFocusSession('deep-work', 90)}>
+                <div className={styles.focusIcon}>🧠</div>
                 <h3>Deep Work</h3>
                 <p>90 minute intensive focus session</p>
-                <div className="focusStats">
+                <div className={styles.focusStats}>
                   <span>Sessions astăzi: 1</span>
                   <span>Avg productivity: 9.2/10</span>
                 </div>
               </div>
 
-              <div className="focusCard" onClick={() => startFocusSession('flow-state', 120)}>
-                <div className="focusIcon">🌊</div>
+              <div className={styles.focusCard} onClick={() => startFocusSession('flow-state', 120)}>
+                <div className={styles.focusIcon}>🌊</div>
                 <h3>Flow State</h3>
                 <p>2+ ore pentru proiecte complexe</p>
-                <div className="focusStats">
+                <div className={styles.focusStats}>
                   <span>Sessions această săptămână: 2</span>
                   <span>Peak performance: 9.8/10</span>
                 </div>
               </div>
             </div>
 
-            <div className="focusHistory">
+            <div className={styles.focusHistory}>
               <h3>📈 Istoric Focus Sessions</h3>
-              <div className="sessionHistory">
-                <div className="historyItem">
-                  <div className="historyTime">09:00 - 10:30</div>
-                  <div className="historyType">🧠 Deep Work</div>
-                  <div className="historyProductivity">
+              <div className={styles.sessionHistory}>
+                <div className={styles.historyItem}>
+                  <div className={styles.historyTime}>09:00 - 10:30</div>
+                  <div className={styles.historyType}>🧠 Deep Work</div>
+                  <div className={styles.historyProductivity}>
                     <span>Productivitate: 9.2/10</span>
-                    <div className="productivityBar">
-                      <div className="productivityFill" style={{ width: '92%' }}></div>
+                    <div className={styles.productivityBar}>
+                      <div className={styles.productivityFill} style={{ width: '92%' }}></div>
                     </div>
                   </div>
-                  <div className="historyDistractions">2 distracții</div>
+                  <div className={styles.historyDistractions}>2 distracții</div>
                 </div>
                 
-                <div className="historyItem">
-                  <div className="historyTime">11:45 - 12:10</div>
-                  <div className="historyType">🍅 Pomodoro</div>
-                  <div className="historyProductivity">
+                <div className={styles.historyItem}>
+                  <div className={styles.historyTime}>11:45 - 12:10</div>
+                  <div className={styles.historyType}>🍅 Pomodoro</div>
+                  <div className={styles.historyProductivity}>
                     <span>Productivitate: 8.5/10</span>
-                    <div className="productivityBar">
-                      <div className="productivityFill" style={{ width: '85%' }}></div>
+                    <div className={styles.productivityBar}>
+                      <div className={styles.productivityFill} style={{ width: '85%' }}></div>
                     </div>
                   </div>
-                  <div className="historyDistractions">1 distracție</div>
+                  <div className={styles.historyDistractions}>1 distracție</div>
                 </div>
               </div>
             </div>
@@ -704,37 +695,37 @@ export default function PorFlowDashboard() {
         )}
 
         {activeView === 'tasks' && (
-          <section className="tasksSection">
-            <div className="tasksHeader">
+          <section className={styles.tasksSection}>
+            <div className={styles.tasksHeader}>
               <h2>✅ Task Management</h2>
-              <button className="addTaskBtn">+ Adaugă Task</button>
+              <button className={styles.addTaskBtn}>+ Adaugă Task</button>
             </div>
 
-            <div className="tasksFilters">
-              <button className="filterBtn">Toate</button>
-              <button className="filterBtn">Astăzi</button>
-              <button className="filterBtn">Prioritate mare</button>
-              <button className="filterBtn">În progres</button>
-              <button className="filterBtn">Completate</button>
+            <div className={styles.tasksFilters}>
+              <button className={styles.filterBtn}>Toate</button>
+              <button className={styles.filterBtn}>Astăzi</button>
+              <button className={styles.filterBtn}>Prioritate mare</button>
+              <button className={styles.filterBtn}>În progres</button>
+              <button className={styles.filterBtn}>Completate</button>
             </div>
 
-            <div className="tasksKanban">
-              <div className="kanbanColumn">
+            <div className={styles.tasksKanban}>
+              <div className={styles.kanbanColumn}>
                 <h3>📝 To Do ({todayTasks.filter(t => t.status === 'todo').length})</h3>
-                <div className="kanbanTasks">
+                <div className={styles.kanbanTasks}>
                   {todayTasks.filter(task => task.status === 'todo').map(task => (
-                    <div key={task.id} className="kanbanTask">
-                      <div className="taskHeader">
+                    <div key={task.id} className={styles.kanbanTask}>
+                      <div className={styles.taskHeader}>
                         <h4>{task.title}</h4>
                         <div 
-                          className="taskPriority"
+                          className={styles.taskPriority}
                           style={{ backgroundColor: getPriorityColor(task.priority) }}
                         >
                           {task.priority}
                         </div>
                       </div>
                       <p>{task.description}</p>
-                      <div className="taskFooter">
+                      <div className={styles.taskFooter}>
                         <span>⏱️ {formatTime(task.estimatedTime)}</span>
                         <span>🤖 {task.aiScore}/10</span>
                       </div>
@@ -743,28 +734,28 @@ export default function PorFlowDashboard() {
                 </div>
               </div>
 
-              <div className="kanbanColumn">
+              <div className={styles.kanbanColumn}>
                 <h3>🔄 În Progres ({todayTasks.filter(t => t.status === 'in-progress').length})</h3>
-                <div className="kanbanTasks">
+                <div className={styles.kanbanTasks}>
                   {todayTasks.filter(task => task.status === 'in-progress').map(task => (
-                    <div key={task.id} className="kanbanTask">
-                      <div className="taskHeader">
+                    <div key={task.id} className={styles.kanbanTask}>
+                      <div className={styles.taskHeader}>
                         <h4>{task.title}</h4>
                         <div 
-                          className="taskPriority"
+                          className={styles.taskPriority}
                           style={{ backgroundColor: getPriorityColor(task.priority) }}
                         >
                           {task.priority}
                         </div>
                       </div>
                       <p>{task.description}</p>
-                      <div className="progressIndicator">
-                        <div className="progressBar">
-                          <div className="progressFill" style={{ width: '65%' }}></div>
+                      <div className={styles.progressIndicator}>
+                        <div className={styles.progressBar}>
+                          <div className={styles.progressFill} style={{ width: '65%' }}></div>
                         </div>
                         <span>65% complet</span>
                       </div>
-                      <div className="taskFooter">
+                      <div className={styles.taskFooter}>
                         <span>⏱️ {task.actualTime ? `${formatTime(task.actualTime)} / ${formatTime(task.estimatedTime)}` : formatTime(task.estimatedTime)}</span>
                         <span>🤖 {task.aiScore}/10</span>
                       </div>
@@ -773,22 +764,22 @@ export default function PorFlowDashboard() {
                 </div>
               </div>
 
-              <div className="kanbanColumn">
+              <div className={styles.kanbanColumn}>
                 <h3>👀 Review ({todayTasks.filter(t => t.status === 'review').length})</h3>
-                <div className="kanbanTasks">
+                <div className={styles.kanbanTasks}>
                   {todayTasks.filter(task => task.status === 'review').map(task => (
-                    <div key={task.id} className="kanbanTask">
-                      <div className="taskHeader">
+                    <div key={task.id} className={styles.kanbanTask}>
+                      <div className={styles.taskHeader}>
                         <h4>{task.title}</h4>
                         <div 
-                          className="taskPriority"
+                          className={styles.taskPriority}
                           style={{ backgroundColor: getPriorityColor(task.priority) }}
                         >
                           {task.priority}
                         </div>
                       </div>
                       <p>{task.description}</p>
-                      <div className="taskFooter">
+                      <div className={styles.taskFooter}>
                         <span>⏱️ {formatTime(task.actualTime || task.estimatedTime)}</span>
                         <span>🤖 {task.aiScore}/10</span>
                       </div>
@@ -797,16 +788,16 @@ export default function PorFlowDashboard() {
                 </div>
               </div>
 
-              <div className="kanbanColumn">
+              <div className={styles.kanbanColumn}>
                 <h3>✅ Completate ({todayTasks.filter(t => t.status === 'completed').length})</h3>
-                <div className="kanbanTasks">
+                <div className={styles.kanbanTasks}>
                   {todayTasks.filter(task => task.status === 'completed').map(task => (
-                    <div key={task.id} className={`kanbanTask completedTask`}>
-                      <div className="taskHeader">
+                    <div key={task.id} className={`${styles.kanbanTask} ${styles.completedTask}`}>
+                      <div className={styles.taskHeader}>
                         <h4>{task.title}</h4>
-                        <span className="completedIcon">✅</span>
+                        <span className={styles.completedIcon}>✅</span>
                       </div>
-                      <div className="taskFooter">
+                      <div className={styles.taskFooter}>
                         <span>⏱️ {task.actualTime ? `${formatTime(task.actualTime)} (estimat: ${formatTime(task.estimatedTime)})` : formatTime(task.estimatedTime)}</span>
                         <span>🤖 {task.aiScore}/10</span>
                       </div>

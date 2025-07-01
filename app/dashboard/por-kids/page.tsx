@@ -1,504 +1,542 @@
 'use client';
-import './dashboard-style.css';
+
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import styles from './style.module.css';
+
+interface ChatMessage {
+  id: string;
+  text: string;
+  isAI: boolean;
+  timestamp: Date;
+}
+
+interface Subject {
+  name: string;
+  progress: number;
+  target: number;
+  lastScore: string;
+  icon: string;
+}
+
+interface Activity {
+  id: string;
+  title: string;
+  time: string;
+  icon: string;
+  type: 'homework' | 'badge' | 'game' | 'mission';
+}
 
 export default function PorKidsDashboard() {
   const [chatOpen, setChatOpen] = useState(false);
   const [parentMode, setParentMode] = useState(false);
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
+    {
+      id: '1',
+      text: 'Salut! Sunt aici să te ajut cu orice exercițiu sau temă. Scrie o întrebare sau trimite o provocare!',
+      isAI: true,
+      timestamp: new Date()
+    }
+  ]);
+  const [newMessage, setNewMessage] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
+
+  const subjects: Subject[] = [
+    { name: 'Matematică', progress: 92, target: 90, lastScore: '8/10', icon: '🔢' },
+    { name: 'Română', progress: 87, target: 85, lastScore: '10/12', icon: '📖' },
+    { name: 'Științe', progress: 80, target: 80, lastScore: '9/11', icon: '🔬' }
+  ];
+
+  const activities: Activity[] = [
+    {
+      id: '1',
+      title: 'Temă la matematică finalizată',
+      time: 'Acum 2h • 8 exerciții',
+      icon: '📓',
+      type: 'homework'
+    },
+    {
+      id: '2',
+      title: 'Insignă nouă: "Geniu la matematică"',
+      time: 'Acum 6h',
+      icon: '🏅',
+      type: 'badge'
+    },
+    {
+      id: '3',
+      title: 'Joacă educațională: Provocare logică',
+      time: 'Azi • 12 min',
+      icon: '🎮',
+      type: 'game'
+    }
+  ];
+
+  const sendMessage = async () => {
+    if (!newMessage.trim()) return;
+
+    // Add user message
+    const userMessage: ChatMessage = {
+      id: Date.now().toString(),
+      text: newMessage,
+      isAI: false,
+      timestamp: new Date()
+    };
+
+    setChatMessages(prev => [...prev, userMessage]);
+    setNewMessage('');
+    setIsTyping(true);
+
+    // Simulate AI response
+    setTimeout(() => {
+      const aiResponse = generateAIResponse(newMessage.toLowerCase());
+      const aiMessage: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        text: aiResponse,
+        isAI: true,
+        timestamp: new Date()
+      };
+      
+      setChatMessages(prev => [...prev, aiMessage]);
+      setIsTyping(false);
+    }, 1500);
+  };
+
+  const generateAIResponse = (input: string): string => {
+    if (input.includes('matematică')) {
+      return 'La matematică, poți rezolva ecuații pas-cu-pas. Vrei să-ți explic un exercițiu? 🔢';
+    } else if (input.includes('joacă')) {
+      return 'Super! Îți recomand un joc de logică. Vrei să încerci unul? 🎮';
+    } else if (input.includes('temă')) {
+      return 'Trimite-mi o poză sau scrie exercițiul. Îți explic pe înțelesul tău! 📝';
+    } else if (input.includes('română')) {
+      return 'La română putem exersa citirea și scrierea! Ce vrei să învățăm? 📖';
+    } else if (input.includes('științe')) {
+      return 'Științele sunt fascinante! Despre ce experimentă vrei să aflii? 🔬';
+    }
+    return 'Grozav! Hai să rezolvăm împreună. Scrie exercițiul tău! ✨';
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  };
 
   useEffect(() => {
-    const onScroll = () => {
-      document.querySelectorAll('.fade-in-up:not(.animated)').forEach(el => {
-        const top = el.getBoundingClientRect().top;
-        if (top < window.innerHeight - 100) el.classList.add('animated');
-      });
-    };
-    window.addEventListener('scroll', onScroll);
-    onScroll();
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+    // Scroll to bottom when new messages arrive
+    if (chatOpen) {
+      const chatContainer = document.querySelector(`.${styles.chatMessages}`);
+      if (chatContainer) {
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+      }
+    }
+  }, [chatMessages, chatOpen]);
 
   return (
-    <div className="dashboard">
-      {/* TABS Copil / Părinte */}
-      <div style={{
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  gap: "1rem",
-  background: "var(--pk-bg-glass)",
-  borderBottom: "1px solid var(--pk-border-glass)",
-  padding: "1.2rem 0",
-  position: "sticky",
-  top: 0,
-  zIndex: 999,
-  // ADAUGĂ:
-  backdropFilter: "blur(16px)",
-  marginBottom: "1.5rem"
-}}>
+    <div className={styles.dashboard}>
+      {/* Mode Toggle - Grid Row 1 */}
+      <div className={styles.modeToggle}>
         <button
-          className={parentMode ? "" : "btn-primary"}
-          style={{
-            padding: "0.7rem 2.3rem",
-            borderRadius: "30px",
-            border: "none",
-            fontWeight: 700,
-            background: parentMode ? "var(--pk-bg-glass)" : "linear-gradient(135deg, var(--pk-primary), var(--pk-secondary))",
-            color: parentMode ? "var(--pk-text-muted)" : "#fff",
-            fontSize: "1.09rem",
-            cursor: "pointer",
-            boxShadow: !parentMode ? "var(--pk-shadow-light)" : "none",
-            transition: "all .25s"
-          }}
+          className={`${styles.modeBtn} ${!parentMode ? styles.active : ''}`}
           onClick={() => setParentMode(false)}
         >
           👦 Viziune copil
         </button>
         <button
-          className={parentMode ? "btn-primary" : ""}
-          style={{
-            padding: "0.7rem 2.3rem",
-            borderRadius: "30px",
-            border: "none",
-            fontWeight: 700,
-            background: parentMode ? "linear-gradient(135deg, var(--pk-primary), var(--pk-secondary))" : "var(--pk-bg-glass)",
-            color: parentMode ? "#fff" : "var(--pk-text-muted)",
-            fontSize: "1.09rem",
-            cursor: "pointer",
-            boxShadow: parentMode ? "var(--pk-shadow-light)" : "none",
-            transition: "all .25s"
-          }}
+          className={`${styles.modeBtn} ${parentMode ? styles.active : ''}`}
           onClick={() => setParentMode(true)}
         >
           👪 Viziune părinte
         </button>
       </div>
 
-      {/* SIDEBAR */}
-      <aside className="sidebar">
-        <div className="sidebar-logo">
-          <div className="logo">PorKids</div>
+      {/* Sidebar - Grid Row 2 to -1, Column 1 */}
+      <aside className={styles.sidebar}>
+        <div className={styles.sidebarLogo}>
+          <div className={styles.logo}>🎓 PorKids</div>
         </div>
-        <nav>
-          <div className="nav-section">
-            <div className="nav-section-title">Dashboard</div>
-            <a className="nav-item active">
-              <span className="nav-item-icon">📊</span>
+        
+        <nav className={styles.navigation}>
+          <div className={styles.navSection}>
+            <div className={styles.navSectionTitle}>Dashboard</div>
+            <button className={`${styles.navItem} ${styles.active}`}>
+              <span className={styles.navItemIcon}>📊</span>
               Overview
-            </a>
-            <a className="nav-item">
-              <span className="nav-item-icon">📓</span>
+            </button>
+            <button className={styles.navItem}>
+              <span className={styles.navItemIcon}>📓</span>
               Teme & Exerciții
-            </a>
-            <a className="nav-item">
-              <span className="nav-item-icon">🧠</span>
+            </button>
+            <button className={styles.navItem}>
+              <span className={styles.navItemIcon}>🧠</span>
               Progres
-            </a>
-            <a className="nav-item">
-              <span className="nav-item-icon">🎯</span>
+            </button>
+            <button className={styles.navItem}>
+              <span className={styles.navItemIcon}>🎯</span>
               Misiuni
-            </a>
+            </button>
           </div>
-          <div className="nav-section">
-            <div className="nav-section-title">Instrumente AI</div>
-            <a className="nav-item">
-              <span className="nav-item-icon">🤖</span>
+          
+          <div className={styles.navSection}>
+            <div className={styles.navSectionTitle}>Instrumente AI</div>
+            <button className={styles.navItem}>
+              <span className={styles.navItemIcon}>🤖</span>
               Ajutor teme
-            </a>
-            <a className="nav-item">
-              <span className="nav-item-icon">🔍</span>
+            </button>
+            <button className={styles.navItem}>
+              <span className={styles.navItemIcon}>🔍</span>
               Scanner temă
-            </a>
-            <a className="nav-item">
-              <span className="nav-item-icon">🎮</span>
+            </button>
+            <button className={styles.navItem}>
+              <span className={styles.navItemIcon}>🎮</span>
               Joacă educațională
-            </a>
+            </button>
           </div>
-          <div className="nav-section">
-            <div className="nav-section-title">Alte ecosisteme</div>
-            <Link href="/dashboard/por-health" className="nav-item">
-              <span className="nav-item-icon">💚</span>
+          
+          <div className={styles.navSection}>
+            <div className={styles.navSectionTitle}>Alte ecosisteme</div>
+            <Link href="/dashboard/por-health" className={styles.navItem}>
+              <span className={styles.navItemIcon}>💚</span>
               PorHealth
             </Link>
-            <Link href="/dashboard/por-mind" className="nav-item">
-              <span className="nav-item-icon">🧠</span>
+            <Link href="/dashboard/por-mind" className={styles.navItem}>
+              <span className={styles.navItemIcon}>🧠</span>
               PorMind
             </Link>
-            <Link href="/dashboard/por-well" className="nav-item">
-              <span className="nav-item-icon">🌻</span>
-              PorWell
-            </Link>
-            <Link href="/dashboard/por-flow" className="nav-item">
-              <span className="nav-item-icon">🌊</span>
+            <Link href="/dashboard/por-flow" className={styles.navItem}>
+              <span className={styles.navItemIcon}>🌊</span>
               PorFlow
             </Link>
-            <Link href="/dashboard/por-blu" className="nav-item">
-              <span className="nav-item-icon">💧</span>
+            <Link href="/dashboard/por-blu" className={styles.navItem}>
+              <span className={styles.navItemIcon}>💧</span>
               PorBlu
             </Link>
           </div>
         </nav>
       </aside>
 
-      {/* HEADER */}
-      <header className="header">
-        <div className="header-left">
+      {/* Header - Grid Row 2, Column 2 (Hidden on mobile) */}
+      <header className={styles.header}>
+        <div className={styles.headerLeft}>
           <h1>{parentMode ? "Monitorizezi progresul copilului tău 👪" : "Bine ai revenit, Luca! 🦸‍♂️"}</h1>
           <p>{parentMode
             ? "Vezi progresul, insignele, misiunile și încurajează-l pe copilul tău direct din dashboard."
             : "Astăzi poți debloca o nouă insignă. Hai să vedem ce provocări ai pentru azi!"}
           </p>
         </div>
-        <div className="header-right">
-          <div className="header-stats">
-            <div className="stat-item">
-              <div className="stat-value">{parentMode ? "32" : "14"}</div>
-              <div className="stat-label">{parentMode ? "Teme finalizate" : "Misiuni finalizate"}</div>
+        <div className={styles.headerRight}>
+          <div className={styles.headerStats}>
+            <div className={styles.statItem}>
+              <div className={styles.statValue}>{parentMode ? "32" : "14"}</div>
+              <div className={styles.statLabel}>{parentMode ? "Teme finalizate" : "Misiuni finalizate"}</div>
             </div>
-            <div className="stat-item">
-              <div className="stat-value">7d</div>
-              <div className="stat-label">Streak</div>
+            <div className={styles.statItem}>
+              <div className={styles.statValue}>7d</div>
+              <div className={styles.statLabel}>Streak</div>
             </div>
-            <div className="stat-item">
-              <div className="stat-value">+3</div>
-              <div className="stat-label">Insigne noi</div>
+            <div className={styles.statItem}>
+              <div className={styles.statValue}>+3</div>
+              <div className={styles.statLabel}>Insigne noi</div>
             </div>
           </div>
-          <button className="notification-btn" aria-label="Notificări">🔔</button>
-          <button className="profile-btn" aria-label="Profil">{parentMode ? "👪" : "🧒"}</button>
+          <button className={styles.notificationBtn} aria-label="Notificări">🔔</button>
+          <button className={styles.profileBtn} aria-label="Profil">{parentMode ? "👪" : "🧒"}</button>
         </div>
       </header>
-      {/* MAIN CONTENT */}
-      <main className="main-content">
+
+      {/* Main Content - Grid Row 3, Column 2 */}
+      <main className={styles.mainContent}>
+        {/* Mobile Header (Shows info when desktop header is hidden) */}
+        <div className={styles.mobileHeader} style={{ display: 'block' }}>
+          <h2 style={{ 
+            fontSize: '1.5rem', 
+            fontWeight: '700', 
+            marginBottom: '0.5rem',
+            background: 'linear-gradient(135deg, #ff6b6b, #45b7d1)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            textAlign: 'center'
+          }}>
+            {parentMode ? "👪 Dashboard Părinte" : "🦸‍♂️ Salut, Luca!"}
+          </h2>
+          <p style={{ 
+            color: '#ffffff', 
+            textAlign: 'center', 
+            opacity: '0.9',
+            marginBottom: '2rem'
+          }}>
+            {parentMode 
+              ? "Progresul copilului tău în timp real" 
+              : "Hai să vezi ce provocări noi ai astăzi!"}
+          </p>
+        </div>
+
         {parentMode ? (
-          // ----- DASHBOARD PĂRINTE -----
+          // Parent Dashboard
           <>
-            {/* Card mare: Progres copil */}
-            <div className="dashboard-card fade-in-up" style={{ marginBottom: '2rem', background: "linear-gradient(135deg, #ffe480 0%, #52b6ff 60%, #ff6ba1 100%)", color: "#181818" }}>
-              <div className="card-header">
-                <span className="card-title" style={{ color: "#181818" }}>👪 Progresul lui Luca (Copilul tău)</span>
-              </div>
-              <div style={{ fontWeight: 700, fontSize: "1.7rem", marginBottom: "0.3rem" }}>Teme finalizate: 32 / 40</div>
-              <div style={{ fontSize: "1.1rem", marginBottom: "0.7rem" }}>Insigne câștigate: 🏅 9 &nbsp;&nbsp; | &nbsp; Streak: 🔥 7 zile &nbsp;&nbsp; | &nbsp; Misiuni: 🎯 14</div>
-              <div className="progress-bar">
-                <div className="progress-fill" style={{ width: "80%" }}></div>
-              </div>
-              <div className="progress-text">80% din obiectivul lunar</div>
-            </div>
-
-            {/* Grid materii & progres */}
-            <div className="dashboard-card fade-in-up">
-              <div className="card-header">
-                <span className="card-title">📊 Progres pe materii</span>
-                <span style={{ color: "#52b6ff", fontSize: "0.92rem" }}>Matematică, Română, Științe</span>
-              </div>
-              <div className="nutrition-grid">
-                <div className="nutrition-item">
-                  <div className="nutrition-label">Matematică</div>
-                  <div className="nutrition-value">92%</div>
-                  <div className="nutrition-target">Ultima temă: 8/10</div>
-                  <div className="progress-bar">
-                    <div className="progress-fill" style={{ width: "92%" }}></div>
+            {/* Overall Progress Card */}
+            <div className={styles.heroCard}>
+              <div className={styles.heroContent}>
+                <h2>👪 Progresul lui Luca</h2>
+                <div className={styles.heroStats}>
+                  <div className={styles.heroStat}>
+                    <span className={styles.heroStatValue}>32/40</span>
+                    <span className={styles.heroStatLabel}>Teme finalizate</span>
+                  </div>
+                  <div className={styles.heroStat}>
+                    <span className={styles.heroStatValue}>🏅 9</span>
+                    <span className={styles.heroStatLabel}>Insigne</span>
+                  </div>
+                  <div className={styles.heroStat}>
+                    <span className={styles.heroStatValue}>🔥 7</span>
+                    <span className={styles.heroStatLabel}>Streak zile</span>
                   </div>
                 </div>
-                <div className="nutrition-item">
-                  <div className="nutrition-label">Română</div>
-                  <div className="nutrition-value">87%</div>
-                  <div className="nutrition-target">Ultima temă: 10/12</div>
-                  <div className="progress-bar">
-                    <div className="progress-fill" style={{ width: "87%" }}></div>
+                <div className={styles.progressContainer}>
+                  <div className={styles.progressBar}>
+                    <div className={styles.progressFill} style={{ width: '80%' }}></div>
                   </div>
-                </div>
-                <div className="nutrition-item">
-                  <div className="nutrition-label">Științe</div>
-                  <div className="nutrition-value">80%</div>
-                  <div className="nutrition-target">Ultima temă: 9/11</div>
-                  <div className="progress-bar">
-                    <div className="progress-fill" style={{ width: "80%" }}></div>
-                  </div>
+                  <span className={styles.progressText}>80% din obiectivul lunar</span>
                 </div>
               </div>
             </div>
 
-            {/* Notificări și recomandări AI */}
-            <div className="dashboard-card fade-in-up">
-              <div className="card-header">
-                <span className="card-title">🔔 Notificări și recomandări AI</span>
+            {/* Subjects Progress */}
+            <div className={styles.dashboardCard}>
+              <div className={styles.cardHeader}>
+                <h3 className={styles.cardTitle}>📊 Progres pe materii</h3>
+                <span className={styles.cardSubtitle}>Matematică, Română, Științe</span>
               </div>
-              <ul style={{ paddingLeft: "1.4rem", marginTop: "0.6rem", marginBottom: "0.4rem" }}>
-                <li>👏 Luca a progresat excelent la Matematică săptămâna aceasta.</li>
-                <li>💡 Recomandare AI: Încurajează-l să finalizeze tema la Engleză pentru badge-ul “Poliglot”.</li>
-                <li>🎯 Are o nouă misiune: “Recitește un capitol de științe și explică părintelui”.</li>
-              </ul>
+              <div className={styles.subjectsGrid}>
+                {subjects.map((subject) => (
+                  <div key={subject.name} className={styles.subjectCard}>
+                    <div className={styles.subjectHeader}>
+                      <span className={styles.subjectIcon}>{subject.icon}</span>
+                      <span className={styles.subjectName}>{subject.name}</span>
+                    </div>
+                    <div className={styles.subjectProgress}>
+                      <span className={styles.subjectScore}>{subject.progress}%</span>
+                      <span className={styles.subjectTarget}>Ultima temă: {subject.lastScore}</span>
+                    </div>
+                    <div className={styles.progressBar}>
+                      <div className={styles.progressFill} style={{ width: `${subject.progress}%` }}></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
 
-            {/* Mesaj rapid către copil */}
-            <div className="dashboard-card fade-in-up">
-              <div className="card-header">
-                <span className="card-title">✉️ Trimite mesaj de încurajare</span>
+            {/* AI Recommendations */}
+            <div className={styles.dashboardCard}>
+              <div className={styles.cardHeader}>
+                <h3 className={styles.cardTitle}>🔔 Notificări și recomandări AI</h3>
               </div>
-              <form onSubmit={e => { e.preventDefault(); alert('Mesajul a fost trimis!'); }}>
+              <div className={styles.notificationsList}>
+                <div className={styles.notification}>
+                  <span className={styles.notificationIcon}>👏</span>
+                  <span>Luca a progresat excelent la Matematică săptămâna aceasta.</span>
+                </div>
+                <div className={styles.notification}>
+                  <span className={styles.notificationIcon}>💡</span>
+                  <span>Recomandare AI: Încurajează-l să finalizeze tema la Engleză pentru badge-ul "Poliglot".</span>
+                </div>
+                <div className={styles.notification}>
+                  <span className={styles.notificationIcon}>🎯</span>
+                  <span>Are o nouă misiune: "Recitește un capitol de științe și explică părintelui".</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Message */}
+            <div className={styles.dashboardCard}>
+              <div className={styles.cardHeader}>
+                <h3 className={styles.cardTitle}>✉️ Trimite mesaj de încurajare</h3>
+              </div>
+              <div className={styles.messageForm}>
                 <input
                   type="text"
-                  style={{
-                    width: "80%",
-                    borderRadius: "9px",
-                    border: "1px solid var(--pk-border-glass)",
-                    padding: "0.6rem 1rem",
-                    fontSize: "1.05rem",
-                    marginRight: "1rem"
-                  }}
+                  className={styles.messageInput}
                   placeholder="Scrie un mesaj pentru copilul tău..."
                 />
-                <button
-                  type="submit"
-                  style={{
-                    background: "linear-gradient(135deg, #ffe480 0%, #52b6ff 60%, #ff6ba1 100%)",
-                    border: "none",
-                    color: "#181818",
-                    padding: "0.6rem 1.4rem",
-                    fontWeight: 700,
-                    borderRadius: "9px",
-                    cursor: "pointer"
-                  }}
-                >Trimite</button>
-              </form>
+                <button className={styles.sendMessageBtn}>Trimite</button>
+              </div>
             </div>
           </>
         ) : (
-          // ----- DASHBOARD COPIL -----
+          // Child Dashboard
           <>
-            {/* CARDURI – progres rapid */}
-            <div className="dashboard-grid">
-              <div className="dashboard-card fade-in-up">
-                <div className="card-header">
-                  <span className="card-title">Teme rezolvate</span>
-                  <span className="card-icon">📓</span>
+            {/* Stats Cards */}
+            <div className={styles.statsGrid}>
+              <div className={styles.statCard}>
+                <div className={styles.statCardHeader}>
+                  <span className={styles.statCardTitle}>Teme rezolvate</span>
+                  <span className={styles.statCardIcon}>📓</span>
                 </div>
-                <div className="card-value">32</div>
-                <div className="card-change positive">+5 față de săptămâna trecută</div>
-                <div className="progress-bar">
-                  <div className="progress-fill" style={{ width: "80%" }}></div>
+                <div className={styles.statCardValue}>32</div>
+                <div className={styles.statCardChange}>+5 față de săptămâna trecută</div>
+                <div className={styles.progressContainer}>
+                  <div className={styles.progressBar}>
+                    <div className={styles.progressFill} style={{ width: '80%' }}></div>
+                  </div>
+                  <span className={styles.progressText}>80% obiectiv săptămânal</span>
                 </div>
-                <div className="progress-text">80% obiectiv săptămânal</div>
               </div>
-              <div className="dashboard-card fade-in-up">
-                <div className="card-header">
-                  <span className="card-title">Misiuni completate</span>
-                  <span className="card-icon">🎯</span>
-                </div>
-                <div className="card-value">14</div>
-                <div className="card-change positive">+2 azi</div>
-                <div className="progress-bar">
-                  <div className="progress-fill" style={{ width: "66%" }}></div>
-                </div>
-                <div className="progress-text">66% din luna aceasta</div>
-              </div>
-              <div className="dashboard-card fade-in-up">
-                <div className="card-header">
-                  <span className="card-title">Insigne câștigate</span>
-                  <span className="card-icon">🏅</span>
-                </div>
-                <div className="card-value">9</div>
-                <div className="card-change positive">+1 nouă</div>
-                <div className="progress-bar">
-                  <div className="progress-fill" style={{ width: "90%" }}></div>
-                </div>
-                <div className="progress-text">Colectează-le pe toate!</div>
-              </div>
-              <div className="dashboard-card fade-in-up">
-                <div className="card-header">
-                  <span className="card-title">Streak zile</span>
-                  <span className="card-icon">🔥</span>
-                </div>
-                <div className="card-value">7</div>
-                <div className="card-change positive">Consecvență!</div>
-                <div className="progress-bar">
-                  <div className="progress-fill" style={{ width: "100%" }}></div>
-                </div>
-                <div className="progress-text">Bravo! Nu rata șirul!</div>
-              </div>
-            </div>
 
-            {/* PROGRES PE MATERII / EXERCIȚII */}
-            <div className="dashboard-card fade-in-up">
-              <div className="card-header">
-                <span className="card-title">📊 Progres pe materii</span>
-                <span style={{ color: "var(--pk-secondary)", fontSize: "0.92rem" }}>Matematică, Română, Științe</span>
+              <div className={styles.statCard}>
+                <div className={styles.statCardHeader}>
+                  <span className={styles.statCardTitle}>Misiuni completate</span>
+                  <span className={styles.statCardIcon}>🎯</span>
+                </div>
+                <div className={styles.statCardValue}>14</div>
+                <div className={styles.statCardChange}>+2 azi</div>
+                <div className={styles.progressContainer}>
+                  <div className={styles.progressBar}>
+                    <div className={styles.progressFill} style={{ width: '66%' }}></div>
+                  </div>
+                  <span className={styles.progressText}>66% din luna aceasta</span>
+                </div>
               </div>
-              <div className="nutrition-grid">
-                <div className="nutrition-item">
-                  <div className="nutrition-label">Matematică</div>
-                  <div className="nutrition-value">92%</div>
-                  <div className="nutrition-target">Target: 90%</div>
-                  <div className="progress-bar">
-                    <div className="progress-fill" style={{ width: "92%" }}></div>
-                  </div>
+
+              <div className={styles.statCard}>
+                <div className={styles.statCardHeader}>
+                  <span className={styles.statCardTitle}>Insigne câștigate</span>
+                  <span className={styles.statCardIcon}>🏅</span>
                 </div>
-                <div className="nutrition-item">
-                  <div className="nutrition-label">Română</div>
-                  <div className="nutrition-value">87%</div>
-                  <div className="nutrition-target">Target: 85%</div>
-                  <div className="progress-bar">
-                    <div className="progress-fill" style={{ width: "87%" }}></div>
+                <div className={styles.statCardValue}>9</div>
+                <div className={styles.statCardChange}>+1 nouă</div>
+                <div className={styles.progressContainer}>
+                  <div className={styles.progressBar}>
+                    <div className={styles.progressFill} style={{ width: '90%' }}></div>
                   </div>
+                  <span className={styles.progressText}>Colectează-le pe toate!</span>
                 </div>
-                <div className="nutrition-item">
-                  <div className="nutrition-label">Științe</div>
-                  <div className="nutrition-value">80%</div>
-                  <div className="nutrition-target">Target: 80%</div>
-                  <div className="progress-bar">
-                    <div className="progress-fill" style={{ width: "80%" }}></div>
+              </div>
+
+              <div className={styles.statCard}>
+                <div className={styles.statCardHeader}>
+                  <span className={styles.statCardTitle}>Streak zile</span>
+                  <span className={styles.statCardIcon}>🔥</span>
+                </div>
+                <div className={styles.statCardValue}>7</div>
+                <div className={styles.statCardChange}>Consecvență!</div>
+                <div className={styles.progressContainer}>
+                  <div className={styles.progressBar}>
+                    <div className={styles.progressFill} style={{ width: '100%' }}></div>
                   </div>
+                  <span className={styles.progressText}>Bravo! Nu rata șirul!</span>
                 </div>
               </div>
             </div>
 
-            {/* ACTIVITĂȚI RECENTE */}
-            <div className="dashboard-card fade-in-up">
-              <div className="card-header">
-                <span className="card-title">📋 Activități recente</span>
-                <span style={{ color: "var(--pk-text-secondary)", fontSize: "0.9rem" }}>Ultimele 24h</span>
+            {/* Subjects Progress */}
+            <div className={styles.dashboardCard}>
+              <div className={styles.cardHeader}>
+                <h3 className={styles.cardTitle}>📊 Progres pe materii</h3>
+                <span className={styles.cardSubtitle}>Matematică, Română, Științe</span>
               </div>
-              <div className="activity-list">
-                <div className="activity-item">
-                  <div className="activity-icon">📓</div>
-                  <div className="activity-content">
-                    <div className="activity-title">Temă la matematică finalizată</div>
-                    <div className="activity-time">Acum 2h • 8 exerciții</div>
+              <div className={styles.subjectsGrid}>
+                {subjects.map((subject) => (
+                  <div key={subject.name} className={styles.subjectCard}>
+                    <div className={styles.subjectHeader}>
+                      <span className={styles.subjectIcon}>{subject.icon}</span>
+                      <span className={styles.subjectName}>{subject.name}</span>
+                    </div>
+                    <div className={styles.subjectProgress}>
+                      <span className={styles.subjectScore}>{subject.progress}%</span>
+                      <span className={styles.subjectTarget}>Target: {subject.target}%</span>
+                    </div>
+                    <div className={styles.progressBar}>
+                      <div className={styles.progressFill} style={{ width: `${subject.progress}%` }}></div>
+                    </div>
                   </div>
-                </div>
-                <div className="activity-item">
-                  <div className="activity-icon">🏅</div>
-                  <div className="activity-content">
-                    <div className="activity-title">Insignă nouă: "Geniu la matematică"</div>
-                    <div className="activity-time">Acum 6h</div>
-                  </div>
-                </div>
-                <div className="activity-item">
-                  <div className="activity-icon">🎮</div>
-                  <div className="activity-content">
-                    <div className="activity-title">Joacă educațională: Provocare logică</div>
-                    <div className="activity-time">Azi • 12 min</div>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
 
-            {/* QUICK ACTIONS */}
-            <div className="quick-actions fade-in-up">
-              <button className="action-btn" onClick={() => setChatOpen(true)}>
-                <span className="action-btn-icon">🤖</span>
-                <span className="action-btn-text">Întreabă AI-ul</span>
+            {/* Recent Activities */}
+            <div className={styles.dashboardCard}>
+              <div className={styles.cardHeader}>
+                <h3 className={styles.cardTitle}>📋 Activități recente</h3>
+                <span className={styles.cardSubtitle}>Ultimele 24h</span>
+              </div>
+              <div className={styles.activitiesList}>
+                {activities.map((activity) => (
+                  <div key={activity.id} className={styles.activityItem}>
+                    <div className={styles.activityIcon}>{activity.icon}</div>
+                    <div className={styles.activityContent}>
+                      <div className={styles.activityTitle}>{activity.title}</div>
+                      <div className={styles.activityTime}>{activity.time}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Quick Actions */}
+            <div className={styles.quickActions}>
+              <button className={styles.actionBtn} onClick={() => setChatOpen(true)}>
+                <span className={styles.actionBtnIcon}>🤖</span>
+                <span className={styles.actionBtnText}>Întreabă AI-ul</span>
               </button>
-              <button className="action-btn">
-                <span className="action-btn-icon">🔍</span>
-                <span className="action-btn-text">Scanează temă</span>
+              <button className={styles.actionBtn}>
+                <span className={styles.actionBtnIcon}>🔍</span>
+                <span className={styles.actionBtnText}>Scanează temă</span>
               </button>
-              <button className="action-btn">
-                <span className="action-btn-icon">🎮</span>
-                <span className="action-btn-text">Joacă educațională</span>
+              <button className={styles.actionBtn}>
+                <span className={styles.actionBtnIcon}>🎮</span>
+                <span className={styles.actionBtnText}>Joacă educațională</span>
               </button>
-              <button className="action-btn">
-                <span className="action-btn-icon">🎯</span>
-                <span className="action-btn-text">Setează obiectiv</span>
+              <button className={styles.actionBtn}>
+                <span className={styles.actionBtnIcon}>🎯</span>
+                <span className={styles.actionBtnText}>Setează obiectiv</span>
               </button>
             </div>
           </>
         )}
       </main>
-      {/* AI CHAT (doar pentru copil, nu părinte) */}
+
+      {/* AI Chat (only for children) */}
       {!parentMode && (
         <>
-          <div className={`ai-chat${chatOpen ? ' open' : ''}`}>
-            <div className="chat-header">
+          <div className={`${styles.aiChat} ${chatOpen ? styles.open : ''}`}>
+            <div className={styles.chatHeader}>
               <h4>🤖 Asistent AI PorKids</h4>
-              <button className="chat-close" onClick={() => setChatOpen(false)}>×</button>
+              <button className={styles.chatClose} onClick={() => setChatOpen(false)}>×</button>
             </div>
-            <div className="chat-messages" id="chatMessages">
-              <div className="message ai">
-                Salut! Sunt aici să te ajut cu orice exercițiu sau temă. Scrie o întrebare sau trimite o provocare!
-              </div>
+            <div className={styles.chatMessages}>
+              {chatMessages.map((message) => (
+                <div 
+                  key={message.id} 
+                  className={`${styles.message} ${message.isAI ? styles.ai : styles.user}`}
+                >
+                  {message.text}
+                </div>
+              ))}
+              {isTyping && (
+                <div className={`${styles.message} ${styles.ai} ${styles.typing}`}>
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+              )}
             </div>
-            <div className="chat-input">
+            <div className={styles.chatInput}>
               <input
-                id="chatInput"
+                type="text"
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                onKeyPress={handleKeyPress}
                 placeholder="Întreabă orice despre temă, exerciții sau joacă..."
-                onKeyDown={e => {
-                  if (e.key === 'Enter') {
-                    // Simulare demo răspuns AI
-                    const input = document.getElementById('chatInput');
-                    const messages = document.getElementById('chatMessages');
-                    if (input && messages && input.value.trim()) {
-                      const umsg = document.createElement('div');
-                      umsg.className = 'message user';
-                      umsg.textContent = input.value;
-                      messages.appendChild(umsg);
-
-                      const userInput = input.value.toLowerCase();
-                      input.value = '';
-                      messages.scrollTop = messages.scrollHeight;
-
-                      setTimeout(() => {
-                        const ai = document.createElement('div');
-                        ai.className = 'message ai';
-                        let resp = 'Grozav! Hai să rezolvăm împreună. Scrie exercițiul tău!';
-                        if (userInput.includes('matematică')) {
-                          resp = 'La matematică, poți rezolva ecuații pas-cu-pas. Vrei să-ți explic un exercițiu?';
-                        } else if (userInput.includes('joacă')) {
-                          resp = 'Super! Îți recomand un joc de logică. Vrei să încerci unul?';
-                        } else if (userInput.includes('temă')) {
-                          resp = 'Trimite-mi o poză sau scrie exercițiul. Îți explic pe înțelesul tău!';
-                        }
-                        ai.innerHTML = resp;
-                        messages.appendChild(ai);
-                        messages.scrollTop = messages.scrollHeight;
-                      }, 1100);
-                    }
-                  }
-                }}
               />
-              <button
-                className="chat-send"
-                onClick={() => {
-                  const input = document.getElementById('chatInput');
-                  const messages = document.getElementById('chatMessages');
-                  if (input && messages && input.value.trim()) {
-                    const umsg = document.createElement('div');
-                    umsg.className = 'message user';
-                    umsg.textContent = input.value;
-                    messages.appendChild(umsg);
-
-                    const userInput = input.value.toLowerCase();
-                    input.value = '';
-                    messages.scrollTop = messages.scrollHeight;
-
-                    setTimeout(() => {
-                      const ai = document.createElement('div');
-                      ai.className = 'message ai';
-                      let resp = 'Grozav! Hai să rezolvăm împreună. Scrie exercițiul tău!';
-                      if (userInput.includes('matematică')) {
-                        resp = 'La matematică, poți rezolva ecuații pas-cu-pas. Vrei să-ți explic un exercițiu?';
-                      } else if (userInput.includes('joacă')) {
-                        resp = 'Super! Îți recomand un joc de logică. Vrei să încerci unul?';
-                      } else if (userInput.includes('temă')) {
-                        resp = 'Trimite-mi o poză sau scrie exercițiul. Îți explic pe înțelesul tău!';
-                      }
-                      ai.innerHTML = resp;
-                      messages.appendChild(ai);
-                      messages.scrollTop = messages.scrollHeight;
-                    }, 1100);
-                  }
-                }}
-              >
+              <button className={styles.chatSend} onClick={sendMessage}>
                 🚀
               </button>
             </div>
           </div>
-          {/* CHAT TOGGLE */}
+
           <button
-            className={`chat-toggle${chatOpen ? ' hidden' : ''}`}
+            className={`${styles.chatToggle} ${chatOpen ? styles.hidden : ''}`}
             onClick={() => setChatOpen(true)}
           >
             💬
@@ -506,10 +544,10 @@ export default function PorKidsDashboard() {
         </>
       )}
 
-      {/* FOOTER DASHBOARD */}
-      <div className="dashboard-footer">
+      {/* Footer - Grid Row 4, Column 2 */}
+      <footer className={styles.dashboardFooter}>
         &copy; 2025 PorVerse. Toate drepturile rezervate.
-      </div>
+      </footer>
     </div>
   );
 }

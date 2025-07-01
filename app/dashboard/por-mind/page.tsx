@@ -1,8 +1,9 @@
+// app/dashboard/por-mind/page.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import './style.css';  // ✅ CORECT - CSS normal
+import styles from './style.module.css'; // ✅ CSS Module import
 
 // Types
 interface FinancialGoal {
@@ -49,7 +50,7 @@ export default function PorMindDashboard() {
   const [monthlyExpenses, setMonthlyExpenses] = useState(0);
   const [savingsRate, setSavingsRate] = useState(0);
 
-  // Mock data - în real ar veni de la API
+  // Mock data
   const [financialGoals, setFinancialGoals] = useState<FinancialGoal[]>([
     {
       id: '1',
@@ -146,13 +147,12 @@ export default function PorMindDashboard() {
   // Simulate loading and data calculation
   useEffect(() => {
     const timer = setTimeout(() => {
-      // Calculate financial metrics
       const totalAssets = investments.reduce((sum, inv) => sum + inv.currentValue, 0) + 
                          financialGoals.reduce((sum, goal) => sum + goal.current, 0);
-      const totalDebts = 0; // Mock - în real ar veni din API
+      const totalDebts = 0;
       
       setNetWorth(totalAssets - totalDebts);
-      setMonthlyIncome(12000); // Mock
+      setMonthlyIncome(12000);
       
       const totalExpenses = budgetCategories.reduce((sum, cat) => sum + cat.spent, 0);
       setMonthlyExpenses(totalExpenses);
@@ -178,202 +178,168 @@ export default function PorMindDashboard() {
     return Math.min((goal.current / goal.target) * 100, 100);
   };
 
-  const generateAIRecommendation = () => {
-    const recommendations = [
-      "💡 Bazat pe analiza ta financiară, recomand să aloci 20% din surplus către fondul de urgență și 60% către investiții ETF.",
-      "🎯 Pentru a atinge obiectivul apartamentului, ai nevoie să economisești 2,900 RON/lună suplimentar.",
-      "📈 Portofoliul tău are o alocare bună, dar consideră să diversifici cu 10% obligațiuni pentru stabilitate.",
-      "⚠️ Cheltuielile la transport sunt în creștere. Analizează alternative: abonament lunar sau car sharing.",
-      "🚀 Ai potential să îți mărești veniturile cu 2,000 RON/lună prin skill-uri suplimentare în domeniul tău."
-    ];
-    
-    return recommendations[Math.floor(Math.random() * recommendations.length)];
-  };
-
   if (loading) {
     return (
-      <div className="dashboard">
-        <div className="loadingScreen">
-          <div className="loadingSpinner"></div>
-          <h2>Calculez situația ta financiară...</h2>
-          <p>Analizez veniturile, cheltuielile și investițiile</p>
-        </div>
+      <div className={styles.loadingScreen}>
+        <div className={styles.loadingSpinner}></div>
+        <h2>Analizez datele tale financiare...</h2>
+        <p>Calculez net worth, obiective și oportunități</p>
       </div>
     );
   }
 
   return (
-    <div className="dashboard">
-      {/* SIDEBAR */}
-      <nav className="sidebar">
-        <div className="sidebarLogo">
-          <Link href="/" className="logo">🧠 PorMind</Link>
+    <div className={styles.dashboard}>
+      {/* Sidebar */}
+      <div className={styles.sidebar}>
+        <div className={styles.sidebarLogo}>
+          <Link href="/dashboard" className={styles.logo}>
+            🧠 PorMind
+          </Link>
         </div>
 
-        <div className="navSection">
-          <div className="navSectionTitle">Dashboard</div>
+        <div className={styles.navSection}>
+          <div className={styles.navSectionTitle}>Overview</div>
           <button 
-            className={`navItem ${activeView === 'overview' ? 'active' : ''}`}
+            className={`${styles.navItem} ${activeView === 'overview' ? styles.active : ''}`}
             onClick={() => setActiveView('overview')}
           >
-            <span className="navItemIcon">📊</span>
-            Prezentare generală
+            <span className={styles.navItemIcon}>📊</span>
+            Dashboard
           </button>
           <button 
-            className={`navItem ${activeView === 'budget' ? 'active' : ''}`}
-            onClick={() => setActiveView('budget')}
-          >
-            <span className="navItemIcon">💰</span>
-            Buget & Cheltuieli
-          </button>
-          <button 
-            className={`navItem ${activeView === 'investments' ? 'active' : ''}`}
-            onClick={() => setActiveView('investments')}
-          >
-            <span className="navItemIcon">📈</span>
-            Investiții
-          </button>
-          <button 
-            className={`navItem ${activeView === 'goals' ? 'active' : ''}`}
+            className={`${styles.navItem} ${activeView === 'goals' ? styles.active : ''}`}
             onClick={() => setActiveView('goals')}
           >
-            <span className="navItemIcon">🎯</span>
-            Obiective financiare
+            <span className={styles.navItemIcon}>🎯</span>
+            Obiective
+          </button>
+          <button 
+            className={`${styles.navItem} ${activeView === 'budget' ? styles.active : ''}`}
+            onClick={() => setActiveView('budget')}
+          >
+            <span className={styles.navItemIcon}>💰</span>
+            Buget
+          </button>
+          <button 
+            className={`${styles.navItem} ${activeView === 'investments' ? styles.active : ''}`}
+            onClick={() => setActiveView('investments')}
+          >
+            <span className={styles.navItemIcon}>📈</span>
+            Investiții
           </button>
         </div>
 
-        <div className="navSection">
-          <div className="navSectionTitle">AI Tools</div>
+        <div className={styles.navSection}>
+          <div className={styles.navSectionTitle}>AI Tools</div>
           <button 
-            className={`navItem ${activeView === 'coach' ? 'active' : ''}`}
+            className={`${styles.navItem} ${activeView === 'coach' ? styles.active : ''}`}
             onClick={() => setActiveView('coach')}
           >
-            <span className="navItemIcon">🤖</span>
-            AI Money Coach
+            <span className={styles.navItemIcon}>🤖</span>
+            AI Coach
           </button>
           <button 
-            className={`navItem ${activeView === 'optimizer' ? 'active' : ''}`}
-            onClick={() => setActiveView('optimizer')}
+            className={`${styles.navItem} ${activeView === 'insights' ? styles.active : ''}`}
+            onClick={() => setActiveView('insights')}
           >
-            <span className="navItemIcon">⚡</span>
-            Budget Optimizer
-          </button>
-          <button 
-            className={`navItem ${activeView === 'analyzer' ? 'active' : ''}`}
-            onClick={() => setActiveView('analyzer')}
-          >
-            <span className="navItemIcon">🔍</span>
-            Spending Analyzer
+            <span className={styles.navItemIcon}>💡</span>
+            Insights
           </button>
         </div>
+      </div>
 
-        <div className="navSection">
-          <div className="navSectionTitle">Education</div>
-          <button 
-            className={`navItem ${activeView === 'learn' ? 'active' : ''}`}
-            onClick={() => setActiveView('learn')}
-          >
-            <span className="navItemIcon">🎓</span>
-            Financial Learning
-          </button>
-          <button 
-            className={`navItem ${activeView === 'mindset' ? 'active' : ''}`}
-            onClick={() => setActiveView('mindset')}
-          >
-            <span className="navItemIcon">🧘</span>
-            Money Mindset
-          </button>
+      {/* Header */}
+      <div className={styles.header}>
+        <div className={styles.headerLeft}>
+          <h1>Financial Dashboard</h1>
+          <p>
+            Net Worth: <span className={styles.netWorth}>{formatCurrency(netWorth)}</span> • 
+            Savings Rate: <span className={styles.savingsRate}>{savingsRate.toFixed(1)}%</span>
+          </p>
         </div>
-      </nav>
-
-      {/* HEADER */}
-      <header className="header">
-        <div className="headerLeft">
-          <h1>💎 Wealth Builder Dashboard</h1>
-          <p>Valoarea netă: <span className="netWorth">{formatCurrency(netWorth)}</span> • Rata economisire: <span className="savingsRate">{savingsRate.toFixed(1)}%</span></p>
-        </div>
-        <div className="headerRight">
-          <div className="headerStats">
-            <div className="statItem">
-              <div className="statValue">{formatCurrency(monthlyIncome)}</div>
-              <div className="statLabel">Venituri luna</div>
+        <div className={styles.headerRight}>
+          <div className={styles.headerStats}>
+            <div className={styles.statItem}>
+              <div className={styles.statValue}>{formatCurrency(monthlyIncome)}</div>
+              <div className={styles.statLabel}>Venit Lunar</div>
             </div>
-            <div className="statItem">
-              <div className="statValue">{formatCurrency(monthlyExpenses)}</div>
-              <div className="statLabel">Cheltuieli luna</div>
-            </div>
-            <div className="statItem">
-              <div className="statValue">{formatCurrency(monthlyIncome - monthlyExpenses)}</div>
-              <div className="statLabel">Surplus</div>
+            <div className={styles.statItem}>
+              <div className={styles.statValue}>{formatCurrency(monthlyExpenses)}</div>
+              <div className={styles.statLabel}>Cheltuieli</div>
             </div>
           </div>
-          <div className="headerActions">
-            <button className="headerBtn" title="Notificări">🔔</button>
-            <button className="headerBtn" title="Setări">⚙️</button>
-            <button className="headerBtn" title="Profil">👤</button>
+          <div className={styles.headerActions}>
+            <button className={styles.headerBtn}>⚙️</button>
+            <button className={styles.headerBtn}>📊</button>
           </div>
         </div>
-      </header>
+      </div>
 
-      {/* MAIN CONTENT */}
-      <main className="mainContent">
+      {/* Main Content */}
+      <div className={styles.mainContent}>
         {activeView === 'overview' && (
           <>
             {/* Welcome Section */}
-            <section className="welcomeSection">
-              <h2>🌟 Bună ziua, Alex!</h2>
-              <p>Astăzi ai o oportunitate să îți optimizezi portofoliul. Situația financiară arată promițător!</p>
-            </section>
+            <div className={styles.welcomeSection}>
+              <h2>Bine ai venit în PorMind! 💰</h2>
+              <p>
+                Analiza ta financiară în timp real cu insights AI pentru maximizarea bogăției
+              </p>
+            </div>
 
-            {/* Quick Stats Grid */}
-            <div className="statsGrid">
-              <div className="statCard">
-                <div className="statIcon">💰</div>
-                <div className="statInfo">
-                  <h3>Valoare netă</h3>
-                  <div className="statValue">{formatCurrency(netWorth)}</div>
-                  <div className="statChange">+12.5% față de luna trecută</div>
+            {/* Stats Grid */}
+            <div className={styles.statsGrid}>
+              <div className={styles.statCard}>
+                <div className={styles.statIcon}>💎</div>
+                <div className={styles.statInfo}>
+                  <h3>Net Worth</h3>
+                  <div className={styles.statValue}>{formatCurrency(netWorth)}</div>
+                  <div className={`${styles.statChange} ${styles.positive}`}>+12.5% this month</div>
                 </div>
               </div>
 
-              <div className="statCard">
-                <div className="statIcon">📈</div>
-                <div className="statInfo">
-                  <h3>ROI Investiții</h3>
-                  <div className="statValue">+8.2%</div>
-                  <div className="statChange">Performanță anuală</div>
+              <div className={styles.statCard}>
+                <div className={styles.statIcon}>💰</div>
+                <div className={styles.statInfo}>
+                  <h3>Monthly Savings</h3>
+                  <div className={styles.statValue}>{formatCurrency(monthlyIncome - monthlyExpenses)}</div>
+                  <div className={`${styles.statChange} ${styles.positive}`}>+{savingsRate.toFixed(1)}% rate</div>
                 </div>
               </div>
 
-              <div className="statCard">
-                <div className="statIcon">🎯</div>
-                <div className="statInfo">
-                  <h3>Obiective</h3>
-                  <div className="statValue">3/5</div>
-                  <div className="statChange">În progres</div>
+              <div className={styles.statCard}>
+                <div className={styles.statIcon}>📈</div>
+                <div className={styles.statInfo}>
+                  <h3>Investment Return</h3>
+                  <div className={styles.statValue}>+8.2%</div>
+                  <div className={`${styles.statChange} ${styles.positive}`}>Beating market</div>
                 </div>
               </div>
 
-              <div className="statCard">
-                <div className="statIcon">💳</div>
-                <div className="statInfo">
-                  <h3>Credit Score</h3>
-                  <div className="statValue">795</div>
-                  <div className="statChange">Excelent</div>
+              <div className={styles.statCard}>
+                <div className={styles.statIcon}>🎯</div>
+                <div className={styles.statInfo}>
+                  <h3>Goals Progress</h3>
+                  <div className={styles.statValue}>64%</div>
+                  <div className={`${styles.statChange} ${styles.positive}`}>On track</div>
                 </div>
               </div>
             </div>
 
-            {/* AI Insights Section */}
-            <section className="aiInsightsSection">
-              <h3>🤖 AI Financial Insights</h3>
-              <div className="insightsGrid">
+            {/* AI Insights */}
+            <div className={styles.aiInsightsSection}>
+              <h3>💡 AI Financial Insights</h3>
+              <div className={styles.insightsGrid}>
                 {aiInsights.map(insight => (
-                  <div key={insight.id} className={`insightCard ${insight.type} ${insight.priority}`}>
-                    <div className="insightHeader">
-                      <span className="insightType">
+                  <div 
+                    key={insight.id} 
+                    className={`${styles.insightCard} ${styles[insight.type]} ${insight.priority === 'high' ? styles.high : ''}`}
+                  >
+                    <div className={styles.insightHeader}>
+                      <span className={styles.insightType}>
                         {insight.type === 'warning' && '⚠️'}
-                        {insight.type === 'saving' && '💡'}
+                        {insight.type === 'saving' && '💰'}
                         {insight.type === 'investing' && '📈'}
                         {insight.type === 'spending' && '💳'}
                       </span>
@@ -381,230 +347,191 @@ export default function PorMindDashboard() {
                     </div>
                     <p>{insight.message}</p>
                     {insight.action && (
-                      <button className="insightAction">{insight.action}</button>
+                      <button className={styles.insightAction}>
+                        {insight.action}
+                      </button>
                     )}
                   </div>
                 ))}
               </div>
-            </section>
+            </div>
 
             {/* Quick Actions */}
-            <section className="quickActionsSection">
-              <h3>⚡ Quick Actions</h3>
-              <div className="quickActions">
-                <button className="actionBtn">
-                  <span className="actionIcon">📊</span>
-                  Generează raport lunar
+            <div className={styles.quickActionsSection}>
+              <h3>🚀 Quick Actions</h3>
+              <div className={styles.quickActions}>
+                <button className={styles.actionBtn}>
+                  <span className={styles.actionIcon}>💳</span>
+                  Add Transaction
                 </button>
-                <button className="actionBtn">
-                  <span className="actionIcon">💰</span>
-                  Adaugă venit/cheltuială
+                <button className={styles.actionBtn}>
+                  <span className={styles.actionIcon}>🎯</span>
+                  Set New Goal
                 </button>
-                <button className="actionBtn">
-                  <span className="actionIcon">🎯</span>
-                  Creează obiectiv nou
+                <button className={styles.actionBtn}>
+                  <span className={styles.actionIcon}>📊</span>
+                  Review Budget
                 </button>
-                <button className="actionBtn">
-                  <span className="actionIcon">📈</span>
-                  Analizează investiții
+                <button className={styles.actionBtn}>
+                  <span className={styles.actionIcon}>📈</span>
+                  Check Investments
                 </button>
               </div>
-            </section>
-
-            {/* Financial Goals Progress */}
-            <section className="goalsSection">
-              <h3>🎯 Progres Obiective Financiare</h3>
-              <div className="goalsGrid">
-                {financialGoals.map(goal => (
-                  <div key={goal.id} className="goalCard">
-                    <div className="goalHeader">
-                      <h4>{goal.name}</h4>
-                      <span className="goalCategory">
-                        {goal.category === 'emergency' && '🚨'}
-                        {goal.category === 'investment' && '📈'}
-                        {goal.category === 'debt' && '💳'}
-                        {goal.category === 'purchase' && '🏠'}
-                      </span>
-                    </div>
-                    <div className="goalProgress">
-                      <div className="goalProgressBar">
-                        <div 
-                          className="goalProgressFill"
-                          style={{ width: `${calculateGoalProgress(goal)}%` }}
-                        ></div>
-                      </div>
-                      <span className="goalPercentage">{calculateGoalProgress(goal).toFixed(1)}%</span>
-                    </div>
-                    <div className="goalDetails">
-                      <span>{formatCurrency(goal.current)} / {formatCurrency(goal.target)}</span>
-                      <span className="goalDeadline">Deadline: {new Date(goal.deadline).toLocaleDateString('ro-RO')}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </section>
+            </div>
           </>
         )}
 
-        {activeView === 'coach' && (
-          <section className="aiCoachSection">
-            <div className="coachHeader">
-              <h2>🤖 AI Money Coach</h2>
-              <p>Consilierul tău personal pentru educație financiară și luarea deciziilor</p>
-            </div>
-
-            <div className="coachInterface">
-              <div className="coachChat">
-                <div className="chatMessage">
-                  <div className="aiAvatar">🤖</div>
-                  <div className="messageContent">
-                    <p>{generateAIRecommendation()}</p>
-                    <span className="messageTime">Acum 2 minute</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="coachActions">
-                <button className="coachBtn">Analizează situația mea financiară</button>
-                <button className="coachBtn">Ce investiții îmi recomanzi?</button>
-                <button className="coachBtn">Cum să îmi optimizez bugetul?</button>
-                <button className="coachBtn">Strategii de economisire</button>
-              </div>
-
-              <div className="chatInput">
-                <input 
-                  type="text" 
-                  placeholder="Întreabă AI Money Coach orice despre finanțe..."
-                  className="chatInputField"
-                />
-                <button className="sendBtn">Trimite</button>
+        {activeView === 'goals' && (
+          <div className={styles.dashboardSection}>
+            <div className={styles.sectionHeader}>
+              <h2 className={styles.sectionTitle}>🎯 Financial Goals</h2>
+              <div className={styles.sectionActions}>
+                <button className={styles.actionBtn}>Add Goal</button>
               </div>
             </div>
-          </section>
-        )}
-
-        {activeView === 'budget' && (
-          <section className="budgetSection">
-            <h2>💰 Budget & Spending Analysis</h2>
             
-            <div className="budgetOverview">
-              <div className="budgetSummary">
-                <h3>Rezumat luna curentă</h3>
-                <div className="budgetStats">
-                  <div className="budgetStat">
-                    <span>Total bugetat:</span>
-                    <span className="budgetAmount">{formatCurrency(budgetCategories.reduce((sum, cat) => sum + cat.budgeted, 0))}</span>
-                  </div>
-                  <div className="budgetStat">
-                    <span>Total cheltuit:</span>
-                    <span className="spentAmount">{formatCurrency(budgetCategories.reduce((sum, cat) => sum + cat.spent, 0))}</span>
-                  </div>
-                  <div className="budgetStat">
-                    <span>Rămas:</span>
-                    <span className="remainingAmount">{formatCurrency(budgetCategories.reduce((sum, cat) => sum + (cat.budgeted - cat.spent), 0))}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="categoriesGrid">
-              {budgetCategories.map(category => {
-                const percentage = (category.spent / category.budgeted) * 100;
-                const isOverBudget = percentage > 100;
-                
-                return (
-                  <div key={category.id} className={`categoryCard ${isOverBudget ? 'overBudget' : ''}`}>
-                    <div className="categoryHeader">
-                      <span className="categoryIcon">{category.icon}</span>
-                      <h4>{category.name}</h4>
-                    </div>
-                    <div className="categoryAmount">
-                      <span className="spent">{formatCurrency(category.spent)}</span>
-                      <span className="budgeted">/ {formatCurrency(category.budgeted)}</span>
-                    </div>
-                    <div className="categoryProgress">
-                      <div className="categoryProgressBar">
-                        <div 
-                          className={`categoryProgressFill ${isOverBudget ? 'overBudgetFill' : ''}`}
-                          style={{ width: `${Math.min(percentage, 100)}%` }}
-                        ></div>
-                      </div>
-                      <span className={`categoryPercentage ${isOverBudget ? 'overBudgetText' : ''}`}>
-                        {percentage.toFixed(1)}%
-                      </span>
-                    </div>
-                    {isOverBudget && (
-                      <div className="overBudgetWarning">
-                        ⚠️ Depășit cu {formatCurrency(category.spent - category.budgeted)}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </section>
-        )}
-
-        {activeView === 'investments' && (
-          <section className="investmentsSection">
-            <h2>📈 Portofoliu Investiții</h2>
-            
-            <div className="portfolioOverview">
-              <div className="portfolioSummary">
-                <h3>Valoare totală portofoliu</h3>
-                <div className="portfolioValue">
-                  {formatCurrency(investments.reduce((sum, inv) => sum + inv.currentValue, 0))}
-                </div>
-                <div className="portfolioChange">
-                  +{formatCurrency(investments.reduce((sum, inv) => sum + inv.change, 0))} 
-                  ({((investments.reduce((sum, inv) => sum + inv.change, 0) / investments.reduce((sum, inv) => sum + inv.amount, 0)) * 100).toFixed(2)}%)
-                </div>
-              </div>
-            </div>
-
-            <div className="investmentsGrid">
-              {investments.map(investment => (
-                <div key={investment.id} className="investmentCard">
-                  <div className="investmentHeader">
-                    <h4>{investment.name}</h4>
-                    <span className="investmentType">
-                      {investment.type === 'stocks' && '📊'}
-                      {investment.type === 'crypto' && '₿'}
-                      {investment.type === 'bonds' && '🏛️'}
-                      {investment.type === 'real-estate' && '🏠'}
+            <div className={styles.goalsGrid}>
+              {financialGoals.map(goal => (
+                <div key={goal.id} className={styles.goalCard}>
+                  <div className={styles.goalHeader}>
+                    <h4>{goal.name}</h4>
+                    <span className={styles.goalCategory}>
+                      {goal.category === 'emergency' && '🆘'}
+                      {goal.category === 'investment' && '📈'}
+                      {goal.category === 'purchase' && '🏠'}
+                      {goal.category === 'debt' && '💳'}
                     </span>
                   </div>
-                  
-                  <div className="investmentValue">
-                    <div className="currentValue">{formatCurrency(investment.currentValue)}</div>
-                    <div className="originalValue">din {formatCurrency(investment.amount)}</div>
+                  <div className={styles.goalProgress}>
+                    <div className={styles.goalProgressBar}>
+                      <div 
+                        className={styles.goalProgressFill}
+                        style={{ width: `${calculateGoalProgress(goal)}%` }}
+                      ></div>
+                    </div>
+                    <div className={styles.goalPercentage}>
+                      {calculateGoalProgress(goal).toFixed(0)}%
+                    </div>
                   </div>
-                  
-                  <div className={`investmentChange ${investment.change >= 0 ? 'positive' : 'negative'}`}>
-                    <span>{investment.change >= 0 ? '+' : ''}{formatCurrency(investment.change)}</span>
-                    <span>({investment.changePercent >= 0 ? '+' : ''}{investment.changePercent.toFixed(2)}%)</span>
+                  <div className={styles.goalDetails}>
+                    <span>{formatCurrency(goal.current)} / {formatCurrency(goal.target)}</span>
+                    <span className={styles.goalDeadline}>Until {goal.deadline}</span>
                   </div>
                 </div>
               ))}
             </div>
-
-            <div className="investmentActions">
-              <button className="actionBtn">
-                <span className="actionIcon">💰</span>
-                Adaugă investiție nouă
-              </button>
-              <button className="actionBtn">
-                <span className="actionIcon">📊</span>
-                Rebalansează portofoliul
-              </button>
-              <button className="actionBtn">
-                <span className="actionIcon">🎯</span>
-                Setează target profit
-              </button>
-            </div>
-          </section>
+          </div>
         )}
-      </main>
+
+        {activeView === 'budget' && (
+          <div className={styles.dashboardSection}>
+            <div className={styles.sectionHeader}>
+              <h2 className={styles.sectionTitle}>💰 Monthly Budget</h2>
+              <div className={styles.sectionActions}>
+                <button className={styles.actionBtn}>Edit Budget</button>
+              </div>
+            </div>
+            
+            <div className={styles.budgetOverview}>
+              <div className={styles.budgetSummary}>
+                <h3>Budget Summary</h3>
+                <div className={styles.budgetStats}>
+                  <div className={styles.budgetStat}>
+                    <span>Total Budget</span>
+                    <span className={styles.budgetAmount}>
+                      {formatCurrency(budgetCategories.reduce((sum, cat) => sum + cat.budgeted, 0))}
+                    </span>
+                  </div>
+                  <div className={styles.budgetStat}>
+                    <span>Total Spent</span>
+                    <span className={styles.spentAmount}>
+                      {formatCurrency(budgetCategories.reduce((sum, cat) => sum + cat.spent, 0))}
+                    </span>
+                  </div>
+                  <div className={styles.budgetStat}>
+                    <span>Remaining</span>
+                    <span className={styles.remainingAmount}>
+                      {formatCurrency(budgetCategories.reduce((sum, cat) => sum + (cat.budgeted - cat.spent), 0))}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeView === 'investments' && (
+          <div className={styles.dashboardSection}>
+            <div className={styles.sectionHeader}>
+              <h2 className={styles.sectionTitle}>📈 Investment Portfolio</h2>
+              <div className={styles.sectionActions}>
+                <button className={styles.actionBtn}>Add Investment</button>
+              </div>
+            </div>
+            
+            <div className={styles.portfolioOverview}>
+              <div className={styles.portfolioSummary}>
+                <h3>Total Portfolio Value</h3>
+                <div className={styles.portfolioValue}>
+                  {formatCurrency(investments.reduce((sum, inv) => sum + inv.currentValue, 0))}
+                </div>
+                <div className={styles.portfolioChange}>
+                  +{((investments.reduce((sum, inv) => sum + inv.change, 0) / 
+                      investments.reduce((sum, inv) => sum + inv.amount, 0)) * 100).toFixed(1)}% Total Return
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeView === 'coach' && (
+          <div className={styles.aiCoachSection}>
+            <div className={styles.coachHeader}>
+              <h2>🤖 Warren AI - Financial Coach</h2>
+              <p>Întreabă-mă orice despre finanțele tale. Sunt aici să te ajut!</p>
+            </div>
+            
+            <div className={styles.coachInterface}>
+              <div className={styles.coachChat}>
+                <div className={styles.chatMessage}>
+                  <div className={styles.aiAvatar}>🤖</div>
+                  <div className={styles.messageContent}>
+                    <p>
+                      Salut! Am analizat situația ta financiară și observ că ai un savings rate excelent de {savingsRate.toFixed(1)}%. 
+                      Însă văd că poți optimiza câteva lucruri...
+                    </p>
+                    <div className={styles.messageTime}>Acum 2 minute</div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className={styles.coachActions}>
+                <button className={styles.coachBtn}>
+                  Analizează bugetul meu complet
+                </button>
+                <button className={styles.coachBtn}>
+                  Strategii pentru investiții în 2025
+                </button>
+                <button className={styles.coachBtn}>
+                  Cum îmi optimizez taxele?
+                </button>
+                <button className={styles.coachBtn}>
+                  Plan pentru independența financiară
+                </button>
+              </div>
+              
+              <div className={styles.chatInput}>
+                <input 
+                  type="text" 
+                  className={styles.chatInputField}
+                  placeholder="Întreabă-mă orice despre finanțe..."
+                />
+                <button className={styles.sendBtn}>Trimite</button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

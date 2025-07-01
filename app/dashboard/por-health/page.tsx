@@ -1,7 +1,8 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import './style.css';
+import styles from './style.module.css'
+;
 
 // Types
 interface HealthMetric {

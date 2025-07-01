@@ -1,60 +1,19 @@
 /* components/ai-chat/AIChat.module.css */
-
-/* CSS Variables */
-:root {
-  /* Backgrounds */
-  --bg-primary: #0a0a0f;
-  --bg-secondary: #1a1a2e;
-  --bg-tertiary: #16213e;
-  
-  /* Glass & Effects */
-  --glass-light: rgba(255, 255, 255, 0.1);
-  --glass-medium: rgba(255, 255, 255, 0.15);
-  --glass-strong: rgba(255, 255, 255, 0.25);
-  --glass-border: rgba(255, 255, 255, 0.2);
-  
-  /* Text */
-  --text-primary: #ffffff;
-  --text-secondary: #a1a1aa;
-  --text-muted: #71717a;
-  
-  /* Spacing */
-  --space-xs: 0.25rem;
-  --space-sm: 0.5rem;
-  --space-md: 1rem;
-  --space-lg: 1.5rem;
-  --space-xl: 2rem;
-  
-  /* Radius */
-  --radius-sm: 0.25rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 1rem;
-  --radius-xl: 1.5rem;
-  
-  /* Shadows */
-  --shadow-light: 0 4px 6px rgba(0, 0, 0, 0.1);
-  --shadow-medium: 0 10px 15px rgba(0, 0, 0, 0.2);
-  --shadow-heavy: 0 25px 50px rgba(0, 0, 0, 0.3);
-  --shadow-glow: 0 0 20px rgba(102, 126, 234, 0.4);
-  
-  /* Transitions */
-  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-}
+/* Beautiful AIChat CSS Module - Complete Fixed Version */
 
 /* Chat Toggle (Floating Button) */
 .chatToggle {
   position: fixed;
   bottom: 2rem;
   right: 2rem;
-  background: var(--glass-medium);
+  background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(20px);
-  border: 2px solid var(--glass-border);
-  border-radius: var(--radius-xl);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 1.5rem;
   padding: 1rem 1.5rem;
   cursor: pointer;
-  transition: var(--transition-bounce);
-  box-shadow: var(--shadow-heavy);
+  transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
   z-index: 1000;
   display: flex;
   align-items: center;
@@ -76,8 +35,8 @@
 
 .chatToggle:hover {
   transform: translateY(-5px) scale(1.05);
-  box-shadow: var(--shadow-heavy);
-  background: var(--glass-strong);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+  background: rgba(255, 255, 255, 0.25);
 }
 
 .toggleIcon {
@@ -95,7 +54,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
-  color: var(--text-primary);
+  color: #ffffff;
   flex: 1;
 }
 
@@ -106,7 +65,7 @@
 
 .toggleText span {
   font-size: 0.8rem;
-  color: var(--text-secondary);
+  color: #a1a1aa;
 }
 
 .pulseDot {
@@ -136,11 +95,11 @@
   right: 2rem;
   width: 400px;
   height: 600px;
-  background: var(--glass-medium);
+  background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(30px);
-  border: 2px solid var(--glass-border);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-heavy);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 1.5rem;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
   z-index: 1000;
   display: flex;
   flex-direction: column;
@@ -162,8 +121,8 @@
 /* Chat Header */
 .chatHeader {
   padding: 1rem 1.5rem;
-  border-bottom: 1px solid var(--glass-border);
-  background: var(--glass-light);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(20px);
   display: flex;
   justify-content: space-between;
@@ -186,12 +145,12 @@
   justify-content: center;
   font-size: 1.5rem;
   color: white;
-  box-shadow: var(--shadow-light);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   animation: avatarGlow 3s ease-in-out infinite;
 }
 
 @keyframes avatarGlow {
-  0%, 100% { box-shadow: var(--shadow-light); }
+  0%, 100% { box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
   50% { box-shadow: 0 0 20px currentColor; }
 }
 
@@ -203,13 +162,13 @@
 
 .aiName {
   font-weight: 700;
-  color: var(--text-primary);
+  color: #ffffff;
   font-size: 0.9rem;
 }
 
 .aiStatus {
   font-size: 0.8rem;
-  color: var(--text-secondary);
+  color: #a1a1aa;
   animation: statusPulse 2s ease-in-out infinite;
 }
 
@@ -221,18 +180,18 @@
 .closeButton {
   background: none;
   border: none;
-  color: var(--text-secondary);
+  color: #a1a1aa;
   font-size: 1.2rem;
   cursor: pointer;
   padding: 0.5rem;
-  border-radius: var(--radius-sm);
-  transition: var(--transition);
+  border-radius: 0.25rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   line-height: 1;
 }
 
 .closeButton:hover {
-  color: var(--text-primary);
-  background: var(--glass-light);
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
   transform: scale(1.1);
 }
 
@@ -252,18 +211,18 @@
 }
 
 .chatMessages::-webkit-scrollbar-track {
-  background: var(--glass-light);
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 3px;
 }
 
 .chatMessages::-webkit-scrollbar-thumb {
-  background: var(--glass-border);
+  background: rgba(255, 255, 255, 0.2);
   border-radius: 3px;
-  transition: var(--transition);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .chatMessages::-webkit-scrollbar-thumb:hover {
-  background: var(--text-muted);
+  background: #71717a;
 }
 
 .message {
@@ -301,21 +260,21 @@
   font-size: 1.2rem;
   color: white;
   flex-shrink: 0;
-  box-shadow: var(--shadow-light);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .userAvatar {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: var(--glass-strong);
+  background: rgba(255, 255, 255, 0.25);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.2rem;
-  color: var(--text-primary);
+  color: #ffffff;
   flex-shrink: 0;
-  box-shadow: var(--shadow-light);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .messageContent {
@@ -335,7 +294,7 @@
 
 .messageText {
   padding: 0.75rem 1rem;
-  border-radius: var(--radius-lg);
+  border-radius: 1rem;
   font-size: 0.9rem;
   line-height: 1.5;
   word-wrap: break-word;
@@ -345,19 +304,19 @@
 .userMessage .messageText {
   background: linear-gradient(135deg, #667eea, #4c51bf);
   color: white;
-  border-bottom-right-radius: var(--radius-sm);
+  border-bottom-right-radius: 0.25rem;
 }
 
 .aiMessage .messageText {
-  background: var(--glass-light);
-  color: var(--text-primary);
-  border: 1px solid var(--glass-border);
-  border-bottom-left-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom-left-radius: 0.25rem;
 }
 
 .messageTime {
   font-size: 0.7rem;
-  color: var(--text-muted);
+  color: #71717a;
   padding: 0 0.5rem;
 }
 
@@ -371,7 +330,7 @@
 
 .suggestionsLabel {
   font-size: 0.8rem;
-  color: var(--text-secondary);
+  color: #a1a1aa;
   font-weight: 600;
   padding: 0 0.5rem;
 }
@@ -383,22 +342,22 @@
 }
 
 .suggestionButton {
-  background: var(--glass-light);
+  background: rgba(255, 255, 255, 0.1);
   border: 1px solid transparent;
-  border-radius: var(--radius-md);
+  border-radius: 0.5rem;
   padding: 0.5rem 0.75rem;
   font-size: 0.8rem;
-  color: var(--text-secondary);
+  color: #a1a1aa;
   cursor: pointer;
-  transition: var(--transition);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   text-align: left;
   backdrop-filter: blur(10px);
   word-wrap: break-word;
 }
 
 .suggestionButton:hover {
-  background: var(--glass-medium);
-  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
   transform: translateX(5px);
   border-color: currentColor;
 }
@@ -409,16 +368,16 @@
   align-items: center;
   gap: 0.25rem;
   padding: 0.75rem 1rem;
-  background: var(--glass-light);
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius-lg);
-  border-bottom-left-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 1rem;
+  border-bottom-left-radius: 0.25rem;
 }
 
 .typingDot {
   width: 6px;
   height: 6px;
-  background: var(--text-secondary);
+  background: #a1a1aa;
   border-radius: 50%;
   animation: typingDot 1.5s ease-in-out infinite;
 }
@@ -441,8 +400,8 @@
 /* Chat Input */
 .chatInput {
   padding: 1rem 1.5rem;
-  border-top: 1px solid var(--glass-border);
-  background: var(--glass-light);
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(20px);
   display: flex;
   gap: 0.75rem;
@@ -451,13 +410,13 @@
 
 .messageInput {
   flex: 1;
-  background: var(--glass-medium);
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 1rem;
   padding: 0.75rem 1rem;
-  color: var(--text-primary);
+  color: #ffffff;
   font-size: 0.9rem;
-  transition: var(--transition);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   resize: none;
   backdrop-filter: blur(10px);
   max-height: 80px;
@@ -465,14 +424,14 @@
 }
 
 .messageInput::placeholder {
-  color: var(--text-muted);
+  color: #71717a;
 }
 
 .messageInput:focus {
   outline: none;
   border-color: currentColor;
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-  background: var(--glass-strong);
+  background: rgba(255, 255, 255, 0.25);
 }
 
 .messageInput:disabled {
@@ -481,8 +440,8 @@
 }
 
 .sendButton {
-  background: var(--glass-medium);
-  border: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 50%;
   width: 40px;
   height: 40px;
@@ -492,7 +451,7 @@
   font-size: 1.2rem;
   color: white;
   cursor: pointer;
-  transition: var(--transition-bounce);
+  transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   flex-shrink: 0;
   backdrop-filter: blur(10px);
 }
@@ -629,16 +588,6 @@
   .suggestionButton:hover,
   .closeButton:hover {
     transform: none;
-  }
-}
-
-/* Dark Mode Enhancements */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --glass-light: rgba(255, 255, 255, 0.08);
-    --glass-medium: rgba(255, 255, 255, 0.12);
-    --glass-strong: rgba(255, 255, 255, 0.18);
-    --glass-border: rgba(255, 255, 255, 0.15);
   }
 }
 

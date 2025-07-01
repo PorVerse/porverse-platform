@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import styles from './AIChat.css';
+import styles from './AIChat.module.css'; // ✅ FIXED: .module.css
 
 interface ChatMessage {
   id: string;
@@ -79,80 +79,81 @@ const ecosystemContexts: Record<string, EcosystemContext> = {
     expertise: ['mental health', 'mindfulness', 'anxiety', 'meditation', 'emotional intelligence'],
     greeting: 'Namaste! Sunt Dr. Serena, ghidul tău pentru wellness mental. Să explorăm împreună calea către echilibrul interior.',
     suggestions: [
-      'Ajută-mă să gestionez anxietatea',
-      'Tehnici de meditație pentru începători',
+      'Ajută-mă să îmi gestionez anxietatea',
+      'Ghidaj de meditație pentru începători',
       'Analizează starea mea emoțională',
-      'Strategii pentru mai multă liniște'
+      'Tehnici de relaxare pentru stress'
     ]
   },
   'por-flow': {
     id: 'por-flow',
-    name: 'Nova Productivity',
-    personality: 'Energic, eficient, expert în productivitate și optimizare temporală',
+    name: 'FlowMaster Pro',
+    personality: 'Eficient, motivant, expert în productivitate și time management',
     color: '#06b6d4',
     icon: '🌊',
-    expertise: ['productivity', 'time management', 'focus', 'workflows', 'automation'],
-    greeting: 'Hey! Sunt Nova, expertul tău în productivitate maximă. Să transformăm timpul tău în rezultate extraordinare!',
+    expertise: ['productivitate', 'time management', 'focus', 'workflow', 'goals'],
+    greeting: 'Salut! Sunt FlowMaster Pro, expertul tău în productivitate maximă. Să îți optimizez timpul și energia pentru rezultate extraordinare!',
     suggestions: [
-      'Optimizează-mi programul zilnic',
-      'Tehnici pentru focus profund',
-      'Automatizări pentru workflow-ul meu',
-      'Cum să fiu mai eficient la lucru?'
+      'Optimizează-mi rutina zilnică',
+      'Plan de time blocking pentru săptămâna asta',
+      'Cum să îmi cresc focusul și concentrarea?',
+      'Automatizări pentru workflow-ul meu'
     ]
   },
   'por-blu': {
     id: 'por-blu',
-    name: 'Maestro Visionari',
-    personality: 'Înțelept, strategic, expert în leadership și planificare pe termen lung',
+    name: 'Strategic Sage',
+    personality: 'Vizionar, înțelept, expert în leadership și planificare strategică',
     color: '#f59e0b',
     icon: '💧',
-    expertise: ['strategic planning', 'leadership', 'vision', 'legacy', 'executive coaching'],
-    greeting: 'Bună ziua! Sunt Maestro Visionari, arhitectul visiunii tale de viitor. Să construim împreună drumul către moștenirea ta!',
+    expertise: ['strategic planning', 'leadership', 'vision', 'legacy', 'coaching'],
+    greeting: 'Bună ziua! Sunt Strategic Sage, mentorul tău pentru leadership și planificare strategică. Să construim împreună viziunea ta de viitor!',
     suggestions: [
-      'Ajută-mă să îmi clarific viziunea',
-      'Strategia mea pe următorii 10 ani',
-      'Dezvoltarea abilităților de leadership',
-      'Cum îmi construiesc legacy-ul?'
+      'Ajută-mă să îmi definesc viziunea pe 10 ani',
+      'Strategii de leadership pentru echipa mea',
+      'Planificare legacy și impact social',
+      'Framework pentru luarea deciziilor importante'
     ]
   }
 };
 
-const mockAIResponses = {
+// Mock AI responses pentru fiecare ecosistem
+const ecosystemMockResponses: Record<string, string[]> = {
   'por-health': [
-    'Pe baza profilului tău, îți recomand să începi ziua cu un smoothie verde bogat în antioxidanți. Adaugă spanac, măr verde, ghimbir și proteină pudră.',
-    'Antrenamentul ideal pentru tine astăzi: 20 min HIIT + 15 min stretching. Corpul tău are nevoie de mișcare intensă, dar și de recuperare.',
-    'Analiza somnului tău arată că adormi greu. Încearcă rutina 3-2-1: fără mâncare cu 3h înainte, fără lichide cu 2h înainte, fără ecrane cu 1h înainte.',
-    'Pentru optimizarea energiei, îți recomand: Vitamina D3+K2 dimineața, Magnesium seara, și Omega-3 la prânz. Toate pe stomacul plin.'
+    'Bazat pe profilul tău, îți recomand să începi ziua cu 500ml apă + o lingură ulei MCT pentru energie susținută. Micul dejun ideal: omletă cu spanac + avocado + nuci.',
+    'Pentru antrenament: 45 min strength training + 15 min HIIT. Focusează-te pe compound movements: squats, deadlifts, pull-ups. Recovery: 48h între sesiuni intensive.',
+    'Somnul tău se poate optimiza prin: camera la 18-19°C, blackout complet, magneziu înainte de culcare, și 90 min înainte să oprești screenurile.',
+    'Suplimente esențiale pentru tine: Vitamina D3+K2, Omega-3 EPA/DHA, magnesium bisglicinat, și B-complex. Testează înainte să adaugi altele.'
   ],
   'por-kids': [
-    'Pentru tema la matematică, să folosim metoda vizuală! Desenăm problemele și le transformăm în povești. Copiii învață mai bine prin joc.',
-    'Motivația copilului crește prin recompense neromanțate: timp de calitate împreună, alegerea activității weekend-ului, sau o aventură mică în natură.',
-    'Rutina ideală pentru copil: trezire la aceeași oră, mic dejun împreună, timp de joacă liber, activitate creativă, apoi homework cu pauze de 15 min.',
-    'Jocuri educative pentru vârsta lui: puzzle-uri cu hărți, experimente de bucătărie (măsurat ingrediente), și povestit cu schimbat rolurile personajelor.'
+    'Pentru matematică: folosește metoda vizuală cu obiecte concrete, apoi treci la abstract. Gamification funcționează excelent - fă din fiecare problemă o "misiune".',
+    'Motivația copilului crește prin: rutină clară, reward system bazat pe efort (nu rezultat), și 15 min "special time" zilnic doar pentru el.',
+    'Rutina perfectă: trezire 7:00, breakfast în familie, 30 min natură, learning blocks de 45 min cu 15 min pauză, și ritual de seară cu citit împreună.',
+    'Jocuri educative pe vârste: 5-7 ani pattern blocks și tangram, 8-10 ani coding unplugged și experimente simple, 11+ robotics și proiecte STEAM.'
   ],
   'por-mind': [
-    'Analiza bugetului tău arată că poți economisi 23% prin optimizarea abonamentelor. Anulează 3 servicii nefolosite și redirecționează banii către investiții.',
-    'Strategia 2025: 40% ETF-uri diversificate, 30% acțiuni tech blue-chip, 20% real estate REITs, 10% crypto (Bitcoin/Ethereum). Rebalansează trimestrial.',
-    'Pentru optimizarea taxelor: maximizează contribuțiile la pensie privată, ține evidența cheltuielilor deductibile, și consideră investițiile pe termen lung pentru impozitare redusă.',
-    'Planul tău către independența financiară: economisește 25% din venit, investește consistent, creează 2-3 surse de venit pasiv. Target: 25x cheltuielile anuale.'
+    'Bugetul tău: 50/30/20 rule - 50% necesități, 30% wants, 20% savings+investments. Track-uiește totul 30 zile să vezi realitatea, apoi optimizează.',
+    'Strategie investiții 2025: 70% index funds low-cost (VTI/VTIAX), 20% bonds (TLT), 10% individual stocks cu research solid. DCA lunar, nu time market.',
+    'Optimizare taxe: maximizează contributions la 401k și IRA, folosește tax-loss harvesting, și consideră Roth conversions în anii cu income mai mic.',
+    'Independența financiară: calculează FI number (25x annual expenses), crește income cu skills, reduce expenses fără să îți afectezi fericirea, investește diferența consistent.'
   ],
   'por-well': [
-    'Pentru gestionarea anxietății, practică tehnica 4-7-8: inspiră 4 secunde, ține respirația 7 secunde, expiră 8 secunde. Repetă de 4 ori, de 3 ori pe zi.',
-    'Meditația pentru începători: începe cu 5 minute zilnic. Concentrează-te pe respirație, fără să judeci gândurile care apar. Ele sunt normale și temporare.',
-    'Starea ta emoțională indică stres moderat. Recomand: plimbări în natură, jurnalul de recunoștință seara, și tehnici de mindfulness în activitățile zilnice.',
-    'Pentru mai multă liniște: creează spații sacre în casă, practică detox digital 1h/zi, și învață să spui "nu" fără vinovăție. Limitele sănătoase aduc pace.'
+    'Pentru anxietate: tehnica 5-4-3-2-1 (5 lucruri văzute, 4 simțite, 3 auzite, 2 mirosuri, 1 gust). Respirație în 4-7-8 counts. Progress, nu perfection.',
+    'Meditație început: start cu 5 min/zi, app-ul Insight Timer e gratuit și excelent. Focusează-te pe breath awareness, nu gânduri. Consistency beats duration.',
+    'Starea emoțională se îmbunătățește prin: jurnal zilnic 3 gratitudes, exercițiu fizic (chiar 10 min walk), sleep hygiene, și limitarea news/social media.',
+    'Stress management: identifcă triggerii, practică assertiveness, boundaries clare cu timpul tău, și self-compassion când greșești. Tu ești enough.'
   ],
   'por-flow': [
-    'Programul tău optimal: Deep work 9-11 AM (energia maximă), taskuri administrative 2-4 PM, creative work 7-9 PM. Time blocking strict cu alarme.',
-    'Pentru focus profund: tehnica Pomodoro modificată - 90 min work intensiv, 20 min pauză completă. Phone în modul airplane, notificări oprite complet.',
-    'Automatizări pentru tine: email templates pentru răspunsuri frecvente, schedulare sociale media cu Buffer, și task automation cu Zapier pentru rutinele repetitive.',
-    'Eficiența ta crește cu: batching taskurilor similare, regula 2 minute (dacă durează sub 2 min, fă acum), și GTD system pentru mental clarity.'
+    'Rutina optimă: morning routine 60 min (exercise, meditation, planning), time blocks de 90 min pentru deep work, breaks de 15 min, și evening review 10 min.',
+    'Time blocking strict cu alarme: 9-10:30 deep work #1, 10:30-10:45 break, 10:45-12:15 deep work #2, 12:15-13:15 lunch, apoi repeat. Phone în modul airplane.',
+    'Focus maxim: regula 2 minute pentru task-uri mici, Pomodoro pentru medium tasks, și time blocking pentru proiecte mari. Elimină multitasking complet.',
+    'Automatizări: email templates pentru răspunsuri frecvente, IFTTT pentru rutine digitale, și batch processing pentru task-uri similare. Work smarter, not harder.'
   ],
   'por-blu': [
-    'Viziunea ta trebuie să răspundă la: Ce impact vrei să ai? Ce problemă rezolvi pentru lume? Ce moștenire lași? Scrie 3 paragrafe, revizuiește lunar.',
-    'Strategia pe 10 ani: Anul 1-2 construiești fundația, 3-5 scalezi sistemele, 6-8 optimizezi și automatizezi, 9-10 construiești legacy-ul și mentorezi.',
-    'Leadership-ul se dezvoltă prin: feedback 360°, mentoring altor lideri, citit biografii de lideri, și practica empației active în toate interacțiunile.',
-    'Legacy-ul tău se construiește zilnic prin: deciziile etice pe care le iei, oamenii pe care îi influențezi pozitiv, și sistemele care te vor supraviețui.'
+    'Viziunea 10 ani: scrie 3 paragrafe despre impactul ideal, valorile fundamentale, și legacy-ul dorit. Review lunar și ajustează. Vision drives decisions.',
+    'Leadership autentic: ascultă mai mult decât vorbești, fă întrebări puternice, oferă feedback constructiv, și dezvoltă oamenii în jurul tău. Lead by example.',
+    'Legacy planning: ce problemă rezolvi pentru lume? Ce sistem creezi care să te supraviețuiască? Ce lideri dezvolți? Impact > income.',
+    'Decizii strategice: framework-ul 10-10-10 (cum mă voi simți în 10 min, 10 luni, 10 ani?), plus consilieri de încredere și time pentru reflection.'
   ]
 };
 
@@ -220,66 +221,58 @@ export default function AIChat({ ecosystem, isOpen, onToggle, className }: AICha
     setMessages(prev => [...prev, message]);
   };
 
-  const generateAIResponse = async (userMessage: string): Promise<{ content: string; suggestions: string[] }> => {
-    // Mock AI response logic - în realitate ai folosi OpenAI/Claude API
+  const generateAIResponse = async (userMessage: string): Promise<string> => {
+    // Simulate AI processing delay
     await new Promise(resolve => setTimeout(resolve, 1500 + Math.random() * 1000));
     
-    const responses = mockAIResponses[ecosystem as keyof typeof mockAIResponses] || mockAIResponses['por-health'];
-    const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+    const responses = ecosystemMockResponses[ecosystem] || ecosystemMockResponses['por-health'];
     
-    // Generate contextual suggestions based on user input
-    const suggestions = generateSuggestions(userMessage, ecosystem);
+    // Simple keyword matching for more relevant responses
+    const keywords = userMessage.toLowerCase();
+    let selectedResponse = responses[Math.floor(Math.random() * responses.length)];
     
-    return {
-      content: randomResponse,
-      suggestions
-    };
-  };
-
-  const generateSuggestions = (userMessage: string, ecosystem: string): string[] => {
-    const lowerMessage = userMessage.toLowerCase();
-    
-    const suggestionMap: Record<string, Record<string, string[]>> = {
-      'por-health': {
-        'nutriție': ['Ce să mănânc pentru mai multă energie?', 'Plan de masă pentru pierdere în greutate', 'Suplimente pentru imunitate'],
-        'antrenament': ['Exerciții pentru acasă', 'Program cardio pentru început', 'Stretching pentru birou'],
-        'somn': ['Rutina de seară perfectă', 'Cum să adorm mai repede?', 'Optimizarea camerei de dormit'],
-        'default': ['Cum să îmi măsor progresul?', 'Sfaturi pentru hidratare', 'Alimente anti-inflamatorii']
-      },
-      'por-mind': {
-        'buget': ['Aplicații pentru tracking cheltuieli', 'Cum să economisesc 1000 RON/lună', 'Planul 50/30/20'],
-        'investiții': ['Primul meu portofoliu de investiții', 'ETF-uri vs acțiuni individuale', 'Investiții în crypto'],
-        'default': ['Cum să îmi negociez salariul?', 'Planul de pensionare', 'Investiții în immobiliare']
-      }
-    };
-
-    const ecosystemSuggestions = suggestionMap[ecosystem] || suggestionMap['por-health'];
-    
-    for (const [keyword, suggestions] of Object.entries(ecosystemSuggestions)) {
-      if (lowerMessage.includes(keyword) && keyword !== 'default') {
-        return suggestions;
+    if (ecosystem === 'por-health') {
+      if (keywords.includes('nutriție') || keywords.includes('mâncare') || keywords.includes('alimentație')) {
+        selectedResponse = responses[0];
+      } else if (keywords.includes('antrenament') || keywords.includes('exercițiu') || keywords.includes('fitness')) {
+        selectedResponse = responses[1];
+      } else if (keywords.includes('somn') || keywords.includes('odihnă') || keywords.includes('sleep')) {
+        selectedResponse = responses[2];
+      } else if (keywords.includes('suplimente') || keywords.includes('vitamine')) {
+        selectedResponse = responses[3];
       }
     }
     
-    return ecosystemSuggestions.default || context.suggestions;
+    return selectedResponse;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSendMessage = async () => {
     if (!inputValue.trim() || isTyping) return;
 
     const userMessage = inputValue.trim();
     setInputValue('');
+    
+    // Add user message
     addUserMessage(userMessage);
+    
+    // Show typing indicator
     setIsTyping(true);
-
+    
     try {
-      const response = await generateAIResponse(userMessage);
-      addAIMessage(response.content, response.suggestions);
+      // Generate AI response
+      const aiResponse = await generateAIResponse(userMessage);
+      addAIMessage(aiResponse, context.suggestions);
     } catch (error) {
-      addAIMessage('Ne pare rău, am întâmpinat o problemă tehnică. Te rog să încerci din nou.', context.suggestions);
+      addAIMessage('Ne pare rău, a apărut o eroare tehnică. Te rog să încerci din nou.', context.suggestions);
     } finally {
       setIsTyping(false);
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
     }
   };
 
@@ -337,54 +330,34 @@ export default function AIChat({ ecosystem, isOpen, onToggle, className }: AICha
             key={message.id}
             className={`${styles.message} ${message.type === 'user' ? styles.userMessage : styles.aiMessage}`}
           >
-            {message.type === 'ai' && (
-              <div className={styles.messageAvatar} style={{ backgroundColor: context.color }}>
-                {context.icon}
-              </div>
-            )}
-            
             <div className={styles.messageContent}>
-              <div className={styles.messageText}>
-                {message.content}
-              </div>
-              <div className={styles.messageTime}>
-                {formatTime(message.timestamp)}
-              </div>
-              
-              {message.suggestions && message.suggestions.length > 0 && (
-                <div className={styles.suggestions}>
-                  <div className={styles.suggestionsLabel}>Sugestii:</div>
-                  <div className={styles.suggestionsList}>
-                    {message.suggestions.map((suggestion, index) => (
-                      <button
-                        key={index}
-                        onClick={() => handleSuggestionClick(suggestion)}
-                        className={styles.suggestionButton}
-                        style={{ borderColor: context.color }}
-                      >
-                        {suggestion}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
+              {message.content}
             </div>
+            <span className={styles.messageTime}>
+              {formatTime(message.timestamp)}
+            </span>
             
-            {message.type === 'user' && (
-              <div className={styles.userAvatar}>
-                👤
+            {message.type === 'ai' && message.suggestions && (
+              <div className={styles.suggestions}>
+                {message.suggestions.map((suggestion, index) => (
+                  <button
+                    key={index}
+                    className={styles.suggestionChip}
+                    onClick={() => handleSuggestionClick(suggestion)}
+                  >
+                    {suggestion}
+                  </button>
+                ))}
               </div>
             )}
           </div>
         ))}
         
         {isTyping && (
-          <div className={`${styles.message} ${styles.aiMessage}`}>
-            <div className={styles.messageAvatar} style={{ backgroundColor: context.color }}>
-              {context.icon}
-            </div>
-            <div className={styles.messageContent}>
-              <div className={styles.typingIndicator}>
+          <div className={`${styles.message} ${styles.ai}`}>
+            <div className={styles.typingIndicator}>
+              <span>{context.name} scrie</span>
+              <div className={styles.typingDots}>
                 <div className={styles.typingDot}></div>
                 <div className={styles.typingDot}></div>
                 <div className={styles.typingDot}></div>
@@ -396,25 +369,27 @@ export default function AIChat({ ecosystem, isOpen, onToggle, className }: AICha
         <div ref={messagesEndRef} />
       </div>
 
-      <form onSubmit={handleSubmit} className={styles.chatInput}>
-        <input
-          ref={inputRef}
-          type="text"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          placeholder={`Întreabă pe ${context.name}...`}
-          className={styles.messageInput}
-          disabled={isTyping}
-        />
-        <button
-          type="submit"
-          disabled={!inputValue.trim() || isTyping}
-          className={styles.sendButton}
-          style={{ backgroundColor: context.color }}
-        >
-          ↗️
-        </button>
-      </form>
+      <div className={styles.chatInput}>
+        <div className={styles.inputContainer}>
+          <input
+            ref={inputRef}
+            type="text"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyPress={handleKeyPress}
+            placeholder={`Întreabă pe ${context.name}...`}
+            className={styles.messageInput}
+            disabled={isTyping}
+          />
+          <button
+            onClick={handleSendMessage}
+            disabled={!inputValue.trim() || isTyping}
+            className={styles.sendButton}
+          >
+            ➤
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
