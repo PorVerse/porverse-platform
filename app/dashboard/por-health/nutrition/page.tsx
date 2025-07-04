@@ -3,12 +3,22 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import styles from './nutrition.module.css';
+import styles from '../style.module.css';
 
-interface FoodItem {
-  id: string;
-  name: string;
-  brand?: string;
+interface NutritionProfile {
+  age: number;
+  gender: 'male' | 'female' | 'other';
+  weight: number;
+  height: number;
+  activity_level: 'sedentary' | 'light' | 'moderate' | 'active' | 'very_active';
+  goal: 'weight_loss' | 'muscle_gain' | 'maintenance' | 'performance';
+  dietary_restrictions: string[];
+  allergies: string[];
+  preferences: string[];
+  medical_conditions: string[];
+}
+
+interface MacroTarget {
   calories: number;
   protein: number;
   carbs: number;
@@ -16,831 +26,715 @@ interface FoodItem {
   fiber: number;
   sugar: number;
   sodium: number;
-  serving: string;
-  barcode?: string;
-  verified: boolean;
 }
 
-interface MealPlan {
+interface NutritionInsight {
+  id: string;
+  type: 'optimization' | 'warning' | 'success' | 'info';
+  title: string;
+  message: string;
+  action_required: boolean;
+  severity: 'low' | 'medium' | 'high';
+  tags: string[];
+}
+
+interface Meal {
   id: string;
   name: string;
-  type: 'breakfast' | 'lunch' | 'dinner' | 'snack';
-  foods: FoodItem[];
-  totalCalories: number;
-  totalProtein: number;
-  totalCarbs: number;
-  totalFat: number;
-  aiOptimized: boolean;
-  completedAt?: Date;
+  type: 'breakfast' | 'morning_snack' | 'lunch' | 'afternoon_snack' | 'dinner' | 'evening_snack';
+  description: string;
+  prep_time: number;
+  cook_time: number;
+  difficulty: 'easy' | 'medium' | 'hard';
+  nutrition: {
+    calories: number;
+    protein: number;
+    carbs: number;
+    fat: number;
+    fiber: number;
+    sugar: number;
+    sodium: number;
+    vitamins: { [key: string]: number };
+    minerals: { [key: string]: number };
+  };
+  ingredients: {
+    name: string;
+    amount: number;
+    unit: string;
+    category: 'protein' | 'vegetable' | 'fruit' | 'grain' | 'dairy' | 'fat' | 'seasoning';
+    price_estimate?: number;
+  }[];
+  instructions: string[];
+  tips: string[];
+  variations: string[];
+  nutritionist_notes: string[];
+  ai_confidence: number;
 }
 
-interface NutritionGoals {
-  calories: number;
-  protein: number;
-  carbs: number;
-  fat: number;
-  fiber: number;
-  water: number; // liters
+interface WeeklyNutritionPlan {
+  id: string;
+  name: string;
+  description: string;
+  week_start: string;
+  profile_based: NutritionProfile;
+  daily_targets: MacroTarget;
+  meals: { [day: string]: Meal[] };
+  shopping_list: { [category: string]: string[] };
+  prep_schedule: { day: string; tasks: string[]; time_needed: number }[];
+  cost_analysis: {
+    total_weekly: number;
+    per_day: number;
+    per_meal: number;
+    cost_vs_eating_out: number;
+  };
+  health_score: number;
+  sustainability_score: number;
+  convenience_score: number;
 }
 
-interface MacroDistribution {
-  protein: number; // percentage
-  carbs: number;   // percentage
-  fat: number;     // percentage
-}
-
-export default function NutritionPage() {
-  const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'today' | 'planner' | 'scanner' | 'analytics'>('today');
-  
-  // Data states
-  const [todayMeals, setTodayMeals] = useState<MealPlan[]>([]);
-  const [nutritionGoals, setNutritionGoals] = useState<NutritionGoals | null>(null);
-  const [dailyProgress, setDailyProgress] = useState({
-    calories: 0,
-    protein: 0,
-    carbs: 0,
-    fat: 0,
-    fiber: 0,
-    water: 0
+export default function PremiumNutritionPlanner() {
+  const [nutritionPlan, setNutritionPlan] = useState<WeeklyNutritionPlan | null>(null);
+  const [insights, setInsights] = useState<NutritionInsight[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [profile, setProfile] = useState<NutritionProfile>({
+    age: 28,
+    gender: 'male',
+    weight: 75,
+    height: 175,
+    activity_level: 'moderate',
+    goal: 'maintenance',
+    dietary_restrictions: [],
+    allergies: [],
+    preferences: ['mediterranean'],
+    medical_conditions: []
   });
-  
-  // AI Planner states
-  const [generatingPlan, setGeneratingPlan] = useState(false);
-  const [userPreferences, setUserPreferences] = useState({
-    dietType: 'balanced',
-    allergies: [] as string[],
-    dislikes: [] as string[],
-    mealCount: 3,
-    snackCount: 2,
-    cookingTime: 'moderate'
-  });
-
-  // Scanner states
-  const [scannerOpen, setScannerOpen] = useState(false);
-  const [scanResult, setScanResult] = useState<FoodItem | null>(null);
+  const [activeDay, setActiveDay] = useState<string>('monday');
+  const [planningMode, setPlanningMode] = useState<'quick' | 'detailed' | 'expert'>('detailed');
 
   useEffect(() => {
-    loadNutritionData();
-  }, []);
+    generateInitialInsights();
+  }, [profile]);
 
-  const loadNutritionData = async () => {
+  const generateInitialInsights = async () => {
+    const mockInsights: NutritionInsight[] = [
+      {
+        id: '1',
+        type: 'optimization',
+        title: '🎯 Optimizare Macro-nutrienți',
+        message: `Bazat pe profilul tău (${profile.weight}kg, activitate ${profile.activity_level}), recomand 2,200 calorii cu 28% proteine pentru obiectivul de ${profile.goal}.`,
+        action_required: true,
+        severity: 'medium',
+        tags: ['calories', 'macros', 'optimization']
+      },
+      {
+        id: '2',
+        type: 'info',
+        title: '🥗 Pattern Alimentar Mediterranean',
+        message: 'Preferința ta pentru dieta mediteraneană se aliniază perfect cu obiectivele de sănătate. Voi prioritiza peștele, uleiul de măsline și vegetalele.',
+        action_required: false,
+        severity: 'low',
+        tags: ['diet_style', 'mediterranean', 'health']
+      },
+      {
+        id: '3',
+        type: 'success',
+        title: '💪 Sincronizare cu PorHealth',
+        message: 'Datele tale din workout tracker arată 4 antrenamente/săptămână. Planul nutrițional va include timing-ul optim pentru pre/post workout.',
+        action_required: false,
+        severity: 'low',
+        tags: ['integration', 'workout', 'timing']
+      },
+      {
+        id: '4',
+        type: 'warning',
+        title: '⚠️ Atenție la Micronutrienți',
+        message: 'Activitatea intensă necesită atenție sporită la B12, Magneziu și Omega-3. Voi include surse naturale în planul săptămânal.',
+        action_required: true,
+        severity: 'high',
+        tags: ['vitamins', 'minerals', 'deficiency']
+      }
+    ];
+
+    setInsights(mockInsights);
+  };
+
+  const generateWeeklyPlan = async () => {
     setLoading(true);
     
-    // Simulate data loading
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    // Mock nutrition goals
-    setNutritionGoals({
-      calories: 2200,
-      protein: 165, // 30%
-      carbs: 248,   // 45% 
-      fat: 73,      // 25%
-      fiber: 35,
-      water: 2.5
-    });
+    try {
+      // Simulate AI analysis with realistic delay
+      await new Promise(resolve => setTimeout(resolve, 3500));
+      
+      const bmr = profile.gender === 'male' 
+        ? 88.362 + (13.397 * profile.weight) + (4.799 * profile.height) - (5.677 * profile.age)
+        : 447.593 + (9.247 * profile.weight) + (3.098 * profile.height) - (4.330 * profile.age);
+      
+      const activityMultipliers = {
+        sedentary: 1.2,
+        light: 1.375,
+        moderate: 1.55,
+        active: 1.725,
+        very_active: 1.9
+      };
+      
+      const dailyCalories = Math.round(bmr * activityMultipliers[profile.activity_level]);
+      
+      const macroTargets: MacroTarget = {
+        calories: dailyCalories,
+        protein: Math.round(dailyCalories * 0.28 / 4),
+        carbs: Math.round(dailyCalories * 0.45 / 4),
+        fat: Math.round(dailyCalories * 0.27 / 9),
+        fiber: Math.max(25, Math.round(dailyCalories / 100)),
+        sugar: Math.min(50, Math.round(dailyCalories * 0.1 / 4)),
+        sodium: 2300
+      };
 
-    // Mock today's meals
-    setTodayMeals([
-      {
-        id: 'breakfast',
-        name: 'Protein Power Bowl',
-        type: 'breakfast',
-        foods: [
+      const sampleMeals: { [day: string]: Meal[] } = {
+        monday: [
           {
-            id: '1',
-            name: 'Greek Yogurt',
-            brand: 'Fage',
-            calories: 130,
-            protein: 20,
-            carbs: 9,
-            fat: 0,
-            fiber: 0,
-            sugar: 9,
-            sodium: 65,
-            serving: '170g',
-            verified: true
+            id: 'mon_breakfast_1',
+            name: 'Power Protein Bowl Mediterranean',
+            type: 'breakfast',
+            description: 'Bowl energizant cu iaurt grecesc, quinoa, nuci și fructe de sezon',
+            prep_time: 10,
+            cook_time: 0,
+            difficulty: 'easy',
+            nutrition: {
+              calories: 420,
+              protein: 28,
+              carbs: 48,
+              fat: 14,
+              fiber: 8,
+              sugar: 22,
+              sodium: 180,
+              vitamins: { 'B12': 0.8, 'D': 0.3, 'C': 15 },
+              minerals: { 'calcium': 320, 'iron': 2.1, 'magnesium': 78 }
+            },
+            ingredients: [
+              { name: 'Iaurt grecesc 0% grăsime', amount: 200, unit: 'g', category: 'protein', price_estimate: 3.5 },
+              { name: 'Quinoa fiartă', amount: 60, unit: 'g', category: 'grain', price_estimate: 2.0 },
+              { name: 'Fructe de pădure mixte', amount: 100, unit: 'g', category: 'fruit', price_estimate: 4.0 },
+              { name: 'Nuci crude', amount: 20, unit: 'g', category: 'fat', price_estimate: 1.8 },
+              { name: 'Miere de salcâm', amount: 1, unit: 'lingurită', category: 'seasoning', price_estimate: 0.5 },
+              { name: 'Semințe de chia', amount: 1, unit: 'lingură', category: 'fat', price_estimate: 1.2 }
+            ],
+            instructions: [
+              'Lasă quinoa să se răcească complet după fierbere',
+              'Într-un bol mare, amestecă iaurtul cu mierea până devine cremos',
+              'Adaugă quinoa și amestecă ușor',
+              'Decorează cu fructele de pădure în pattern atractiv',
+              'Presară nucile mărunțite și semințele de chia',
+              'Servește imediat pentru textura optimă'
+            ],
+            tips: [
+              'Prepară quinoa cu o seară înainte pentru economie de timp',
+              'Înlocuiește fructele de pădure cu fructe de sezon pentru cost redus',
+              'Adaugă scorțișoară pentru boost de antioxidanți',
+              'Dublează porția pentru meal prep de 2 zile'
+            ],
+            variations: [
+              'Versiune tropicală: mango și nucă de cocos',
+              'Versiune de toamnă: mere și scorțișoară',
+              'Versiune proteică: adaugă 1 lingură protein powder'
+            ],
+            nutritionist_notes: [
+              'Combinația perfectă de proteine complete și carbohidrați complecși',
+              'Omega-3 din semințele de chia susține funcția cerebrală',
+              'Probioticele din iaurt optimizează digestia și imunitatea'
+            ],
+            ai_confidence: 0.94
           },
           {
-            id: '2',
-            name: 'Blueberries',
-            calories: 84,
-            protein: 1,
-            carbs: 21,
-            fat: 0.5,
-            fiber: 4,
-            sugar: 15,
-            sodium: 1,
-            serving: '100g',
-            verified: true
-          },
-          {
-            id: '3',
-            name: 'Almonds',
-            calories: 161,
-            protein: 6,
-            carbs: 6,
-            fat: 14,
-            fiber: 4,
-            sugar: 1,
-            sodium: 0,
-            serving: '28g',
-            verified: true
+            id: 'mon_lunch_1',
+            name: 'Salmon Teriyaki cu Quinoa și Avocado',
+            type: 'lunch',
+            description: 'Somon la grătar cu glazură teriyaki, quinoa cu ierburi și salată de avocado',
+            prep_time: 15,
+            cook_time: 20,
+            difficulty: 'medium',
+            nutrition: {
+              calories: 580,
+              protein: 42,
+              carbs: 38,
+              fat: 28,
+              fiber: 12,
+              sugar: 8,
+              sodium: 420,
+              vitamins: { 'B12': 5.4, 'D': 8.2, 'E': 3.1 },
+              minerals: { 'omega3': 1200, 'potassium': 890, 'magnesium': 95 }
+            },
+            ingredients: [
+              { name: 'File de somon proaspăt', amount: 180, unit: 'g', category: 'protein', price_estimate: 18.0 },
+              { name: 'Quinoa', amount: 80, unit: 'g', category: 'grain', price_estimate: 2.5 },
+              { name: 'Avocado mare', amount: 1, unit: 'bucată', category: 'fat', price_estimate: 6.0 },
+              { name: 'Sos teriyaki natural', amount: 2, unit: 'linguri', category: 'seasoning', price_estimate: 1.0 },
+              { name: 'Broccoli', amount: 150, unit: 'g', category: 'vegetable', price_estimate: 2.0 },
+              { name: 'Roșii cherry', amount: 100, unit: 'g', category: 'vegetable', price_estimate: 3.0 },
+              { name: 'Ulei de măsline extra virgin', amount: 1, unit: 'lingură', category: 'fat', price_estimate: 0.8 }
+            ],
+            instructions: [
+              'Marinează somonul în sosul teriyaki 30 minute',
+              'Fierbe quinoa cu bulion de legume pentru extra aromă',
+              'Aburi broccoli 4-5 minute până rămâne crocant',
+              'Grătarează somonul 4 minute pe fiecare parte',
+              'Taie avocado și roșiile cherry, condimentează cu ulei',
+              'Asamblează totul într-un bol, servește cald'
+            ],
+            tips: [
+              'Nu supragătești somonul - centrul să rămână ușor rozaliu',
+              'Adaugă susan pentru crunch și nutrients extra',
+              'Înlocuiește quinoa cu orez integral dacă preferi',
+              'Garniture: edamame pentru proteine extra'
+            ],
+            variations: [
+              'Versiune vegetariană: tofu la grătar cu același marinat',
+              'Versiune low-carb: înlocuiește quinoa cu mai multe legume',
+              'Versiune picantă: adaugă ghimbir și chili flakes'
+            ],
+            nutritionist_notes: [
+              'Omega-3 din somon reduce inflamația și susține inima',
+              'Quinoa oferă proteine complete cu toți aminoacizii esențiali',
+              'Avocado furnizează grăsimi sănătoase pentru absorbția vitaminelor'
+            ],
+            ai_confidence: 0.91
           }
-        ],
-        totalCalories: 375,
-        totalProtein: 27,
-        totalCarbs: 36,
-        totalFat: 14.5,
-        aiOptimized: true,
-        completedAt: new Date()
-      },
-      {
-        id: 'lunch',
-        name: 'Mediterranean Power Salad',
-        type: 'lunch',
-        foods: [
-          {
-            id: '4',
-            name: 'Grilled Chicken Breast',
-            calories: 185,
-            protein: 35,
-            carbs: 0,
-            fat: 4,
-            fiber: 0,
-            sugar: 0,
-            sodium: 74,
-            serving: '100g',
-            verified: true
-          },
-          {
-            id: '5',
-            name: 'Mixed Greens',
-            calories: 20,
-            protein: 2,
-            carbs: 4,
-            fat: 0,
-            fiber: 2,
-            sugar: 2,
-            sodium: 22,
-            serving: '100g',
-            verified: true
-          },
-          {
-            id: '6',
-            name: 'Olive Oil',
-            calories: 119,
-            protein: 0,
-            carbs: 0,
-            fat: 14,
-            fiber: 0,
-            sugar: 0,
-            sodium: 0,
-            serving: '1 tbsp',
-            verified: true
-          }
-        ],
-        totalCalories: 324,
-        totalProtein: 37,
-        totalCarbs: 4,
-        totalFat: 18,
-        aiOptimized: true,
-        completedAt: new Date()
-      },
-      {
-        id: 'dinner',
-        name: 'Salmon & Sweet Potato',
-        type: 'dinner',
-        foods: [],
-        totalCalories: 0,
-        totalProtein: 0,
-        totalCarbs: 0,
-        totalFat: 0,
-        aiOptimized: true
-      }
-    ]);
+        ]
+        // Add more days...
+      };
 
-    // Calculate daily progress
-    const consumed = todayMeals.filter(meal => meal.completedAt);
-    const progress = {
-      calories: consumed.reduce((sum, meal) => sum + meal.totalCalories, 0),
-      protein: consumed.reduce((sum, meal) => sum + meal.totalProtein, 0),
-      carbs: consumed.reduce((sum, meal) => sum + meal.totalCarbs, 0),
-      fat: consumed.reduce((sum, meal) => sum + meal.totalFat, 0),
-      fiber: consumed.reduce((sum, meal) => sum + meal.foods.reduce((fSum, food) => fSum + food.fiber, 0), 0),
-      water: 1.8 // Mock current water intake
+      const mockPlan: WeeklyNutritionPlan = {
+        id: crypto.randomUUID(),
+        name: 'Plan Nutrițional Personalizat - Săptămâna 1',
+        description: 'Plan optimizat AI pentru obiectivele tale de sănătate și lifestyle',
+        week_start: new Date().toISOString().split('T')[0],
+        profile_based: profile,
+        daily_targets: macroTargets,
+        meals: sampleMeals,
+        shopping_list: {
+          'Proteine': ['File de somon 1kg', 'Iaurt grecesc 1kg', 'Ouă 12 buc', 'Piept de pui 800g'],
+          'Legume': ['Broccoli 500g', 'Spanac 300g', 'Roșii cherry 500g', 'Avocado 4 buc'],
+          'Cereale': ['Quinoa 500g', 'Ovăz 500g', 'Orez integral 1kg'],
+          'Condimente': ['Ulei măsline extra virgin', 'Sos teriyaki', 'Miere', 'Ierburi aromate']
+        },
+        prep_schedule: [
+          { day: 'Duminică', tasks: ['Fierbe quinoa pentru 3 zile', 'Spală și taie legumele', 'Marinează proteina'], time_needed: 90 },
+          { day: 'Miercuri', tasks: ['Prep intermediar legume', 'Verifică inventarul'], time_needed: 30 }
+        ],
+        cost_analysis: {
+          total_weekly: 285,
+          per_day: 40.7,
+          per_meal: 13.6,
+          cost_vs_eating_out: 0.65 // 35% savings vs eating out
+        },
+        health_score: 92,
+        sustainability_score: 88,
+        convenience_score: 85
+      };
+
+      setNutritionPlan(mockPlan);
+      
+      // Update insights based on generated plan
+      const planInsights: NutritionInsight[] = [
+        {
+          id: 'plan_1',
+          type: 'success',
+          title: '🎯 Plan Generat cu Succes',
+          message: `Planul tău săptămânal include ${Object.values(mockPlan.meals).flat().length} mese optimizate pentru obiectivul de ${profile.goal}.`,
+          action_required: false,
+          severity: 'low',
+          tags: ['plan_generation', 'success']
+        },
+        {
+          id: 'plan_2',
+          type: 'optimization',
+          title: '💰 Optimizare Costuri',
+          message: `Economisești 35% față de mâncarea comandată, cu o dietă superioară nutrițional. Cost estimat: ${mockPlan.cost_analysis.per_day} RON/zi.`,
+          action_required: false,
+          severity: 'medium',
+          tags: ['cost', 'savings', 'budget']
+        }
+      ];
+
+      setInsights(prev => [...prev, ...planInsights]);
+      
+    } catch (error) {
+      console.error('Error generating nutrition plan:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getInsightIcon = (type: string) => {
+    switch (type) {
+      case 'optimization': return '⚡';
+      case 'warning': return '⚠️';
+      case 'success': return '✅';
+      case 'info': return '💡';
+      default: return '📊';
+    }
+  };
+
+  const getMealIcon = (type: string) => {
+    switch (type) {
+      case 'breakfast': return '🌅';
+      case 'morning_snack': return '☕';
+      case 'lunch': return '☀️';
+      case 'afternoon_snack': return '🍎';
+      case 'dinner': return '🌙';
+      case 'evening_snack': return '🌛';
+      default: return '🍽️';
+    }
+  };
+
+  const getDayName = (day: string) => {
+    const names: { [key: string]: string } = {
+      monday: 'Luni',
+      tuesday: 'Marți',
+      wednesday: 'Miercuri',
+      thursday: 'Joi',
+      friday: 'Vineri',
+      saturday: 'Sâmbătă',
+      sunday: 'Duminică'
     };
-    
-    setDailyProgress(progress);
-    setLoading(false);
+    return names[day] || day;
   };
-
-  const generateAIMealPlan = async () => {
-    setGeneratingPlan(true);
-    
-    // Simulate AI generation
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    
-    // Generate optimized meal plan based on preferences
-    const newMealPlan = generateOptimizedMeals(userPreferences);
-    setTodayMeals(newMealPlan);
-    
-    setGeneratingPlan(false);
-  };
-
-  const generateOptimizedMeals = (preferences: typeof userPreferences): MealPlan[] => {
-    // AI meal generation logic would go here
-    // For now, returning mock optimized meals
-    return [
-      {
-        id: 'ai-breakfast',
-        name: 'AI-Optimized Breakfast',
-        type: 'breakfast',
-        foods: [
-          {
-            id: 'ai-1',
-            name: 'Protein Oats',
-            calories: 320,
-            protein: 25,
-            carbs: 45,
-            fat: 8,
-            fiber: 6,
-            sugar: 12,
-            sodium: 150,
-            serving: '1 bowl',
-            verified: true
-          }
-        ],
-        totalCalories: 320,
-        totalProtein: 25,
-        totalCarbs: 45,
-        totalFat: 8,
-        aiOptimized: true
-      }
-      // More AI-generated meals would be added here
-    ];
-  };
-
-  const scanFood = async (barcode?: string) => {
-    setScannerOpen(true);
-    
-    // Simulate barcode scanning
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    // Mock scan result
-    setScanResult({
-      id: 'scanned-1',
-      name: 'Protein Bar',
-      brand: 'Quest',
-      calories: 200,
-      protein: 21,
-      carbs: 15,
-      fat: 9,
-      fiber: 14,
-      sugar: 1,
-      sodium: 250,
-      serving: '1 bar (60g)',
-      barcode: '123456789',
-      verified: true
-    });
-    
-    setScannerOpen(false);
-  };
-
-  const getMacroPercentage = (macro: 'protein' | 'carbs' | 'fat', current: number): number => {
-    if (!nutritionGoals) return 0;
-    return Math.min((current / nutritionGoals[macro]) * 100, 100);
-  };
-
-  const getCaloriePercentage = (): number => {
-    if (!nutritionGoals) return 0;
-    return Math.min((dailyProgress.calories / nutritionGoals.calories) * 100, 100);
-  };
-
-  const getMealTypeIcon = (type: MealPlan['type']): string => {
-    const icons = {
-      breakfast: '🌅',
-      lunch: '☀️',
-      dinner: '🌙',
-      snack: '🍎'
-    };
-    return icons[type];
-  };
-
-  const getMealStatusColor = (meal: MealPlan): string => {
-    if (meal.completedAt) return '#00ff88';
-    if (meal.foods.length > 0) return '#fbbf24';
-    return '#6b7280';
-  };
-
-  if (loading) {
-    return (
-      <div className={styles.loadingContainer}>
-        <div className={styles.loadingSpinner}>
-          <div className={styles.spinner}></div>
-        </div>
-        <h2 className={styles.loadingTitle}>🍎 Analyzing Nutrition Data</h2>
-        <p className={styles.loadingText}>
-          AI is optimizing your meal plans and calculating macro distributions...
-        </p>
-      </div>
-    );
-  }
 
   return (
-    <div className={styles.nutritionPage}>
+    <div className={styles.nutritionContainer}>
+      {/* Animated Background */}
+      <div className={styles.nutritionBackground}></div>
+      
       {/* Header */}
-      <header className={styles.header}>
-        <div className={styles.headerLeft}>
-          <Link href="/dashboard/por-health" className={styles.backButton}>
-            ← Back to Dashboard
-          </Link>
-          <div className={styles.titleSection}>
-            <h1 className={styles.pageTitle}>🍎 AI Nutrition Center</h1>
-            <p className={styles.pageSubtitle}>
-              Intelligent meal planning powered by your biometric data
-            </p>
+      <div className={styles.nutritionHeader}>
+        <Link href="/dashboard/por-health" className={styles.backButton}>
+          ← Înapoi la PorHealth
+        </Link>
+        <div className={styles.headerContent}>
+          <h1 className={styles.nutritionTitle}>🍎 AI Nutrition Planner Premium</h1>
+          <p className={styles.nutritionSubtitle}>
+            Planuri nutriționale personalizate cu analiza AI avansată și optimizare automată
+          </p>
+        </div>
+      </div>
+
+      {loading ? (
+        <div className={styles.loadingSection}>
+          <div className={styles.loadingSpinner}></div>
+          <div className={styles.loadingContent}>
+            <h3>🧠 Analizez profilul tău nutrițional...</h3>
+            <div className={styles.loadingSteps}>
+              <div className={styles.loadingStep}>Calculez necesarul caloric bazal</div>
+              <div className={styles.loadingStep}>Optimizez macro și micronutrienții</div>
+              <div className={styles.loadingStep}>Generez mese personalizate</div>
+              <div className={styles.loadingStep}>Creez planul de meal prep</div>
+            </div>
           </div>
         </div>
-        
-        <div className={styles.headerStats}>
-          <div className={styles.quickStat}>
-            <span className={styles.statValue}>{dailyProgress.calories}</span>
-            <span className={styles.statUnit}>/{nutritionGoals?.calories} cal</span>
-          </div>
-          <div className={styles.quickStat}>
-            <span className={styles.statValue}>{dailyProgress.protein}g</span>
-            <span className={styles.statUnit}>protein</span>
-          </div>
-          <div className={styles.quickStat}>
-            <span className={styles.statValue}>{dailyProgress.water}L</span>
-            <span className={styles.statUnit}>water</span>
-          </div>
-        </div>
-      </header>
-
-      {/* Navigation Tabs */}
-      <nav className={styles.tabNavigation}>
-        <button 
-          className={`${styles.tab} ${activeTab === 'today' ? styles.activeTab : ''}`}
-          onClick={() => setActiveTab('today')}
-        >
-          <span className={styles.tabIcon}>📊</span>
-          Today's Nutrition
-        </button>
-        <button 
-          className={`${styles.tab} ${activeTab === 'planner' ? styles.activeTab : ''}`}
-          onClick={() => setActiveTab('planner')}
-        >
-          <span className={styles.tabIcon}>🤖</span>
-          AI Meal Planner
-        </button>
-        <button 
-          className={`${styles.tab} ${activeTab === 'scanner' ? styles.activeTab : ''}`}
-          onClick={() => setActiveTab('scanner')}
-        >
-          <span className={styles.tabIcon}>📱</span>
-          Food Scanner
-        </button>
-        <button 
-          className={`${styles.tab} ${activeTab === 'analytics' ? styles.activeTab : ''}`}
-          onClick={() => setActiveTab('analytics')}
-        >
-          <span className={styles.tabIcon}>📈</span>
-          Analytics
-        </button>
-      </nav>
-
-      <div className={styles.tabContent}>
-        {/* TODAY'S NUTRITION TAB */}
-        {activeTab === 'today' && (
-          <div className={styles.todayTab}>
-            {/* Macro Overview */}
-            <div className={styles.macroOverview}>
-              <div className={styles.calorieRing}>
-                <div className={styles.ringContainer}>
-                  <svg className={styles.progressRing} viewBox="0 0 100 100">
-                    <circle
-                      cx="50"
-                      cy="50"
-                      r="45"
-                      fill="none"
-                      stroke="rgba(255,255,255,0.1)"
-                      strokeWidth="6"
-                    />
-                    <circle
-                      cx="50"
-                      cy="50"
-                      r="45"
-                      fill="none"
-                      stroke="url(#calorieGradient)"
-                      strokeWidth="6"
-                      strokeLinecap="round"
-                      strokeDasharray={`${2 * Math.PI * 45}`}
-                      strokeDashoffset={`${2 * Math.PI * 45 * (1 - getCaloriePercentage() / 100)}`}
-                      className={styles.progressCircle}
-                    />
-                    <defs>
-                      <linearGradient id="calorieGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stopColor="#00ff88" />
-                        <stop offset="100%" stopColor="#22c55e" />
-                      </linearGradient>
-                    </defs>
-                  </svg>
-                  <div className={styles.ringContent}>
-                    <span className={styles.ringValue}>{dailyProgress.calories}</span>
-                    <span className={styles.ringLabel}>calories</span>
-                    <span className={styles.ringRemaining}>
-                      {nutritionGoals ? nutritionGoals.calories - dailyProgress.calories : 0} left
-                    </span>
-                  </div>
+      ) : (
+        <div className={styles.nutritionContent}>
+          {/* Profile Setup & Insights */}
+          <div className={styles.nutritionSidebar}>
+            {/* Profile Card */}
+            <div className={styles.profileCard}>
+              <h3 className={styles.profileTitle}>👤 Profilul Tău Nutrițional</h3>
+              
+              <div className={styles.profileGrid}>
+                <div className={styles.profileItem}>
+                  <label>Vârsta</label>
+                  <input
+                    type="number"
+                    value={profile.age}
+                    onChange={(e) => setProfile(prev => ({...prev, age: parseInt(e.target.value)}))}
+                    className={styles.profileInput}
+                  />
+                </div>
+                
+                <div className={styles.profileItem}>
+                  <label>Greutate (kg)</label>
+                  <input
+                    type="number"
+                    value={profile.weight}
+                    onChange={(e) => setProfile(prev => ({...prev, weight: parseInt(e.target.value)}))}
+                    className={styles.profileInput}
+                  />
+                </div>
+                
+                <div className={styles.profileItem}>
+                  <label>Înălțime (cm)</label>
+                  <input
+                    type="number"
+                    value={profile.height}
+                    onChange={(e) => setProfile(prev => ({...prev, height: parseInt(e.target.value)}))}
+                    className={styles.profileInput}
+                  />
+                </div>
+                
+                <div className={styles.profileItem}>
+                  <label>Activitate</label>
+                  <select
+                    value={profile.activity_level}
+                    onChange={(e) => setProfile(prev => ({...prev, activity_level: e.target.value as any}))}
+                    className={styles.profileSelect}
+                  >
+                    <option value="sedentary">Sedentară</option>
+                    <option value="light">Ușoară</option>
+                    <option value="moderate">Moderată</option>
+                    <option value="active">Activă</option>
+                    <option value="very_active">Foarte Activă</option>
+                  </select>
+                </div>
+                
+                <div className={styles.profileItem}>
+                  <label>Obiectiv</label>
+                  <select
+                    value={profile.goal}
+                    onChange={(e) => setProfile(prev => ({...prev, goal: e.target.value as any}))}
+                    className={styles.profileSelect}
+                  >
+                    <option value="weight_loss">Pierdere în greutate</option>
+                    <option value="muscle_gain">Câștig muscular</option>
+                    <option value="maintenance">Menținere</option>
+                    <option value="performance">Performanță</option>
+                  </select>
                 </div>
               </div>
 
-              <div className={styles.macroGrid}>
-                <div className={styles.macroCard}>
-                  <div className={styles.macroHeader}>
-                    <span className={styles.macroIcon}>🥩</span>
-                    <span className={styles.macroName}>Protein</span>
-                  </div>
-                  <div className={styles.macroValue}>
-                    {dailyProgress.protein}g / {nutritionGoals?.protein}g
-                  </div>
-                  <div className={styles.macroProgress}>
-                    <div 
-                      className={styles.macroBar}
-                      style={{ width: `${getMacroPercentage('protein', dailyProgress.protein)}%` }}
-                    ></div>
-                  </div>
-                  <div className={styles.macroPercentage}>
-                    {Math.round(getMacroPercentage('protein', dailyProgress.protein))}%
-                  </div>
-                </div>
-
-                <div className={styles.macroCard}>
-                  <div className={styles.macroHeader}>
-                    <span className={styles.macroIcon}>🌾</span>
-                    <span className={styles.macroName}>Carbs</span>
-                  </div>
-                  <div className={styles.macroValue}>
-                    {dailyProgress.carbs}g / {nutritionGoals?.carbs}g
-                  </div>
-                  <div className={styles.macroProgress}>
-                    <div 
-                      className={styles.macroBar}
-                      style={{ width: `${getMacroPercentage('carbs', dailyProgress.carbs)}%` }}
-                    ></div>
-                  </div>
-                  <div className={styles.macroPercentage}>
-                    {Math.round(getMacroPercentage('carbs', dailyProgress.carbs))}%
-                  </div>
-                </div>
-
-                <div className={styles.macroCard}>
-                  <div className={styles.macroHeader}>
-                    <span className={styles.macroIcon}>🥑</span>
-                    <span className={styles.macroName}>Fat</span>
-                  </div>
-                  <div className={styles.macroValue}>
-                    {dailyProgress.fat}g / {nutritionGoals?.fat}g
-                  </div>
-                  <div className={styles.macroProgress}>
-                    <div 
-                      className={styles.macroBar}
-                      style={{ width: `${getMacroPercentage('fat', dailyProgress.fat)}%` }}
-                    ></div>
-                  </div>
-                  <div className={styles.macroPercentage}>
-                    {Math.round(getMacroPercentage('fat', dailyProgress.fat))}%
-                  </div>
-                </div>
-              </div>
+              <button
+                onClick={generateWeeklyPlan}
+                disabled={loading}
+                className={styles.generatePlanButton}
+              >
+                <span className={styles.buttonIcon}>✨</span>
+                Generează Plan AI Premium
+              </button>
             </div>
 
-            {/* Meals Timeline */}
-            <div className={styles.mealsTimeline}>
-              <h3 className={styles.sectionTitle}>Today's Meals</h3>
-              
-              <div className={styles.mealsList}>
-                {todayMeals.map((meal) => (
-                  <div key={meal.id} className={styles.mealCard}>
-                    <div className={styles.mealHeader}>
-                      <div className={styles.mealInfo}>
-                        <span className={styles.mealIcon}>{getMealTypeIcon(meal.type)}</span>
-                        <div>
-                          <h4 className={styles.mealName}>{meal.name}</h4>
-                          <p className={styles.mealType}>{meal.type.charAt(0).toUpperCase() + meal.type.slice(1)}</p>
-                        </div>
-                      </div>
-                      
-                      <div className={styles.mealStats}>
-                        <div className={styles.mealStat}>
-                          <span className={styles.statValue}>{meal.totalCalories}</span>
-                          <span className={styles.statLabel}>cal</span>
-                        </div>
-                        <div className={styles.mealStat}>
-                          <span className={styles.statValue}>{meal.totalProtein}g</span>
-                          <span className={styles.statLabel}>protein</span>
-                        </div>
-                      </div>
-                      
-                      <div 
-                        className={styles.mealStatus}
-                        style={{ backgroundColor: getMealStatusColor(meal) }}
-                      >
-                        {meal.completedAt ? '✓' : meal.foods.length > 0 ? '⏰' : '○'}
-                      </div>
+            {/* AI Insights */}
+            <div className={styles.insightsCard}>
+              <h3 className={styles.insightsTitle}>🧠 AI Insights</h3>
+              <div className={styles.insightsList}>
+                {insights.map(insight => (
+                  <div key={insight.id} className={`${styles.insightItem} ${styles[insight.type]}`}>
+                    <div className={styles.insightHeader}>
+                      <span className={styles.insightIcon}>{getInsightIcon(insight.type)}</span>
+                      <span className={styles.insightItemTitle}>{insight.title}</span>
                     </div>
-
-                    {meal.foods.length > 0 && (
-                      <div className={styles.foodsList}>
-                        {meal.foods.map((food) => (
-                          <div key={food.id} className={styles.foodItem}>
-                            <div className={styles.foodInfo}>
-                              <span className={styles.foodName}>{food.name}</span>
-                              {food.brand && <span className={styles.foodBrand}>{food.brand}</span>}
-                              <span className={styles.foodServing}>{food.serving}</span>
-                            </div>
-                            <div className={styles.foodMacros}>
-                              <span>{food.calories} cal</span>
-                              <span>P: {food.protein}g</span>
-                              <span>C: {food.carbs}g</span>
-                              <span>F: {food.fat}g</span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
+                    <p className={styles.insightMessage}>{insight.message}</p>
+                    {insight.action_required && (
+                      <button className={styles.insightAction}>Aplică</button>
                     )}
-
-                    <div className={styles.mealActions}>
-                      {meal.completedAt ? (
-                        <span className={styles.completedLabel}>
-                          Completed at {meal.completedAt.toLocaleTimeString()}
-                        </span>
-                      ) : (
-                        <div className={styles.actionButtons}>
-                          <button className={styles.addFoodButton}>+ Add Food</button>
-                          <button className={styles.completeButton}>Mark Complete</button>
-                        </div>
-                      )}
-                    </div>
                   </div>
                 ))}
               </div>
             </div>
           </div>
-        )}
 
-        {/* AI MEAL PLANNER TAB */}
-        {activeTab === 'planner' && (
-          <div className={styles.plannerTab}>
-            <div className={styles.plannerContent}>
-              <div className={styles.plannerHeader}>
-                <h3 className={styles.sectionTitle}>🤖 AI Meal Planner</h3>
-                <p className={styles.sectionSubtitle}>
-                  Get personalized meal plans optimized for your health goals and preferences
-                </p>
-              </div>
-
-              <div className={styles.preferencesForm}>
-                <div className={styles.formSection}>
-                  <label className={styles.formLabel}>Diet Type</label>
-                  <select 
-                    className={styles.formSelect}
-                    value={userPreferences.dietType}
-                    onChange={(e) => setUserPreferences(prev => ({ ...prev, dietType: e.target.value }))}
-                  >
-                    <option value="balanced">Balanced</option>
-                    <option value="keto">Ketogenic</option>
-                    <option value="paleo">Paleo</option>
-                    <option value="vegetarian">Vegetarian</option>
-                    <option value="vegan">Vegan</option>
-                    <option value="mediterranean">Mediterranean</option>
-                  </select>
-                </div>
-
-                <div className={styles.formSection}>
-                  <label className={styles.formLabel}>Meals per Day</label>
-                  <div className={styles.numberInput}>
-                    <button 
-                      className={styles.numberButton}
-                      onClick={() => setUserPreferences(prev => ({ 
-                        ...prev, 
-                        mealCount: Math.max(1, prev.mealCount - 1) 
-                      }))}
-                    >
-                      -
-                    </button>
-                    <span className={styles.numberValue}>{userPreferences.mealCount}</span>
-                    <button 
-                      className={styles.numberButton}
-                      onClick={() => setUserPreferences(prev => ({ 
-                        ...prev, 
-                        mealCount: Math.min(6, prev.mealCount + 1) 
-                      }))}
-                    >
-                      +
-                    </button>
-                  </div>
-                </div>
-
-                <div className={styles.formSection}>
-                  <label className={styles.formLabel}>Cooking Time Preference</label>
-                  <div className={styles.radioGroup}>
-                    {['quick', 'moderate', 'elaborate'].map((time) => (
-                      <label key={time} className={styles.radioLabel}>
-                        <input
-                          type="radio"
-                          name="cookingTime"
-                          value={time}
-                          checked={userPreferences.cookingTime === time}
-                          onChange={(e) => setUserPreferences(prev => ({ 
-                            ...prev, 
-                            cookingTime: e.target.value 
-                          }))}
-                          className={styles.radioInput}
-                        />
-                        <span className={styles.radioText}>
-                          {time.charAt(0).toUpperCase() + time.slice(1)}
-                        </span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <button 
-                className={styles.generateButton}
-                onClick={generateAIMealPlan}
-                disabled={generatingPlan}
-              >
-                {generatingPlan ? (
-                  <span className={styles.generatingText}>
-                    <span className={styles.loadingDots}></span>
-                    Generating Optimal Meal Plan...
-                  </span>
-                ) : (
-                  '✨ Generate AI Meal Plan'
-                )}
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* FOOD SCANNER TAB */}
-        {activeTab === 'scanner' && (
-          <div className={styles.scannerTab}>
-            <div className={styles.scannerContent}>
-              <div className={styles.scannerHeader}>
-                <h3 className={styles.sectionTitle}>📱 Food Scanner</h3>
-                <p className={styles.sectionSubtitle}>
-                  Scan barcodes or search foods to track nutrition instantly
-                </p>
-              </div>
-
-              <div className={styles.scannerActions}>
-                <button 
-                  className={styles.scanButton}
-                  onClick={() => scanFood()}
-                  disabled={scannerOpen}
-                >
-                  {scannerOpen ? (
-                    <span className={styles.scanningText}>
-                      <span className={styles.loadingDots}></span>
-                      Scanning...
-                    </span>
-                  ) : (
-                    <>
-                      <span className={styles.scanIcon}>📷</span>
-                      Scan Barcode
-                    </>
-                  )}
-                </button>
-
-                <div className={styles.searchSection}>
-                  <input
-                    type="text"
-                    placeholder="Search food database..."
-                    className={styles.searchInput}
-                  />
-                  <button className={styles.searchButton}>🔍 Search</button>
-                </div>
-              </div>
-
-              {scanResult && (
-                <div className={styles.scanResult}>
-                  <div className={styles.resultHeader}>
-                    <h4 className={styles.resultTitle}>Scan Result</h4>
-                    <span className={styles.verifiedBadge}>
-                      {scanResult.verified ? '✓ Verified' : '⚠ Unverified'}
-                    </span>
-                  </div>
-                  
-                  <div className={styles.resultContent}>
-                    <div className={styles.resultInfo}>
-                      <h5 className={styles.resultName}>{scanResult.name}</h5>
-                      {scanResult.brand && (
-                        <p className={styles.resultBrand}>{scanResult.brand}</p>
-                      )}
-                      <p className={styles.resultServing}>Serving: {scanResult.serving}</p>
-                    </div>
-
-                    <div className={styles.resultNutrition}>
-                      <div className={styles.nutritionGrid}>
-                        <div className={styles.nutritionItem}>
-                          <span className={styles.nutritionLabel}>Calories</span>
-                          <span className={styles.nutritionValue}>{scanResult.calories}</span>
-                        </div>
-                        <div className={styles.nutritionItem}>
-                          <span className={styles.nutritionLabel}>Protein</span>
-                          <span className={styles.nutritionValue}>{scanResult.protein}g</span>
-                        </div>
-                        <div className={styles.nutritionItem}>
-                          <span className={styles.nutritionLabel}>Carbs</span>
-                          <span className={styles.nutritionValue}>{scanResult.carbs}g</span>
-                        </div>
-                        <div className={styles.nutritionItem}>
-                          <span className={styles.nutritionLabel}>Fat</span>
-                          <span className={styles.nutritionValue}>{scanResult.fat}g</span>
-                        </div>
-                        <div className={styles.nutritionItem}>
-                          <span className={styles.nutritionLabel}>Fiber</span>
-                          <span className={styles.nutritionValue}>{scanResult.fiber}g</span>
-                        </div>
-                        <div className={styles.nutritionItem}>
-                          <span className={styles.nutritionLabel}>Sodium</span>
-                          <span className={styles.nutritionValue}>{scanResult.sodium}mg</span>
-                        </div>
+          {/* Main Content - Weekly Plan */}
+          <div className={styles.nutritionMain}>
+            {nutritionPlan ? (
+              <>
+                {/* Plan Overview */}
+                <div className={styles.planOverview}>
+                  <div className={styles.planHeader}>
+                    <h2 className={styles.planTitle}>{nutritionPlan.name}</h2>
+                    <div className={styles.planScores}>
+                      <div className={styles.scoreItem}>
+                        <span className={styles.scoreValue}>{nutritionPlan.health_score}</span>
+                        <span className={styles.scoreLabel}>Sănătate</span>
+                      </div>
+                      <div className={styles.scoreItem}>
+                        <span className={styles.scoreValue}>{nutritionPlan.sustainability_score}</span>
+                        <span className={styles.scoreLabel}>Sustenabil</span>
+                      </div>
+                      <div className={styles.scoreItem}>
+                        <span className={styles.scoreValue}>{nutritionPlan.convenience_score}</span>
+                        <span className={styles.scoreLabel}>Convenabil</span>
                       </div>
                     </div>
+                  </div>
 
-                    <div className={styles.resultActions}>
-                      <button className={styles.addToMealButton}>Add to Meal</button>
-                      <button className={styles.quickLogButton}>Quick Log</button>
+                  {/* Daily Targets */}
+                  <div className={styles.dailyTargets}>
+                    <h4>🎯 Obiective Zilnice</h4>
+                    <div className={styles.targetsGrid}>
+                      <div className={styles.targetItem}>
+                        <span className={styles.targetValue}>{nutritionPlan.daily_targets.calories}</span>
+                        <span className={styles.targetLabel}>Calorii</span>
+                      </div>
+                      <div className={styles.targetItem}>
+                        <span className={styles.targetValue}>{nutritionPlan.daily_targets.protein}g</span>
+                        <span className={styles.targetLabel}>Proteine</span>
+                      </div>
+                      <div className={styles.targetItem}>
+                        <span className={styles.targetValue}>{nutritionPlan.daily_targets.carbs}g</span>
+                        <span className={styles.targetLabel}>Carbohidrați</span>
+                      </div>
+                      <div className={styles.targetItem}>
+                        <span className={styles.targetValue}>{nutritionPlan.daily_targets.fat}g</span>
+                        <span className={styles.targetLabel}>Grăsimi</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Cost Analysis */}
+                  <div className={styles.costAnalysis}>
+                    <h4>💰 Analiză Costuri</h4>
+                    <div className={styles.costGrid}>
+                      <div className={styles.costItem}>
+                        <span className={styles.costValue}>{nutritionPlan.cost_analysis.per_day} RON</span>
+                        <span className={styles.costLabel}>Cost/zi</span>
+                      </div>
+                      <div className={styles.costItem}>
+                        <span className={styles.costValue}>{Math.round((1 - nutritionPlan.cost_analysis.cost_vs_eating_out) * 100)}%</span>
+                        <span className={styles.costLabel}>Economie vs restaurant</span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              )}
-            </div>
-          </div>
-        )}
 
-        {/* ANALYTICS TAB */}
-        {activeTab === 'analytics' && (
-          <div className={styles.analyticsTab}>
-            <div className={styles.analyticsContent}>
-              <h3 className={styles.sectionTitle}>📈 Nutrition Analytics</h3>
-              
-              <div className={styles.analyticsGrid}>
-                <div className={styles.analyticsCard}>
-                  <h4 className={styles.cardTitle}>7-Day Trends</h4>
-                  <div className={styles.chartPlaceholder}>
-                    📊 Macro trends visualization
-                  </div>
+                {/* Day Navigation */}
+                <div className={styles.dayNavigation}>
+                  {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map(day => (
+                    <button
+                      key={day}
+                      onClick={() => setActiveDay(day)}
+                      className={`${styles.dayButton} ${activeDay === day ? styles.activeDayButton : ''}`}
+                    >
+                      {getDayName(day)}
+                    </button>
+                  ))}
                 </div>
 
-                <div className={styles.analyticsCard}>
-                  <h4 className={styles.cardTitle}>Goal Achievement</h4>
-                  <div className={styles.chartPlaceholder}>
-                    🎯 Goal completion rates
-                  </div>
-                </div>
+                {/* Meals Display */}
+                <div className={styles.mealsSection}>
+                  {nutritionPlan.meals[activeDay]?.map(meal => (
+                    <div key={meal.id} className={styles.mealCard}>
+                      <div className={styles.mealHeader}>
+                        <div className={styles.mealType}>
+                          <span className={styles.mealIcon}>{getMealIcon(meal.type)}</span>
+                          <span className={styles.mealTypeName}>
+                            {meal.type.replace('_', ' ').charAt(0).toUpperCase() + meal.type.slice(1)}
+                          </span>
+                        </div>
+                        <div className={styles.mealMeta}>
+                          <span className={styles.mealTime}>⏱️ {meal.prep_time + meal.cook_time}min</span>
+                          <span className={styles.mealDifficulty}>👨‍🍳 {meal.difficulty}</span>
+                          <span className={styles.mealCalories}>🔥 {meal.nutrition.calories} cal</span>
+                        </div>
+                      </div>
 
-                <div className={styles.analyticsCard}>
-                  <h4 className={styles.cardTitle}>Nutrient Timing</h4>
-                  <div className={styles.chartPlaceholder}>
-                    ⏰ Optimal meal timing analysis
-                  </div>
-                </div>
+                      <h4 className={styles.mealName}>{meal.name}</h4>
+                      <p className={styles.mealDescription}>{meal.description}</p>
 
-                <div className={styles.analyticsCard}>
-                  <h4 className={styles.cardTitle}>AI Insights</h4>
-                  <div className={styles.insightsList}>
-                    <div className={styles.insight}>
-                      <span className={styles.insightIcon}>💡</span>
-                      <span className={styles.insightText}>
-                        Increase protein intake by 15g for optimal recovery
-                      </span>
+                      {/* Nutrition Info */}
+                      <div className={styles.nutritionInfo}>
+                        <div className={styles.nutritionItem}>
+                          <span>Proteine: {meal.nutrition.protein}g</span>
+                        </div>
+                        <div className={styles.nutritionItem}>
+                          <span>Carbohidrați: {meal.nutrition.carbs}g</span>
+                        </div>
+                        <div className={styles.nutritionItem}>
+                          <span>Grăsimi: {meal.nutrition.fat}g</span>
+                        </div>
+                        <div className={styles.nutritionItem}>
+                          <span>Fibre: {meal.nutrition.fiber}g</span>
+                        </div>
+                      </div>
+
+                      {/* Ingredients */}
+                      <div className={styles.ingredientsSection}>
+                        <h5>🛒 Ingrediente:</h5>
+                        <div className={styles.ingredientsList}>
+                          {meal.ingredients.map((ingredient, index) => (
+                            <div key={index} className={styles.ingredientItem}>
+                              <span className={styles.ingredientName}>{ingredient.name}</span>
+                              <span className={styles.ingredientAmount}>
+                                {ingredient.amount} {ingredient.unit}
+                              </span>
+                              {ingredient.price_estimate && (
+                                <span className={styles.ingredientPrice}>
+                                  {ingredient.price_estimate} RON
+                                </span>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Instructions */}
+                      <div className={styles.instructionsSection}>
+                        <h5>👨‍🍳 Preparare:</h5>
+                        <ol className={styles.instructionsList}>
+                          {meal.instructions.map((instruction, index) => (
+                            <li key={index} className={styles.instructionItem}>
+                              {instruction}
+                            </li>
+                          ))}
+                        </ol>
+                      </div>
+
+                      {/* AI Tips */}
+                      <div className={styles.tipsSection}>
+                        <h5>💡 Tips AI:</h5>
+                        <ul className={styles.tipsList}>
+                          {meal.tips.map((tip, index) => (
+                            <li key={index} className={styles.tipItem}>{tip}</li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      {/* Nutritionist Notes */}
+                      <div className={styles.notesSection}>
+                        <h5>📋 Note Nutriționist:</h5>
+                        <ul className={styles.notesList}>
+                          {meal.nutritionist_notes.map((note, index) => (
+                            <li key={index} className={styles.noteItem}>{note}</li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      {/* AI Confidence */}
+                      <div className={styles.confidenceSection}>
+                        <span className={styles.confidenceLabel}>AI Confidence:</span>
+                        <div className={styles.confidenceBar}>
+                          <div 
+                            className={styles.confidenceFill}
+                            style={{ width: `${meal.ai_confidence * 100}%` }}
+                          ></div>
+                        </div>
+                        <span className={styles.confidenceValue}>{Math.round(meal.ai_confidence * 100)}%</span>
+                      </div>
                     </div>
-                    <div className={styles.insight}>
-                      <span className={styles.insightIcon}>📈</span>
-                      <span className={styles.insightText}>
-                        Your fiber intake improved 23% this week
-                      </span>
-                    </div>
-                    <div className={styles.insight}>
-                      <span className={styles.insightIcon}>⚡</span>
-                      <span className={styles.insightText}>
-                        Pre-workout carbs timing is optimal
-                      </span>
-                    </div>
-                  </div>
+                  ))}
                 </div>
+
+                {/* Action Buttons */}
+                <div className={styles.actionButtons}>
+                  <button className={styles.actionButton}>
+                    📱 Salvează în App
+                  </button>
+                  <button className={styles.actionButton}>
+                    🛒 Generează Lista Cumpărături
+                  </button>
+                  <button className={styles.actionButton}>
+                    📧 Trimite Plan prin Email
+                  </button>
+                  <button className={styles.actionButton}>
+                    📊 Analiză Nutrițională Detaliată
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div className={styles.noPlansState}>
+                <div className={styles.noPlanIcon}>🍎</div>
+                <h3>Generează primul tău plan nutrițional AI</h3>
+                <p>Completează profilul din stânga și generează un plan personalizat pentru obiectivele tale</p>
               </div>
-            </div>
+            )}
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
