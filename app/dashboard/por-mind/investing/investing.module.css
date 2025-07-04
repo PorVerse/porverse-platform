@@ -1,0 +1,1487 @@
+/* app/dashboard/por-mind/investing/investing.module.css */
+/* PorMind Investment Advisor - Premium Financial CSS Module */
+
+/* =================================
+   CSS VARIABLES - PORMIND INVESTING
+   ================================= */
+:root {
+  /* PorMind Brand Colors - Financial Inspired */
+  --mind-primary: #3b82f6;
+  --mind-secondary: #1d4ed8;
+  --mind-accent: #60a5fa;
+  --mind-success: #10b981;
+  --mind-warning: #f59e0b;
+  --mind-danger: #ef4444;
+  --mind-info: #06b6d4;
+  
+  /* Financial State Colors */
+  --mind-profit: #22c55e;
+  --mind-loss: #ef4444;
+  --mind-neutral: #6b7280;
+  --mind-bullish: #16a34a;
+  --mind-bearish: #dc2626;
+  --mind-gold: #eab308;
+  
+  /* Investment Risk Colors */
+  --risk-low: #22c55e;
+  --risk-medium: #f59e0b;
+  --risk-high: #ef4444;
+  --risk-critical: #dc2626;
+  
+  /* Premium Gradients - Finance Inspired */
+  --mind-gradient-primary: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  --mind-gradient-secondary: linear-gradient(135deg, #60a5fa, #3b82f6);
+  --mind-gradient-success: linear-gradient(135deg, #10b981, #059669);
+  --mind-gradient-warning: linear-gradient(135deg, #f59e0b, #d97706);
+  --mind-gradient-financial: linear-gradient(135deg, #3b82f6, #10b981, #f59e0b);
+  --mind-gradient-market: linear-gradient(135deg, #1d4ed8, #3b82f6, #60a5fa);
+  
+  /* Glassmorphism Effects - Enhanced */
+  --mind-glass: rgba(59, 130, 246, 0.08);
+  --mind-glass-medium: rgba(59, 130, 246, 0.12);
+  --mind-glass-strong: rgba(59, 130, 246, 0.18);
+  --mind-glass-border: rgba(59, 130, 246, 0.25);
+  --mind-glass-background: rgba(255, 255, 255, 0.03);
+  --mind-glass-profit: rgba(34, 197, 94, 0.1);
+  --mind-glass-loss: rgba(239, 68, 68, 0.1);
+  
+  /* Background System - Financial Ambiance */
+  --mind-bg-primary: #0a0a0f;
+  --mind-bg-secondary: #0f1419;
+  --mind-bg-tertiary: #1a1a2e;
+  --mind-bg-main: linear-gradient(135deg, #0a0a0f 0%, #0f1419 30%, #1a1a2e 100%);
+  --mind-bg-card: rgba(255, 255, 255, 0.02);
+  --mind-bg-investment: rgba(59, 130, 246, 0.03);
+  
+  /* Text Hierarchy - Ultra Clear */
+  --mind-text-primary: #ffffff;
+  --mind-text-secondary: #e2e8f0;
+  --mind-text-muted: #94a3b8;
+  --mind-text-accent: #3b82f6;
+  --mind-text-success: #10b981;
+  --mind-text-warning: #f59e0b;
+  --mind-text-danger: #ef4444;
+  --mind-text-profit: #22c55e;
+  --mind-text-loss: #ef4444;
+  
+  /* Shadow System - Financial Focus */
+  --mind-shadow-light: 0 4px 20px rgba(59, 130, 246, 0.08);
+  --mind-shadow-medium: 0 8px 30px rgba(59, 130, 246, 0.15);
+  --mind-shadow-heavy: 0 16px 40px rgba(59, 130, 246, 0.2);
+  --mind-shadow-glow: 0 0 30px rgba(59, 130, 246, 0.25);
+  --mind-shadow-premium: 0 0 50px rgba(59, 130, 246, 0.4);
+  --mind-shadow-financial: 0 0 20px rgba(59, 130, 246, 0.3);
+  --mind-shadow-profit: 0 0 20px rgba(34, 197, 94, 0.3);
+  --mind-shadow-loss: 0 0 20px rgba(239, 68, 68, 0.3);
+  
+  /* Layout & Spacing */
+  --mind-radius: 20px;
+  --mind-radius-medium: 16px;
+  --mind-radius-small: 12px;
+  --mind-radius-tiny: 8px;
+  --mind-spacing-xs: 0.5rem;
+  --mind-spacing-sm: 1rem;
+  --mind-spacing-md: 1.5rem;
+  --mind-spacing-lg: 2rem;
+  --mind-spacing-xl: 3rem;
+  
+  /* Transitions - Financial Smoothness */
+  --mind-transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --mind-transition-slow: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --mind-transition-fast: all 0.15s ease-out;
+  --mind-transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --mind-transition-financial: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* =================================
+   BASE & RESET STYLES
+   ================================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* =================================
+   INVESTING CONTAINER - MAIN LAYOUT
+   ================================= */
+.investingContainer {
+  min-height: 100vh;
+  background: var(--mind-bg-main);
+  color: var(--mind-text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'SF Pro Display', sans-serif;
+  position: relative;
+  overflow-x: hidden;
+  padding: var(--mind-spacing-lg);
+}
+
+/* Animated Financial Background */
+.financialBackground {
+  position: fixed;
+  inset: 0;
+  background: 
+    radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(16, 185, 129, 0.06) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(245, 158, 11, 0.04) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+  animation: financialPulse 30s ease-in-out infinite;
+}
+
+@keyframes financialPulse {
+  0%, 100% { 
+    opacity: 0.6; 
+    transform: scale(1) rotate(0deg); 
+  }
+  25% { 
+    opacity: 0.8; 
+    transform: scale(1.01) rotate(0.5deg); 
+  }
+  50% { 
+    opacity: 1; 
+    transform: scale(1.02) rotate(1deg); 
+  }
+  75% { 
+    opacity: 0.9; 
+    transform: scale(1.01) rotate(0.5deg); 
+  }
+}
+
+/* Financial Particles */
+.particleContainer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.financialParticle {
+  position: absolute;
+  font-size: 1.5rem;
+  opacity: 0.3;
+  animation: financialFloat 20s infinite linear;
+  pointer-events: none;
+}
+
+@keyframes financialFloat {
+  0% {
+    transform: translateY(100vh) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.3;
+  }
+  90% {
+    opacity: 0.3;
+  }
+  100% {
+    transform: translateY(-10vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* =================================
+   HEADER SECTION
+   ================================= */
+.investingHeader {
+  position: relative;
+  z-index: 10;
+  margin-bottom: var(--mind-spacing-xl);
+}
+
+.backButton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--mind-spacing-xs);
+  background: var(--mind-glass);
+  border: 2px solid var(--mind-glass-border);
+  border-radius: var(--mind-radius-small);
+  padding: var(--mind-spacing-xs) var(--mind-spacing-md);
+  color: var(--mind-text-primary);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: var(--mind-transition);
+  margin-bottom: var(--mind-spacing-md);
+}
+
+.backButton:hover {
+  background: var(--mind-glass-medium);
+  border-color: var(--mind-primary);
+  transform: translateX(-4px);
+  box-shadow: var(--mind-shadow-medium);
+}
+
+.headerContent {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.investingTitle {
+  font-size: 3.5rem;
+  font-weight: 900;
+  background: var(--mind-gradient-financial);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: var(--mind-spacing-sm);
+  filter: drop-shadow(0 0 25px rgba(59, 130, 246, 0.4));
+  animation: financialShimmer 6s ease-in-out infinite;
+}
+
+@keyframes financialShimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.investingSubtitle {
+  font-size: 1.3rem;
+  color: var(--mind-text-secondary);
+  line-height: 1.6;
+  max-width: 700px;
+  margin: 0 auto;
+  opacity: 0.9;
+}
+
+/* =================================
+   LOADING SECTION
+   ================================= */
+.loadingScreen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: var(--mind-bg-main);
+  position: relative;
+  z-index: 100;
+}
+
+.loadingContent {
+  text-align: center;
+  background: var(--mind-glass-background);
+  backdrop-filter: blur(25px);
+  border: 2px solid var(--mind-glass-border);
+  border-radius: var(--mind-radius);
+  padding: var(--mind-spacing-xl);
+  box-shadow: var(--mind-shadow-heavy);
+}
+
+.loadingSpinner {
+  width: 100px;
+  height: 100px;
+  border: 8px solid rgba(59, 130, 246, 0.1);
+  border-top: 8px solid var(--mind-primary);
+  border-radius: 50%;
+  animation: financialSpin 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+  margin: 0 auto var(--mind-spacing-lg);
+  box-shadow: var(--mind-shadow-glow);
+  position: relative;
+}
+
+.loadingSpinner::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60px;
+  height: 60px;
+  border: 4px solid rgba(16, 185, 129, 0.2);
+  border-top: 4px solid var(--mind-success);
+  border-radius: 50%;
+  animation: financialSpin 1s linear infinite reverse;
+}
+
+@keyframes financialSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loadingContent h3 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: var(--mind-spacing-md);
+  background: var(--mind-gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.loadingSteps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mind-spacing-sm);
+  max-width: 400px;
+}
+
+.loadingStep {
+  background: var(--mind-glass);
+  border: 1px solid var(--mind-glass-border);
+  border-radius: var(--mind-radius-small);
+  padding: var(--mind-spacing-sm) var(--mind-spacing-md);
+  color: var(--mind-text-secondary);
+  font-size: 0.9rem;
+  animation: loadingStepPulse 2s ease-in-out infinite;
+}
+
+@keyframes loadingStepPulse {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.02); }
+}
+
+.loadingStep:nth-child(1) { animation-delay: 0s; }
+.loadingStep:nth-child(2) { animation-delay: 0.5s; }
+.loadingStep:nth-child(3) { animation-delay: 1s; }
+.loadingStep:nth-child(4) { animation-delay: 1.5s; }
+
+/* =================================
+   TAB NAVIGATION
+   ================================= */
+.tabNavigation {
+  display: flex;
+  gap: var(--mind-spacing-sm);
+  justify-content: center;
+  margin-bottom: var(--mind-spacing-xl);
+  background: var(--mind-glass-background);
+  border-radius: var(--mind-radius);
+  padding: var(--mind-spacing-sm);
+  backdrop-filter: blur(20px);
+  border: 2px solid var(--mind-glass-border);
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: var(--mind-spacing-xl);
+  position: relative;
+  z-index: 10;
+}
+
+.tab {
+  background: transparent;
+  border: 2px solid transparent;
+  border-radius: var(--mind-radius-small);
+  padding: var(--mind-spacing-sm) var(--mind-spacing-md);
+  color: var(--mind-text-secondary);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--mind-transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.tab::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--mind-gradient-primary);
+  opacity: 0;
+  transition: var(--mind-transition);
+  z-index: -1;
+}
+
+.tab:hover {
+  color: var(--mind-text-primary);
+  border-color: var(--mind-glass-border);
+}
+
+.tab:hover::before {
+  opacity: 0.1;
+}
+
+.activeTab {
+  background: var(--mind-gradient-primary) !important;
+  border-color: var(--mind-primary);
+  color: white !important;
+  box-shadow: var(--mind-shadow-financial);
+}
+
+.activeTab::before {
+  opacity: 1;
+}
+
+/* =================================
+   MAIN CONTENT LAYOUT
+   ================================= */
+.investingContent {
+  position: relative;
+  z-index: 10;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+/* =================================
+   PORTFOLIO SECTION
+   ================================= */
+.portfolioSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mind-spacing-xl);
+}
+
+.portfolioOverview {
+  background: var(--mind-glass-background);
+  backdrop-filter: blur(25px);
+  border: 2px solid var(--mind-glass-border);
+  border-radius: var(--mind-radius);
+  padding: var(--mind-spacing-xl);
+  box-shadow: var(--mind-shadow-medium);
+  transition: var(--mind-transition);
+}
+
+.portfolioOverview:hover {
+  background: var(--mind-glass);
+  transform: translateY(-4px);
+  box-shadow: var(--mind-shadow-heavy);
+}
+
+.portfolioHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--mind-spacing-lg);
+  flex-wrap: wrap;
+  gap: var(--mind-spacing-md);
+}
+
+.portfolioTitle {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--mind-text-primary);
+  background: var(--mind-gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.portfolioStats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--mind-spacing-md);
+}
+
+.statItem {
+  text-align: center;
+  background: var(--mind-glass);
+  border-radius: var(--mind-radius-small);
+  padding: var(--mind-spacing-md);
+  transition: var(--mind-transition);
+}
+
+.statItem:hover {
+  background: var(--mind-glass-medium);
+  transform: translateY(-2px);
+}
+
+.statValue {
+  display: block;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--mind-primary);
+  margin-bottom: var(--mind-spacing-xs);
+}
+
+.statLabel {
+  font-size: 0.9rem;
+  color: var(--mind-text-muted);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* =================================
+   ASSET ALLOCATION
+   ================================= */
+.allocationSection {
+  margin-top: var(--mind-spacing-lg);
+}
+
+.allocationSection h3 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--mind-text-primary);
+  margin-bottom: var(--mind-spacing-md);
+}
+
+.allocationChart {
+  background: var(--mind-glass);
+  border-radius: var(--mind-radius-small);
+  padding: var(--mind-spacing-lg);
+}
+
+.allocationBar {
+  height: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  margin-bottom: var(--mind-spacing-md);
+}
+
+.allocationSegment {
+  height: 100%;
+  transition: var(--mind-transition);
+  position: relative;
+}
+
+.allocationSegment:hover {
+  filter: brightness(1.2);
+}
+
+.allocationLegend {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--mind-spacing-sm);
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: var(--mind-spacing-sm);
+  font-size: 0.9rem;
+  color: var(--mind-text-secondary);
+}
+
+.legendColor {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+/* =================================
+   HOLDINGS TABLE
+   ================================= */
+.holdingsSection {
+  background: var(--mind-glass-background);
+  backdrop-filter: blur(25px);
+  border: 2px solid var(--mind-glass-border);
+  border-radius: var(--mind-radius);
+  padding: var(--mind-spacing-xl);
+  box-shadow: var(--mind-shadow-medium);
+}
+
+.holdingsSection h3 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--mind-text-primary);
+  margin-bottom: var(--mind-spacing-lg);
+}
+
+.holdingsTable {
+  overflow-x: auto;
+}
+
+.tableHeader {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1.5fr 1.5fr 1fr;
+  gap: var(--mind-spacing-md);
+  padding: var(--mind-spacing-md);
+  background: var(--mind-glass);
+  border-radius: var(--mind-radius-small);
+  margin-bottom: var(--mind-spacing-sm);
+}
+
+.headerCell {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--mind-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tableRow {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1.5fr 1.5fr 1fr;
+  gap: var(--mind-spacing-md);
+  padding: var(--mind-spacing-md);
+  background: var(--mind-glass-background);
+  border: 1px solid var(--mind-glass-border);
+  border-radius: var(--mind-radius-small);
+  margin-bottom: var(--mind-spacing-xs);
+  transition: var(--mind-transition);
+}
+
+.tableRow:hover {
+  background: var(--mind-glass);
+  transform: translateX(4px);
+  box-shadow: var(--mind-shadow-medium);
+}
+
+.tableCell {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-size: 0.9rem;
+  color: var(--mind-text-primary);
+}
+
+.stockInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.stockSymbol {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--mind-primary);
+}
+
+.stockName {
+  font-size: 0.8rem;
+  color: var(--mind-text-muted);
+}
+
+.percentChange {
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+/* =================================
+   RECOMMENDATIONS SECTION
+   ================================= */
+.recommendationsSection {
+  background: var(--mind-glass-background);
+  backdrop-filter: blur(25px);
+  border: 2px solid var(--mind-glass-border);
+  border-radius: var(--mind-radius);
+  padding: var(--mind-spacing-xl);
+  box-shadow: var(--mind-shadow-medium);
+}
+
+.recommendationsSection h3 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--mind-text-primary);
+  margin-bottom: var(--mind-spacing-lg);
+}
+
+.recommendationsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mind-spacing-md);
+}
+
+.recommendationItem {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--mind-spacing-md);
+  background: var(--mind-glass);
+  border-radius: var(--mind-radius-small);
+  padding: var(--mind-spacing-md);
+  transition: var(--mind-transition);
+}
+
+.recommendationItem:hover {
+  background: var(--mind-glass-medium);
+  transform: translateY(-2px);
+}
+
+.recommendationIcon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.recommendationText {
+  font-size: 1rem;
+  color: var(--mind-text-secondary);
+  line-height: 1.6;
+}
+
+/* =================================
+   MARKET SECTION
+   ================================= */
+.marketSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mind-spacing-xl);
+}
+
+.watchlistSection {
+  background: var(--mind-glass-background);
+  backdrop-filter: blur(25px);
+  border: 2px solid var(--mind-glass-border);
+  border-radius: var(--mind-radius);
+  padding: var(--mind-spacing-xl);
+  box-shadow: var(--mind-shadow-medium);
+}
+
+.watchlistSection h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--mind-text-primary);
+  margin-bottom: var(--mind-spacing-lg);
+  background: var(--mind-gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.stocksList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: var(--mind-spacing-lg);
+}
+
+.stockCard {
+  background: var(--mind-glass);
+  border: 2px solid var(--mind-glass-border);
+  border-radius: var(--mind-radius);
+  padding: var(--mind-spacing-lg);
+  cursor: pointer;
+  transition: var(--mind-transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.stockCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--mind-gradient-primary);
+  opacity: 0;
+  transition: var(--mind-transition);
+}
+
+.stockCard:hover {
+  background: var(--mind-glass-medium);
+  transform: translateY(-4px);
+  box-shadow: var(--mind-shadow-heavy);
+  border-color: var(--mind-primary);
+}
+
+.stockCard:hover::before {
+  opacity: 1;
+}
+
+.stockHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--mind-spacing-md);
+}
+
+.stockIdentity {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.stockSymbol {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--mind-primary);
+}
+
+.stockName {
+  font-size: 0.9rem;
+  color: var(--mind-text-muted);
+}
+
+.aiScoreBadge {
+  background: var(--mind-gradient-primary);
+  color: white;
+  padding: 0.3rem 0.8rem;
+  border-radius: var(--mind-radius-tiny);
+  font-size: 0.8rem;
+  font-weight: 600;
+  box-shadow: var(--mind-shadow-light);
+}
+
+.stockMetrics {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--mind-spacing-md);
+}
+
+.priceSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.currentPrice {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--mind-text-primary);
+}
+
+.priceChange {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.stockDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  align-items: flex-end;
+}
+
+.detailItem {
+  font-size: 0.8rem;
+  color: var(--mind-text-secondary);
+}
+
+.riskBadge {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.aiAnalysis {
+  font-size: 0.9rem;
+  color: var(--mind-text-secondary);
+  line-height: 1.5;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--mind-radius-small);
+  padding: var(--mind-spacing-sm);
+  border-left: 3px solid var(--mind-primary);
+}
+
+/* =================================
+   TRENDS SECTION
+   ================================= */
+.trendsSection {
+  background: var(--mind-glass-background);
+  backdrop-filter: blur(25px);
+  border: 2px solid var(--mind-glass-border);
+  border-radius: var(--mind-radius);
+  padding: var(--mind-spacing-xl);
+  box-shadow: var(--mind-shadow-medium);
+}
+
+.trendsSection h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--mind-text-primary);
+  margin-bottom: var(--mind-spacing-lg);
+  background: var(--mind-gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.trendsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mind-spacing-lg);
+}
+
+.trendCard {
+  background: var(--mind-glass);
+  border: 2px solid var(--mind-glass-border);
+  border-radius: var(--mind-radius);
+  padding: var(--mind-spacing-lg);
+  transition: var(--mind-transition);
+}
+
+.trendCard:hover {
+  background: var(--mind-glass-medium);
+  transform: translateY(-2px);
+  box-shadow: var(--mind-shadow-medium);
+}
+
+.trendHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--mind-spacing-md);
+  flex-wrap: wrap;
+  gap: var(--mind-spacing-sm);
+}
+
+.trendHeader h4 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--mind-text-primary);
+}
+
+.trendBadge {
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--mind-radius-tiny);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.trendBadge.bullish {
+  background: var(--mind-glass-profit);
+  color: var(--mind-bullish);
+  border: 1px solid var(--mind-bullish);
+}
+
+.trendBadge.bearish {
+  background: var(--mind-glass-loss);
+  color: var(--mind-bearish);
+  border: 1px solid var(--mind-bearish);
+}
+
+.trendBadge.neutral {
+  background: rgba(107, 114, 128, 0.1);
+  color: var(--mind-neutral);
+  border: 1px solid var(--mind-neutral);
+}
+
+.strengthMeter {
+  width: 100px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.strengthFill {
+  height: 100%;
+  background: var(--mind-gradient-primary);
+  border-radius: 4px;
+  transition: width 1s ease-out;
+}
+
+.trendDetails {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--mind-spacing-lg);
+}
+
+.trendColumn h5 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--mind-text-primary);
+  margin-bottom: var(--mind-spacing-sm);
+}
+
+.trendColumn ul {
+  list-style: none;
+  padding: 0;
+}
+
+.trendColumn li {
+  font-size: 0.9rem;
+  color: var(--mind-text-secondary);
+  line-height: 1.5;
+  margin-bottom: 0.3rem;
+  padding-left: 1rem;
+  position: relative;
+}
+
+.trendColumn li::before {
+  content: '•';
+  color: var(--mind-primary);
+  position: absolute;
+  left: 0;
+}
+
+/* =================================
+   ANALYSIS SECTION
+   ================================= */
+.analysisSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mind-spacing-lg);
+}
+
+.analysisSection h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--mind-text-primary);
+  text-align: center;
+  background: var(--mind-gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: var(--mind-spacing-lg);
+}
+
+.insightsList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: var(--mind-spacing-lg);
+}
+
+.insightCard {
+  background: var(--mind-glass-background);
+  backdrop-filter: blur(25px);
+  border: 2px solid var(--mind-glass-border);
+  border-radius: var(--mind-radius);
+  padding: var(--mind-spacing-lg);
+  transition: var(--mind-transition);
+  box-shadow: var(--mind-shadow-light);
+  position: relative;
+  overflow: hidden;
+}
+
+.insightCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--mind-gradient-financial);
+  opacity: 0;
+  transition: var(--mind-transition);
+  z-index: -1;
+}
+
+.insightCard:hover {
+  background: var(--mind-glass);
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: var(--mind-shadow-premium);
+  border-color: var(--mind-primary);
+}
+
+.insightCard:hover::before {
+  opacity: 0.05;
+}
+
+.insightCard.opportunity {
+  border-left: 4px solid var(--mind-success);
+}
+
+.insightCard.warning {
+  border-left: 4px solid var(--mind-warning);
+}
+
+.insightCard.rebalance {
+  border-left: 4px solid var(--mind-info);
+}
+
+.insightCard.dividend {
+  border-left: 4px solid var(--mind-gold);
+}
+
+.insightCard.analysis {
+  border-left: 4px solid var(--mind-primary);
+}
+
+.insightHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--mind-spacing-md);
+}
+
+.insightIcon {
+  font-size: 1.5rem;
+  margin-right: var(--mind-spacing-sm);
+}
+
+.insightMeta {
+  flex: 1;
+}
+
+.insightTitle {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--mind-text-primary);
+  margin-bottom: var(--mind-spacing-xs);
+}
+
+.insightTags {
+  display: flex;
+  gap: var(--mind-spacing-xs);
+  flex-wrap: wrap;
+}
+
+.impactTag, .timeframeTag, .confidenceTag {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--mind-radius-tiny);
+  border: 1px solid transparent;
+}
+
+.impactTag.high {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--mind-danger);
+  border-color: var(--mind-danger);
+}
+
+.impactTag.medium {
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--mind-warning);
+  border-color: var(--mind-warning);
+}
+
+.impactTag.low {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--mind-success);
+  border-color: var(--mind-success);
+}
+
+.timeframeTag {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--mind-primary);
+  border-color: var(--mind-primary);
+}
+
+.confidenceTag {
+  background: rgba(107, 114, 128, 0.1);
+  color: var(--mind-text-muted);
+  border-color: var(--mind-text-muted);
+}
+
+.insightContent {
+  margin-top: var(--mind-spacing-md);
+}
+
+.insightMessage {
+  font-size: 1rem;
+  color: var(--mind-text-secondary);
+  line-height: 1.6;
+  margin-bottom: var(--mind-spacing-md);
+}
+
+.relatedSymbols {
+  font-size: 0.9rem;
+  color: var(--mind-text-muted);
+  margin-bottom: var(--mind-spacing-md);
+}
+
+.symbolTag {
+  color: var(--mind-primary);
+  font-weight: 600;
+}
+
+.actionButton {
+  background: var(--mind-gradient-primary);
+  border: none;
+  border-radius: var(--mind-radius-small);
+  padding: var(--mind-spacing-sm) var(--mind-spacing-md);
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--mind-transition);
+  box-shadow: var(--mind-shadow-light);
+}
+
+.actionButton:hover {
+  background: var(--mind-gradient-secondary);
+  transform: translateY(-2px);
+  box-shadow: var(--mind-shadow-medium);
+}
+
+/* =================================
+   OPTIMIZER SECTION
+   ================================= */
+.optimizerSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mind-spacing-xl);
+}
+
+.optimizerSection h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--mind-text-primary);
+  text-align: center;
+  background: var(--mind-gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.optimizerInputs {
+  background: var(--mind-glass-background);
+  backdrop-filter: blur(25px);
+  border: 2px solid var(--mind-glass-border);
+  border-radius: var(--mind-radius);
+  padding: var(--mind-spacing-xl);
+  box-shadow: var(--mind-shadow-medium);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--mind-spacing-lg);
+  align-items: end;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mind-spacing-xs);
+}
+
+.inputGroup label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--mind-text-secondary);
+}
+
+.amountInput, .selectInput {
+  background: var(--mind-glass);
+  border: 2px solid var(--mind-glass-border);
+  border-radius: var(--mind-radius-small);
+  padding: var(--mind-spacing-md);
+  color: var(--mind-text-primary);
+  font-size: 1rem;
+  font-weight: 500;
+  transition: var(--mind-transition);
+}
+
+.amountInput:focus, .selectInput:focus {
+  outline: none;
+  border-color: var(--mind-primary);
+  background: var(--mind-glass-medium);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+.optimizeButton {
+  background: var(--mind-gradient-primary);
+  border: none;
+  border-radius: var(--mind-radius-small);
+  padding: var(--mind-spacing-md) var(--mind-spacing-lg);
+  color: white;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--mind-transition);
+  box-shadow: var(--mind-shadow-medium);
+  height: fit-content;
+}
+
+.optimizeButton:hover {
+  background: var(--mind-gradient-secondary);
+  transform: translateY(-2px);
+  box-shadow: var(--mind-shadow-glow);
+}
+
+.optimizedAllocation {
+  background: var(--mind-glass-background);
+  backdrop-filter: blur(25px);
+  border: 2px solid var(--mind-glass-border);
+  border-radius: var(--mind-radius);
+  padding: var(--mind-spacing-xl);
+  box-shadow: var(--mind-shadow-medium);
+}
+
+.optimizedAllocation h3 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--mind-text-primary);
+  margin-bottom: var(--mind-spacing-lg);
+  text-align: center;
+}
+
+.allocationSuggestion {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mind-spacing-md);
+}
+
+.allocationItem {
+  display: flex;
+  align-items: center;
+  gap: var(--mind-spacing-md);
+  padding: var(--mind-spacing-md);
+  background: var(--mind-glass);
+  border-radius: var(--mind-radius-small);
+  transition: var(--mind-transition);
+}
+
+.allocationItem:hover {
+  background: var(--mind-glass-medium);
+  transform: translateX(4px);
+}
+
+.assetName {
+  font-weight: 600;
+  color: var(--mind-text-primary);
+  min-width: 150px;
+}
+
+.assetPercent {
+  font-weight: 700;
+  color: var(--mind-primary);
+  min-width: 50px;
+}
+
+.assetBar {
+  flex: 1;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.assetFill {
+  height: 100%;
+  background: var(--mind-gradient-primary);
+  border-radius: 4px;
+  transition: width 1s ease-out;
+}
+
+/* =================================
+   RESPONSIVE DESIGN
+   ================================= */
+@media (max-width: 1400px) {
+  .investingContent {
+    padding: 0 var(--mind-spacing-md);
+  }
+  
+  .portfolioHeader {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .portfolioStats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 1024px) {
+  .investingContainer {
+    padding: var(--mind-spacing-md);
+  }
+  
+  .investingTitle {
+    font-size: 2.5rem;
+  }
+  
+  .tabNavigation {
+    flex-wrap: wrap;
+  }
+  
+  .tableHeader, .tableRow {
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    font-size: 0.8rem;
+  }
+  
+  .stocksList {
+    grid-template-columns: 1fr;
+  }
+  
+  .insightsList {
+    grid-template-columns: 1fr;
+  }
+  
+  .optimizerInputs {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .investingHeader {
+    text-align: center;
+  }
+  
+  .investingTitle {
+    font-size: 2rem;
+  }
+  
+  .investingSubtitle {
+    font-size: 1rem;
+  }
+  
+  .portfolioStats {
+    grid-template-columns: 1fr;
+  }
+  
+  .allocationLegend {
+    grid-template-columns: 1fr;
+  }
+  
+  .tableHeader, .tableRow {
+    display: flex;
+    flex-direction: column;
+    gap: var(--mind-spacing-sm);
+  }
+  
+  .stockHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--mind-spacing-sm);
+  }
+  
+  .stockMetrics {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--mind-spacing-sm);
+  }
+  
+  .trendHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .trendDetails {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .investingContainer {
+    padding: var(--mind-spacing-sm);
+  }
+  
+  .portfolioOverview,
+  .holdingsSection,
+  .recommendationsSection,
+  .watchlistSection,
+  .trendsSection,
+  .optimizerInputs,
+  .optimizedAllocation {
+    padding: var(--mind-spacing-md);
+  }
+  
+  .investingTitle {
+    font-size: 1.8rem;
+  }
+  
+  .tabNavigation {
+    padding: var(--mind-spacing-xs);
+  }
+  
+  .tab {
+    padding: var(--mind-spacing-xs) var(--mind-spacing-sm);
+    font-size: 0.8rem;
+  }
+}
+
+/* =================================
+   ACCESSIBILITY IMPROVEMENTS
+   ================================= */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (prefers-contrast: high) {
+  .portfolioOverview,
+  .holdingsSection,
+  .recommendationsSection,
+  .stockCard,
+  .trendCard,
+  .insightCard {
+    border-width: 3px;
+  }
+  
+  .activeTab,
+  .stockCard:hover,
+  .insightCard:hover {
+    border-width: 4px;
+  }
+}
+
+.amountInput:focus,
+.selectInput:focus,
+.optimizeButton:focus,
+.actionButton:focus,
+.tab:focus {
+  outline: 2px solid var(--mind-primary);
+  outline-offset: 2px;
+}
