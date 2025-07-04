@@ -1,0 +1,1333 @@
+/* app/dashboard/por-health/nutrition/nutrition.module.css */
+
+/* ===== CSS VARIABLES ===== */
+:root {
+  /* Nutrition Theme Colors */
+  --nutrition-primary: #00ff88;
+  --nutrition-secondary: #22c55e;
+  --nutrition-accent: #10b981;
+  --nutrition-gradient: linear-gradient(135deg, #00ff88, #22c55e);
+  
+  /* Macro Colors */
+  --protein-color: #ef4444;
+  --carbs-color: #3b82f6;
+  --fat-color: #f59e0b;
+  --fiber-color: #8b5cf6;
+  
+  /* Glass & Background */
+  --bg-primary: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 35%, #16213e 70%, #0f2027 100%);
+  --glass: rgba(255, 255, 255, 0.12);
+  --glass-strong: rgba(255, 255, 255, 0.18);
+  --glass-border: rgba(255, 255, 255, 0.15);
+  
+  /* Text */
+  --text-primary: #ffffff;
+  --text-secondary: #e5e7eb;
+  --text-muted: #9ca3af;
+  
+  /* Effects */
+  --shadow-light: 0 4px 20px rgba(0, 255, 136, 0.15);
+  --shadow-medium: 0 8px 32px rgba(0, 0, 0, 0.25);
+  --shadow-heavy: 0 8px 40px rgba(0, 255, 136, 0.25);
+  --shadow-glow: 0 0 30px rgba(0, 255, 136, 0.3);
+  
+  /* Layout */
+  --radius: 24px;
+  --radius-medium: 16px;
+  --radius-small: 12px;
+  --transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* ===== KEYFRAMES ===== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes loadingDots {
+  0%, 20% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  80%, 100% { transform: scale(1); }
+}
+
+@keyframes progressFill {
+  from { width: 0%; }
+  to { width: var(--target-width); }
+}
+
+/* ===== LOADING STATE ===== */
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+  background: var(--bg-primary);
+  color: white;
+  font-family: 'Inter', -apple-system, sans-serif;
+}
+
+.loadingSpinner {
+  margin-bottom: 2rem;
+}
+
+.spinner {
+  width: 60px;
+  height: 60px;
+  border: 4px solid rgba(0, 255, 136, 0.2);
+  border-top: 4px solid var(--nutrition-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loadingTitle {
+  font-family: 'SF Pro Display', -apple-system, sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  background: var(--nutrition-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.loadingText {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  text-align: center;
+  max-width: 400px;
+  line-height: 1.6;
+}
+
+/* ===== MAIN PAGE ===== */
+.nutritionPage {
+  background: var(--bg-primary);
+  min-height: 100vh;
+  color: var(--text-primary);
+  font-family: 'Inter', -apple-system, sans-serif;
+}
+
+/* ===== HEADER ===== */
+.header {
+  background: var(--glass);
+  backdrop-filter: blur(30px);
+  border-bottom: 1px solid var(--glass-border);
+  padding: 2rem 3rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-medium);
+}
+
+.headerLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.backButton {
+  color: var(--nutrition-primary);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: var(--transition);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-small);
+  background: rgba(0, 255, 136, 0.1);
+  border: 1px solid rgba(0, 255, 136, 0.2);
+  width: fit-content;
+}
+
+.backButton:hover {
+  background: rgba(0, 255, 136, 0.2);
+  transform: translateX(-4px);
+}
+
+.titleSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.pageTitle {
+  font-family: 'SF Pro Display', -apple-system, sans-serif;
+  font-size: 2.5rem;
+  font-weight: 800;
+  background: var(--nutrition-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.2;
+  filter: drop-shadow(0 0 20px rgba(0, 255, 136, 0.3));
+}
+
+.pageSubtitle {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.headerStats {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+.quickStat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-medium);
+  backdrop-filter: blur(20px);
+  transition: var(--transition);
+}
+
+.quickStat:hover {
+  background: var(--glass-strong);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-light);
+}
+
+.statValue {
+  font-family: 'SF Pro Display', -apple-system, sans-serif;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--nutrition-primary);
+  line-height: 1;
+  filter: drop-shadow(0 0 10px rgba(0, 255, 136, 0.4));
+}
+
+.statUnit {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  margin-top: 0.2rem;
+}
+
+/* ===== TAB NAVIGATION ===== */
+.tabNavigation {
+  display: flex;
+  background: var(--glass);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--glass-border);
+  padding: 0 3rem;
+  overflow-x: auto;
+}
+
+.tab {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  padding: 1.5rem 2rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-bottom: 3px solid transparent;
+  white-space: nowrap;
+}
+
+.tab:hover {
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.activeTab {
+  color: var(--nutrition-primary);
+  border-bottom-color: var(--nutrition-primary);
+  background: rgba(0, 255, 136, 0.08);
+}
+
+.tabIcon {
+  font-size: 1.2rem;
+  filter: drop-shadow(0 0 5px rgba(0, 255, 136, 0.4));
+}
+
+/* ===== TAB CONTENT ===== */
+.tabContent {
+  padding: 3rem;
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* ===== TODAY'S NUTRITION TAB ===== */
+.todayTab {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+/* Macro Overview */
+.macroOverview {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 3rem;
+  align-items: center;
+}
+
+.calorieRing {
+  display: flex;
+  justify-content: center;
+}
+
+.ringContainer {
+  position: relative;
+  width: 200px;
+  height: 200px;
+}
+
+.progressRing {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+  filter: drop-shadow(0 0 20px rgba(0, 255, 136, 0.4));
+}
+
+.progressCircle {
+  transition: stroke-dashoffset 2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.ringContent {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.ringValue {
+  font-family: 'SF Pro Display', -apple-system, sans-serif;
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--nutrition-primary);
+  line-height: 1;
+  filter: drop-shadow(0 0 15px rgba(0, 255, 136, 0.4));
+}
+
+.ringLabel {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 0.2rem;
+}
+
+.ringRemaining {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin-top: 0.5rem;
+}
+
+.macroGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.macroCard {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-medium);
+  padding: 2rem;
+  backdrop-filter: blur(20px);
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.macroCard:hover {
+  background: var(--glass-strong);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-light);
+}
+
+.macroHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.macroIcon {
+  font-size: 1.5rem;
+  filter: drop-shadow(0 0 8px rgba(0, 255, 136, 0.4));
+}
+
+.macroName {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.macroValue {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+  font-family: 'SF Pro Display', -apple-system, sans-serif;
+}
+
+.macroProgress {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-small);
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+  position: relative;
+}
+
+.macroBar {
+  height: 100%;
+  background: var(--nutrition-gradient);
+  border-radius: var(--radius-small);
+  transition: width 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  position: relative;
+  box-shadow: 0 0 10px rgba(0, 255, 136, 0.4);
+}
+
+.macroBar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  animation: shimmer 2s infinite;
+}
+
+.macroPercentage {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--nutrition-primary);
+  text-align: right;
+}
+
+/* Meals Timeline */
+.mealsTimeline {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  padding: 2.5rem;
+  backdrop-filter: blur(20px);
+}
+
+.sectionTitle {
+  font-family: 'SF Pro Display', -apple-system, sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mealsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.mealCard {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-medium);
+  padding: 2rem;
+  transition: var(--transition);
+  animation: slideInUp 0.6s ease-out;
+}
+
+.mealCard:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-light);
+}
+
+.mealHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.mealInfo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.mealIcon {
+  font-size: 2rem;
+  filter: drop-shadow(0 0 10px rgba(0, 255, 136, 0.4));
+}
+
+.mealName {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.2rem;
+}
+
+.mealType {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.mealStats {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.mealStat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.mealStat .statValue {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--nutrition-primary);
+  line-height: 1;
+}
+
+.mealStat .statLabel {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  margin-top: 0.2rem;
+}
+
+.mealStatus {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  font-size: 1rem;
+  box-shadow: 0 0 15px currentColor;
+}
+
+.foodsList {
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.foodItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-small);
+  transition: var(--transition);
+}
+
+.foodItem:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--nutrition-primary);
+}
+
+.foodInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.foodName {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.foodBrand {
+  font-size: 0.85rem;
+  color: var(--nutrition-primary);
+  font-weight: 500;
+}
+
+.foodServing {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.foodMacros {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.mealActions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.completedLabel {
+  font-size: 0.9rem;
+  color: var(--nutrition-primary);
+  font-weight: 600;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 1rem;
+}
+
+.addFoodButton,
+.completeButton {
+  padding: 0.6rem 1.2rem;
+  border-radius: var(--radius-small);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: var(--transition);
+  border: none;
+}
+
+.addFoodButton {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary);
+  border: 1px solid var(--glass-border);
+}
+
+.addFoodButton:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--text-primary);
+}
+
+.completeButton {
+  background: var(--nutrition-gradient);
+  color: white;
+  box-shadow: var(--shadow-light);
+}
+
+.completeButton:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-glow);
+}
+
+/* ===== AI MEAL PLANNER TAB ===== */
+.plannerTab {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.plannerContent {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  padding: 3rem;
+  backdrop-filter: blur(20px);
+}
+
+.plannerHeader {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.sectionSubtitle {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-top: 0.5rem;
+}
+
+.preferencesForm {
+  display: grid;
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.formSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.formLabel {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.formSelect {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-small);
+  padding: 1rem;
+  color: var(--text-primary);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.formSelect:focus {
+  outline: none;
+  border-color: var(--nutrition-primary);
+  box-shadow: 0 0 0 3px rgba(0, 255, 136, 0.2);
+}
+
+.numberInput {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-small);
+  padding: 0.5rem 1rem;
+  width: fit-content;
+}
+
+.numberButton {
+  background: var(--nutrition-primary);
+  border: none;
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.numberButton:hover {
+  background: var(--nutrition-secondary);
+  transform: scale(1.1);
+}
+
+.numberValue {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  min-width: 2rem;
+  text-align: center;
+}
+
+.radioGroup {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.radioLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-small);
+  border: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.05);
+  transition: var(--transition);
+}
+
+.radioLabel:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--nutrition-primary);
+}
+
+.radioInput {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--glass-border);
+  border-radius: 50%;
+  position: relative;
+  cursor: pointer;
+}
+
+.radioInput:checked {
+  border-color: var(--nutrition-primary);
+  background: var(--nutrition-primary);
+}
+
+.radioInput:checked::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 6px;
+  height: 6px;
+  background: white;
+  border-radius: 50%;
+}
+
+.radioText {
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.generateButton {
+  background: var(--nutrition-gradient);
+  border: none;
+  color: white;
+  padding: 1.5rem 3rem;
+  border-radius: var(--radius-medium);
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-glow);
+  width: 100%;
+}
+
+.generateButton:hover:not(:disabled) {
+  transform: translateY(-4px);
+  box-shadow: 0 0 40px rgba(0, 255, 136, 0.5);
+}
+
+.generateButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.generatingText {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.loadingDots {
+  width: 20px;
+  height: 20px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* ===== FOOD SCANNER TAB ===== */
+.scannerTab {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.scannerContent {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  padding: 3rem;
+  backdrop-filter: blur(20px);
+}
+
+.scannerHeader {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.scannerActions {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  align-items: center;
+  margin-bottom: 3rem;
+}
+
+.scanButton {
+  background: var(--nutrition-gradient);
+  border: none;
+  color: white;
+  padding: 2rem 3rem;
+  border-radius: var(--radius-medium);
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-glow);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.scanButton:hover:not(:disabled) {
+  transform: translateY(-4px);
+  box-shadow: 0 0 40px rgba(0, 255, 136, 0.5);
+}
+
+.scanButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.scanIcon {
+  font-size: 1.5rem;
+}
+
+.scanningText {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.searchSection {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  max-width: 500px;
+}
+
+.searchInput {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-small);
+  padding: 1rem 1.5rem;
+  color: var(--text-primary);
+  font-size: 1rem;
+  transition: var(--transition);
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: var(--nutrition-primary);
+  box-shadow: 0 0 0 3px rgba(0, 255, 136, 0.2);
+}
+
+.searchButton {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--glass-border);
+  color: var(--text-secondary);
+  padding: 1rem 1.5rem;
+  border-radius: var(--radius-small);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.searchButton:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--text-primary);
+  border-color: var(--nutrition-primary);
+}
+
+/* Scan Result */
+.scanResult {
+  background: rgba(0, 255, 136, 0.08);
+  border: 1px solid rgba(0, 255, 136, 0.2);
+  border-radius: var(--radius-medium);
+  padding: 2rem;
+  animation: slideInUp 0.5s ease-out;
+}
+
+.resultHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.resultTitle {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.verifiedBadge {
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--radius-small);
+  font-size: 0.8rem;
+  font-weight: 600;
+  background: var(--nutrition-primary);
+  color: white;
+}
+
+.resultContent {
+  display: grid;
+  gap: 2rem;
+}
+
+.resultInfo {
+  text-align: center;
+}
+
+.resultName {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.resultBrand {
+  font-size: 1rem;
+  color: var(--nutrition-primary);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.resultServing {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.resultNutrition {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-small);
+  padding: 1.5rem;
+}
+
+.nutritionGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+}
+
+.nutritionItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-small);
+}
+
+.nutritionLabel {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+}
+
+.nutritionValue {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.resultActions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.addToMealButton,
+.quickLogButton {
+  padding: 1rem 2rem;
+  border-radius: var(--radius-small);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  border: none;
+}
+
+.addToMealButton {
+  background: var(--nutrition-gradient);
+  color: white;
+  box-shadow: var(--shadow-light);
+}
+
+.addToMealButton:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-glow);
+}
+
+.quickLogButton {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary);
+  border: 1px solid var(--glass-border);
+}
+
+.quickLogButton:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--text-primary);
+}
+
+/* ===== ANALYTICS TAB ===== */
+.analyticsTab {
+  display: grid;
+  gap: 3rem;
+}
+
+.analyticsContent {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  padding: 3rem;
+  backdrop-filter: blur(20px);
+}
+
+.analyticsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.analyticsCard {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-medium);
+  padding: 2rem;
+  transition: var(--transition);
+}
+
+.analyticsCard:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-light);
+}
+
+.cardTitle {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.chartPlaceholder {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-small);
+  padding: 3rem 2rem;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.insightsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.insight {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-small);
+  transition: var(--transition);
+}
+
+.insight:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateX(4px);
+}
+
+.insightIcon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 5px rgba(0, 255, 136, 0.4));
+}
+
+.insightText {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 1200px) {
+  .macroOverview {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    text-align: center;
+  }
+  
+  .macroGrid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .nutritionPage {
+    font-size: 0.9rem;
+  }
+  
+  .header {
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1.5rem 2rem;
+    text-align: center;
+  }
+  
+  .headerStats {
+    gap: 1rem;
+  }
+  
+  .pageTitle {
+    font-size: 2rem;
+  }
+  
+  .tabNavigation {
+    padding: 0 2rem;
+  }
+  
+  .tab {
+    padding: 1rem 1.5rem;
+    font-size: 0.85rem;
+  }
+  
+  .tabContent {
+    padding: 2rem;
+  }
+  
+  .macroGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .mealHeader {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  
+  .mealStats {
+    align-self: stretch;
+    justify-content: space-around;
+  }
+  
+  .foodItem {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  
+  .foodMacros {
+    align-self: stretch;
+    justify-content: space-around;
+  }
+  
+  .analyticsGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .nutritionGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .resultActions {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    padding: 1rem;
+  }
+  
+  .pageTitle {
+    font-size: 1.5rem;
+  }
+  
+  .tabContent {
+    padding: 1rem;
+  }
+  
+  .quickStat {
+    padding: 0.75rem 1rem;
+  }
+  
+  .statValue {
+    font-size: 1.4rem;
+  }
+  
+  .ringContainer {
+    width: 150px;
+    height: 150px;
+  }
+  
+  .ringValue {
+    font-size: 2rem;
+  }
+  
+  .plannerContent,
+  .scannerContent,
+  .analyticsContent {
+    padding: 2rem 1.5rem;
+  }
+  
+  .searchSection {
+    flex-direction: column;
+  }
+  
+  .radioGroup {
+    flex-direction: column;
+  }
+  
+  .numberInput {
+    justify-content: center;
+  }
+}
+
+/* ===== SCROLLBAR STYLING ===== */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--nutrition-primary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--nutrition-secondary);
+}

@@ -1,7 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Nu mai e nevoie de appDir: true în Next.js 14 - e default
   experimental: {
-    appDir: true,
+    // Poți adăuga alte features experimentale aici dacă e nevoie
   },
   images: {
     domains: [
@@ -53,7 +54,8 @@ const nextConfig = {
     ]
   },
   env: {
-    CUSTOM_KEY: process.env.CUSTOM_KEY,
+    // Fix pentru warning - adaugă fallback
+    CUSTOM_KEY: process.env.CUSTOM_KEY || 'porverse-default-key',
   },
 }
 

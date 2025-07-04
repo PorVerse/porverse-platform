@@ -1,0 +1,114 @@
+[33mcommit 10fecc9b42909ee1a077d2bfd1d47b1125fd45c4[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: PorVerse <porverseofficial@gmail.com>
+Date:   Tue Jul 1 17:31:36 2025 +0300
+
+    Refresh
+
+[33mcommit 56c15dce110b4f01965879cb1721ba4ea7dc4bd0[m
+Author: PorVerse <porverseofficial@gmail.com>
+Date:   Sun Jun 29 09:35:52 2025 +0300
+
+    SUPABASE SETUP
+
+[33mcommit f60fe437a58d1927db7bbc8206129d59bc0101c7[m
+Author: PorVerse <porverseofficial@gmail.com>
+Date:   Sun Jun 29 09:04:33 2025 +0300
+
+    🚀 PLATFORM COMPLETE: Final landing pages for PorFlow & PorBlu
+
+[33mcommit 39e287907013c2318a43c9556fd7519145e1727a[m
+Author: PorVerse <porverseofficial@gmail.com>
+Date:   Sun Jun 29 08:46:49 2025 +0300
+
+    🎨 VIBRANT DASHBOARD: Complete UI Transformation
+
+[33mcommit 583d04e70bc085f23c066e1463ab4fedd7955445[m
+Author: PorVerse <porverseofficial@gmail.com>
+Date:   Sat Jun 28 23:58:57 2025 +0300
+
+    ✨ Add landing pages for PorHealth, PorKids, PorWell + PorHealth dashboard
+    
+    - Created responsive landing pages for 3 ecosystems
+    - Added PorHealth dashboard with AI chat functionality
+    - Updated package.json with new dependencies
+    - Implemented glassmorphism design system
+    - Added mobile-first responsive layouts
+
+[33mcommit aaa6e112e499d93fa61a00744527e65381037479[m
+Author: PorVerse <porverseofficial@gmail.com>
+Date:   Sat Jun 28 13:32:22 2025 +0300
+
+    fix: Remove duplicate styles folder and resolve compilation errors
+
+[33mcommit c9828af38e47316eb310b4cdbebbbae30db66a68[m
+Author: PorVerse <porverseofficial@gmail.com>
+Date:   Sat Jun 28 13:13:38 2025 +0300
+
+    Update PorHealth dashboard cu AI nutrition planner
+
+[33mcommit 68d9e87deadcd0ac6f317e08eceea17b2a2213e3[m
+Author: PorVerse <porverseofficial@gmail.com>
+Date:   Sat Jun 28 00:03:28 2025 +0300
+
+    🎨 Fix: renamed style.css to style.module.css for PorHealth Dashboard
+
+[33mcommit 18db6138512a1b95ec711f544ab74c2687d4c1a0[m
+Author: PorVerse <porverseofficial@gmail.com>
+Date:   Fri Jun 27 23:34:32 2025 +0300
+
+    🚀 Update: [Descriere scurtă a modificărilor]
+
+[33mcommit 6366c70ec9d6c760fbf1a176f7a21700f8eeb8a4[m
+Author: PorVerse <porverseofficial@gmail.com>
+Date:   Tue Jun 24 23:10:10 2025 +0300
+
+    🎉 Complete PorWell ecosystem - all tools implemented
+
+[33mcommit a30eb6b8fb3f04411929921961c8c66d7791009e[m
+Author: PorVerse <porverseofficial@gmail.com>
+Date:   Tue Jun 24 22:34:42 2025 +0300
+
+    🔥 FINALE: Stress Management Ultimate - Complete PorWell Ecosystem Integration
+
+[33mcommit 4f244ddbec2bbbb5dbbd95b9158f964f596728dc[m
+Author: PorVerse <porverseofficial@gmail.com>
+Date:   Tue Jun 24 22:16:46 2025 +0300
+
+    ✨ Add Meditation Center with AI recommendations & biometrics
+
+[33mcommit ffd116b4e545967f9cca8f24c1031cf4cd6f4488[m
+Author: PorVerse <porverseofficial@gmail.com>
+Date:   Tue Jun 24 22:07:42 2025 +0300
+
+    ✨ Add advanced Mood Tracker with AI analytics
+
+[33mcommit f721363d6f0a28dd4bbbabf3461c4bb316f13a8b[m
+Author: PorVerse <porverseofficial@gmail.com>
+Date:   Mon Jun 23 23:31:23 2025 +0300
+
+    "Add PorWell and AI Therapist"
+
+[33mcommit 66816acc645721002d7d03b147843fbd7b8bc3ba[m
+Author: PorVerse <porverseofficial@gmail.com>
+Date:   Mon Jun 23 22:15:07 2025 +0300
+
+    Updated PorVerse structure with ecosystems and AI features
+
+[33mcommit 25a9356e2786e28c94fed44805d7c625080fb996[m
+Merge: 4596914 64b2668
+Author: PorVerse <porverseofficial@gmail.com>
+Date:   Thu Jun 12 22:30:24 2025 +0300
+
+    Finalize merge with remote main
+
+[33mcommit 4596914cb127b2111b8f2a2498b30e7a21cec64b[m
+Author: PorVerse <porverseofficial@gmail.com>
+Date:   Thu Jun 12 22:22:12 2025 +0300
+
+    Initial commit PorVerse structure
+
+[33mcommit 64b2668754512475487e3753a1acd51376e83fe5[m
+Author: PorVerse <porverseofficial@gmail.com>
+Date:   Thu Jun 12 22:09:17 2025 +0300
+
+    Add files via upload

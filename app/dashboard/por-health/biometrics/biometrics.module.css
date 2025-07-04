@@ -1,0 +1,1375 @@
+/* app/dashboard/por-health/biometrics/biometrics.module.css */
+
+/* ===== CSS VARIABLES ===== */
+:root {
+  /* Biometrics Theme Colors */
+  --biometrics-primary: #00ff88;
+  --biometrics-secondary: #22c55e;
+  --biometrics-accent: #10b981;
+  --biometrics-gradient: linear-gradient(135deg, #00ff88, #22c55e);
+  
+  /* Status Colors */
+  --excellent: #22c55e;
+  --good: #3b82f6;
+  --fair: #f59e0b;
+  --poor: #ef4444;
+  --critical: #dc2626;
+  --warning: #f59e0b;
+  --info: #3b82f6;
+  
+  /* Trend Colors */
+  --improving: #22c55e;
+  --stable: #3b82f6;
+  --declining: #ef4444;
+  
+  /* Glass & Background */
+  --bg-primary: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 35%, #16213e 70%, #0f2027 100%);
+  --glass: rgba(255, 255, 255, 0.12);
+  --glass-strong: rgba(255, 255, 255, 0.18);
+  --glass-border: rgba(255, 255, 255, 0.15);
+  
+  /* Text */
+  --text-primary: #ffffff;
+  --text-secondary: #e5e7eb;
+  --text-muted: #9ca3af;
+  
+  /* Effects */
+  --shadow-light: 0 4px 20px rgba(0, 255, 136, 0.15);
+  --shadow-medium: 0 8px 32px rgba(0, 0, 0, 0.25);
+  --shadow-heavy: 0 8px 40px rgba(0, 255, 136, 0.25);
+  --shadow-glow: 0 0 30px rgba(0, 255, 136, 0.3);
+  
+  /* Layout */
+  --radius: 24px;
+  --radius-medium: 16px;
+  --radius-small: 12px;
+  --transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* ===== KEYFRAMES ===== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.05); }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  14% { transform: scale(1.2); }
+  28% { transform: scale(1); }
+  42% { transform: scale(1.2); }
+  70% { transform: scale(1); }
+}
+
+@keyframes liveIndicatorPulse {
+  0%, 100% { 
+    background: #22c55e;
+    box-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
+  }
+  50% { 
+    background: #16a34a;
+    box-shadow: 0 0 20px rgba(34, 197, 94, 0.8);
+  }
+}
+
+@keyframes slideInFromRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes alertSlideIn {
+  from { transform: translateY(-100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* ===== LOADING STATE ===== */
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+  background: var(--bg-primary);
+  color: white;
+  font-family: 'Inter', -apple-system, sans-serif;
+}
+
+.loadingSpinner {
+  margin-bottom: 2rem;
+}
+
+.spinner {
+  width: 60px;
+  height: 60px;
+  border: 4px solid rgba(0, 255, 136, 0.2);
+  border-top: 4px solid var(--biometrics-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loadingTitle {
+  font-family: 'SF Pro Display', -apple-system, sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  background: var(--biometrics-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.loadingText {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  text-align: center;
+  max-width: 400px;
+  line-height: 1.6;
+}
+
+/* ===== MAIN PAGE ===== */
+.biometricsPage {
+  background: var(--bg-primary);
+  min-height: 100vh;
+  color: var(--text-primary);
+  font-family: 'Inter', -apple-system, sans-serif;
+  position: relative;
+}
+
+/* ===== HEADER ===== */
+.header {
+  background: var(--glass);
+  backdrop-filter: blur(30px);
+  border-bottom: 1px solid var(--glass-border);
+  padding: 2rem 3rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-medium);
+}
+
+.headerLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.backButton {
+  color: var(--biometrics-primary);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: var(--transition);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-small);
+  background: rgba(0, 255, 136, 0.1);
+  border: 1px solid rgba(0, 255, 136, 0.2);
+  width: fit-content;
+}
+
+.backButton:hover {
+  background: rgba(0, 255, 136, 0.2);
+  transform: translateX(-4px);
+}
+
+.titleSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.pageTitle {
+  font-family: 'SF Pro Display', -apple-system, sans-serif;
+  font-size: 2.5rem;
+  font-weight: 800;
+  background: var(--biometrics-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.2;
+  filter: drop-shadow(0 0 20px rgba(0, 255, 136, 0.3));
+}
+
+.pageSubtitle {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.headerControls {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+.liveControls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.liveToggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 1.5rem;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-medium);
+  color: var(--text-secondary);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  backdrop-filter: blur(20px);
+}
+
+.liveToggle:hover {
+  background: var(--glass-strong);
+  transform: translateY(-2px);
+}
+
+.liveToggle.active {
+  background: var(--biometrics-gradient);
+  color: white;
+  border-color: var(--biometrics-primary);
+  box-shadow: var(--shadow-glow);
+}
+
+.liveIndicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #6b7280;
+  transition: var(--transition);
+}
+
+.liveToggle.active .liveIndicator {
+  animation: liveIndicatorPulse 2s ease-in-out infinite;
+}
+
+.refreshSelect {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-small);
+  padding: 0.75rem 1rem;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: var(--transition);
+  backdrop-filter: blur(20px);
+}
+
+.refreshSelect:focus {
+  outline: none;
+  border-color: var(--biometrics-primary);
+  box-shadow: 0 0 0 3px rgba(0, 255, 136, 0.2);
+}
+
+.addReadingButton {
+  background: var(--biometrics-gradient);
+  border: none;
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: var(--radius-medium);
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-glow);
+}
+
+.addReadingButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 40px rgba(0, 255, 136, 0.5);
+}
+
+/* ===== HEALTH ALERTS ===== */
+.alertsSection {
+  padding: 1rem 3rem;
+  position: relative;
+}
+
+.alertsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.healthAlert {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1.5rem 2rem;
+  border-radius: var(--radius-medium);
+  backdrop-filter: blur(20px);
+  animation: alertSlideIn 0.5s ease-out;
+  border-left: 4px solid;
+}
+
+.healthAlert.critical {
+  background: rgba(220, 38, 38, 0.1);
+  border-color: var(--critical);
+  border: 1px solid rgba(220, 38, 38, 0.3);
+}
+
+.healthAlert.warning {
+  background: rgba(245, 158, 11, 0.1);
+  border-color: var(--warning);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.healthAlert.info {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: var(--info);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.alertContent {
+  flex: 1;
+}
+
+.alertHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.alertIcon {
+  font-size: 1.2rem;
+  filter: drop-shadow(0 0 8px rgba(0, 255, 136, 0.4));
+}
+
+.alertMetric {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.alertTime {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-left: auto;
+}
+
+.alertMessage {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.alertRecommendation {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.dismissButton {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--glass-border);
+  color: var(--text-muted);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.dismissButton:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--text-primary);
+  transform: scale(1.1);
+}
+
+/* ===== TAB NAVIGATION ===== */
+.tabNavigation {
+  display: flex;
+  background: var(--glass);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--glass-border);
+  padding: 0 3rem;
+  overflow-x: auto;
+}
+
+.tab {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  padding: 1.5rem 2rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-bottom: 3px solid transparent;
+  white-space: nowrap;
+}
+
+.tab:hover {
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.activeTab {
+  color: var(--biometrics-primary);
+  border-bottom-color: var(--biometrics-primary);
+  background: rgba(0, 255, 136, 0.08);
+}
+
+.tabIcon {
+  font-size: 1.2rem;
+  filter: drop-shadow(0 0 5px rgba(0, 255, 136, 0.4));
+}
+
+/* ===== TAB CONTENT ===== */
+.tabContent {
+  padding: 3rem;
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* ===== REAL-TIME TAB ===== */
+.realtimeTab {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+.metricCard {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  padding: 2rem;
+  backdrop-filter: blur(20px);
+  transition: var(--transition);
+  animation: slideInUp 0.6s ease-out;
+  position: relative;
+  overflow: hidden;
+}
+
+.metricCard:hover {
+  background: var(--glass-strong);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-heavy);
+}
+
+.metricCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--biometrics-gradient);
+  opacity: 0.8;
+}
+
+.metricHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+}
+
+.metricIcon {
+  font-size: 2rem;
+  filter: drop-shadow(0 0 10px rgba(0, 255, 136, 0.4));
+  animation: heartbeat 3s ease-in-out infinite;
+}
+
+.metricInfo {
+  flex: 1;
+  margin-left: 1rem;
+}
+
+.metricName {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.3rem;
+}
+
+.metricTime {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.qualityIndicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  animation: pulse 2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+.metricValue {
+  font-family: 'SF Pro Display', -apple-system, sans-serif;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--biometrics-primary);
+  margin-bottom: 1rem;
+  filter: drop-shadow(0 0 10px rgba(0, 255, 136, 0.4));
+  line-height: 1.2;
+}
+
+.metricSource {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.sectionTitle {
+  font-family: 'SF Pro Display', -apple-system, sans-serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.recentReadings {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  padding: 2.5rem;
+  backdrop-filter: blur(20px);
+}
+
+.readingsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.readingItem {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-medium);
+  transition: var(--transition);
+  animation: slideInFromRight 0.5s ease-out;
+}
+
+.readingItem:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-light);
+}
+
+.readingIcon {
+  font-size: 1.5rem;
+  filter: drop-shadow(0 0 8px rgba(0, 255, 136, 0.4));
+  flex-shrink: 0;
+}
+
+.readingContent {
+  flex: 1;
+}
+
+.readingHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.readingName {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.readingTime {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.readingValue {
+  font-size: 1rem;
+  color: var(--biometrics-primary);
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+
+.readingNotes {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.readingQuality {
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--radius-small);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  color: white;
+  flex-shrink: 0;
+}
+
+/* ===== TRENDS TAB ===== */
+.trendsTab {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.trendsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 2rem;
+}
+
+.trendCard {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  padding: 2.5rem;
+  backdrop-filter: blur(20px);
+  transition: var(--transition);
+}
+
+.trendCard:hover {
+  background: var(--glass-strong);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-light);
+}
+
+.trendHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+}
+
+.trendInfo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.trendIcon {
+  font-size: 1.8rem;
+  filter: drop-shadow(0 0 8px rgba(0, 255, 136, 0.4));
+}
+
+.trendName {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.2rem;
+}
+
+.trendPeriod {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.trendChange {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+}
+
+.changeValue {
+  font-family: 'SF Pro Display', -apple-system, sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 0.2rem;
+}
+
+.changeTrend {
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.trendChart {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-medium);
+  padding: 2rem;
+  min-height: 200px;
+}
+
+.chartPlaceholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--text-muted);
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.chartSummary {
+  margin-top: 1rem;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+/* ===== DEVICES TAB ===== */
+.devicesTab {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.devicesHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 3rem;
+}
+
+.addDeviceButton {
+  background: var(--biometrics-gradient);
+  border: none;
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: var(--radius-medium);
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-light);
+}
+
+.addDeviceButton:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-glow);
+}
+
+.devicesList {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.deviceCard {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  padding: 2.5rem;
+  backdrop-filter: blur(20px);
+  transition: var(--transition);
+}
+
+.deviceCard:hover {
+  background: var(--glass-strong);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-light);
+}
+
+.deviceHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.deviceInfo {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.deviceIcon {
+  font-size: 2.5rem;
+  filter: drop-shadow(0 0 10px rgba(0, 255, 136, 0.4));
+}
+
+.deviceName {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.3rem;
+}
+
+.deviceModel {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.deviceStatus {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: flex-end;
+}
+
+.connectionStatus {
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-small);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.connected {
+  background: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.disconnected {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.batteryLevel {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.deviceDetails {
+  margin-bottom: 2rem;
+}
+
+.syncInfo {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.deviceMetrics {
+  margin-top: 1rem;
+}
+
+.metricsChips {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+
+.metricChip {
+  background: rgba(0, 255, 136, 0.1);
+  border: 1px solid rgba(0, 255, 136, 0.2);
+  color: var(--biometrics-primary);
+  padding: 0.3rem 0.8rem;
+  border-radius: var(--radius-small);
+  font-size: 0.8rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.deviceActions {
+  display: flex;
+  gap: 1rem;
+}
+
+.syncButton,
+.settingsButton,
+.connectButton {
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-small);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.syncButton,
+.settingsButton {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary);
+  border: 1px solid var(--glass-border);
+}
+
+.syncButton:hover,
+.settingsButton:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--text-primary);
+}
+
+.connectButton {
+  background: var(--biometrics-gradient);
+  color: white;
+  box-shadow: var(--shadow-light);
+}
+
+.connectButton:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-glow);
+}
+
+/* ===== GOALS TAB ===== */
+.goalsTab {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.goalsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 3rem;
+}
+
+.editGoalsButton {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--glass-border);
+  color: var(--text-secondary);
+  padding: 1rem 2rem;
+  border-radius: var(--radius-medium);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.editGoalsButton:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--text-primary);
+  transform: translateY(-2px);
+}
+
+.goalsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+}
+
+.goalCard {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  padding: 2rem;
+  backdrop-filter: blur(20px);
+  transition: var(--transition);
+}
+
+.goalCard:hover {
+  background: var(--glass-strong);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-light);
+}
+
+.goalHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.goalIcon {
+  font-size: 2rem;
+  filter: drop-shadow(0 0 10px rgba(0, 255, 136, 0.4));
+}
+
+.goalName {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.goalTarget {
+  font-size: 1.1rem;
+  color: var(--biometrics-primary);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.goalRange {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+
+.goalProgress {
+  margin-bottom: 1rem;
+}
+
+.progressBar {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-small);
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--biometrics-gradient);
+  border-radius: var(--radius-small);
+  transition: width 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  box-shadow: 0 0 10px rgba(0, 255, 136, 0.4);
+}
+
+.progressText {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* ===== MODAL ===== */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(12px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modalContent {
+  background: var(--glass);
+  backdrop-filter: blur(30px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  width: 100%;
+  max-width: 500px;
+  box-shadow: var(--shadow-heavy);
+  animation: slideInUp 0.4s ease-out;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem 2rem 1rem;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.modalTitle {
+  font-family: 'SF Pro Display', -apple-system, sans-serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.modalClose {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--glass-border);
+  color: var(--text-muted);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: 1.1rem;
+}
+
+.modalClose:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--text-primary);
+  transform: scale(1.1);
+}
+
+.modalBody {
+  padding: 2rem;
+}
+
+.formGroup {
+  margin-bottom: 1.5rem;
+}
+
+.formLabel {
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.formSelect,
+.formInput {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-small);
+  padding: 1rem;
+  color: var(--text-primary);
+  font-size: 1rem;
+  transition: var(--transition);
+}
+
+.formSelect:focus,
+.formInput:focus {
+  outline: none;
+  border-color: var(--biometrics-primary);
+  box-shadow: 0 0 0 3px rgba(0, 255, 136, 0.2);
+}
+
+.formTextarea {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-small);
+  padding: 1rem;
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-family: 'Inter', -apple-system, sans-serif;
+  resize: vertical;
+  min-height: 80px;
+  transition: var(--transition);
+}
+
+.formTextarea:focus {
+  outline: none;
+  border-color: var(--biometrics-primary);
+  box-shadow: 0 0 0 3px rgba(0, 255, 136, 0.2);
+}
+
+.formInput::placeholder,
+.formTextarea::placeholder {
+  color: var(--text-muted);
+}
+
+.modalActions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  padding: 1rem 2rem 2rem;
+  border-top: 1px solid var(--glass-border);
+}
+
+.cancelButton,
+.saveButton {
+  padding: 1rem 2rem;
+  border-radius: var(--radius-small);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  border: none;
+}
+
+.cancelButton {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary);
+  border: 1px solid var(--glass-border);
+}
+
+.cancelButton:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--text-primary);
+}
+
+.saveButton {
+  background: var(--biometrics-gradient);
+  color: white;
+  box-shadow: var(--shadow-light);
+}
+
+.saveButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-glow);
+}
+
+.saveButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 1200px) {
+  .metricsGrid,
+  .trendsGrid,
+  .goalsGrid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .biometricsPage {
+    font-size: 0.9rem;
+  }
+  
+  .header {
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1.5rem 2rem;
+    text-align: center;
+  }
+  
+  .headerControls {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .liveControls {
+    justify-content: center;
+  }
+  
+  .pageTitle {
+    font-size: 2rem;
+  }
+  
+  .tabNavigation {
+    padding: 0 2rem;
+  }
+  
+  .tab {
+    padding: 1rem 1.5rem;
+    font-size: 0.85rem;
+  }
+  
+  .tabContent {
+    padding: 2rem;
+  }
+  
+  .alertsSection {
+    padding: 1rem 2rem;
+  }
+  
+  .healthAlert {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .alertHeader {
+    flex-wrap: wrap;
+  }
+  
+  .metricsGrid,
+  .trendsGrid,
+  .goalsGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .readingItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .readingHeader {
+    width: 100%;
+  }
+  
+  .deviceHeader {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  
+  .deviceActions {
+    flex-direction: column;
+  }
+  
+  .modalContent {
+    margin: 1rem;
+    max-width: none;
+  }
+  
+  .modalActions {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    padding: 1rem;
+  }
+  
+  .pageTitle {
+    font-size: 1.5rem;
+  }
+  
+  .tabContent {
+    padding: 1rem;
+  }
+  
+  .metricCard,
+  .trendCard,
+  .goalCard,
+  .deviceCard {
+    padding: 1.5rem;
+  }
+  
+  .metricValue {
+    font-size: 1.5rem;
+  }
+  
+  .deviceInfo {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+  
+  .syncInfo {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .metricsChips {
+    justify-content: center;
+  }
+}
+
+/* ===== SCROLLBAR STYLING ===== */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--biometrics-primary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--biometrics-secondary);
+}
