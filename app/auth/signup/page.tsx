@@ -4,6 +4,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
 interface SignupForm {
   firstName: string;
@@ -70,6 +71,7 @@ export default function SignupPage() {
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
+  const supabase = createClientComponentClient();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -135,34 +137,65 @@ export default function SignupPage() {
     setError('');
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      const userData = {
-        id: 'user_new_' + Date.now(),
+      // Create user in Supabase Auth
+      const { data: authData, error: authError } = await supabase.auth.signUp({
         email: formData.email,
-        name: `${formData.firstName} ${formData.lastName}`,
-        subscription: 'free',
-        ecosystems: ['por-health', 'por-kids'],
-        onboarding: onboardingData,
-        createdAt: new Date().toISOString()
-      };
-      
-      localStorage.setItem('porverse_auth', JSON.stringify({
-        user: userData,
-        token: 'mock_jwt_token_' + Date.now(),
-        expiresAt: Date.now() + (24 * 60 * 60 * 1000)
-      }));
-      
-      localStorage.setItem('porverse_onboarding_complete', 'true');
-      
+        password: formData.password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+          data: {
+            first_name: formData.firstName,
+            last_name: formData.lastName,
+            marketing_consent: formData.agreeMarketing,
+            onboarding_data: onboardingData
+          }
+        }
+      });
+
+      if (authError) throw authError;
+
+      // Create user profile with onboarding data
+      if (authData.user) {
+        const { error: profileError } = await supabase
+          .from('user_profiles')
+          .insert({
+            id: authData.user.id,
+            email: formData.email,
+            first_name: formData.firstName,
+            last_name: formData.lastName,
+            onboarding_completed: true,
+            onboarding_data: onboardingData,
+            marketing_consent: formData.agreeMarketing
+          });
+
+        if (profileError) {
+          console.error('Profile creation error:', profileError);
+        }
+
+        // Grant access to free ecosystems
+        const freeEcosystems = onboardingData.ecosystemInterest.filter(eco => 
+          ['por-health', 'por-kids'].includes(eco)
+        );
+        
+        for (const ecosystem of freeEcosystems) {
+          await supabase
+            .from('user_ecosystems')
+            .insert({
+              user_id: authData.user.id,
+              ecosystem: ecosystem,
+              access_level: 'free'
+            });
+        }
+      }
+
       setStep(5);
-      
       setTimeout(() => {
         router.push('/dashboard');
+        router.refresh();
       }, 3000);
       
     } catch (err: any) {
-      setError('Eroare la crearea contului. Încearcă din nou.');
+      setError(err.message || 'Eroare la crearea contului. Încearcă din nou.');
     } finally {
       setLoading(false);
     }
@@ -172,24 +205,20 @@ export default function SignupPage() {
     setLoading(true);
     
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      localStorage.setItem('porverse_auth', JSON.stringify({
-        user: {
-          id: 'user_social_' + Date.now(),
-          email: `user@${provider}.com`,
-          name: `User ${provider}`,
-          subscription: 'free',
-          ecosystems: ['por-health', 'por-kids']
-        },
-        token: 'mock_social_token_' + Date.now(),
-        expiresAt: Date.now() + (24 * 60 * 60 * 1000)
-      }));
-      
-      router.push('/dashboard');
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: provider === 'microsoft' ? 'azure' : provider,
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          }
+        }
+      });
+
+      if (error) throw error;
     } catch (err: any) {
-      setError('Eroare la înregistrarea cu ' + provider);
-    } finally {
+      setError(`Eroare la înregistrarea cu ${provider}`);
       setLoading(false);
     }
   };

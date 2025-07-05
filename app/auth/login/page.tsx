@@ -4,6 +4,10 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+
+// Create Supabase client once
+const supabase = createClientComponentClient();
 
 interface LoginForm {
   email: string;
@@ -36,27 +40,19 @@ export default function LoginPage() {
     setError('');
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      if (formData.email && formData.password) {
-        localStorage.setItem('porverse_auth', JSON.stringify({
-          user: {
-            id: 'user_123',
-            email: formData.email,
-            name: formData.email.split('@')[0],
-            subscription: 'free',
-            ecosystems: ['por-health', 'por-kids']
-          },
-          token: 'mock_jwt_token_' + Date.now(),
-          expiresAt: Date.now() + (24 * 60 * 60 * 1000)
-        }));
-        
-        router.push('/dashboard');
+      const { error } = await supabase.auth.signInWithPassword({
+        email: formData.email,
+        password: formData.password,
+      });
+
+      if (error) {
+        setError(error.message);
       } else {
-        throw new Error('Email și parola sunt obligatorii');
+        router.push('/dashboard');
+        router.refresh(); // Important pentru Next.js 14
       }
     } catch (err: any) {
-      setError(err.message || 'Eroare la autentificare');
+      setError('Eroare la conectare');
     } finally {
       setLoading(false);
     }
@@ -66,24 +62,16 @@ export default function LoginPage() {
     setLoading(true);
     
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      localStorage.setItem('porverse_auth', JSON.stringify({
-        user: {
-          id: 'user_social_123',
-          email: `user@${provider}.com`,
-          name: `User ${provider}`,
-          subscription: 'free',
-          ecosystems: ['por-health', 'por-kids']
-        },
-        token: 'mock_social_token_' + Date.now(),
-        expiresAt: Date.now() + (24 * 60 * 60 * 1000)
-      }));
-      
-      router.push('/dashboard');
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: provider === 'microsoft' ? 'azure' : provider,
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`
+        }
+      });
+
+      if (error) throw error;
     } catch (err: any) {
-      setError('Eroare la autentificarea cu ' + provider);
-    } finally {
+      setError(`Eroare la autentificarea cu ${provider}`);
       setLoading(false);
     }
   };
