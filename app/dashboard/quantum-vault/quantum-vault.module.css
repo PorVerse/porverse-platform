@@ -1,0 +1,2037 @@
+/* app/dashboard/quantum-vault/quantum-vault.module.css */
+
+:root {
+  /* Quantum Color Palette */
+  --quantum-primary: #00d4ff;
+  --quantum-secondary: #a855f7;
+  --quantum-tertiary: #ec4899;
+  --quantum-gold: #ffd700;
+  --quantum-emerald: #10b981;
+  
+  /* Cosmic Gradients */
+  --cosmic-gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --cosmic-gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --cosmic-gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  --cosmic-gradient-4: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  
+  /* Quantum Shadows */
+  --quantum-shadow-1: 0 8px 32px rgba(0, 212, 255, 0.3);
+  --quantum-shadow-2: 0 16px 64px rgba(168, 85, 247, 0.3);
+  --quantum-shadow-3: 0 24px 96px rgba(236, 72, 153, 0.3);
+  
+  /* Cosmic Glows */
+  --cosmic-glow-blue: 0 0 30px rgba(0, 212, 255, 0.6);
+  --cosmic-glow-purple: 0 0 30px rgba(168, 85, 247, 0.6);
+  --cosmic-glow-pink: 0 0 30px rgba(236, 72, 153, 0.6);
+  --cosmic-glow-gold: 0 0 30px rgba(255, 215, 0, 0.6);
+  
+  /* Animation Timings */
+  --quantum-fast: 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --quantum-normal: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --quantum-slow: 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --quantum-cosmic: 2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* ===== QUANTUM VAULT CONTAINER ===== */
+.quantumVault {
+  min-height: 100vh;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(0, 212, 255, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(168, 85, 247, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(236, 72, 153, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 60% 60%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
+    linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #1a1a2e 100%);
+  color: #ffffff;
+  overflow: hidden;
+  position: relative;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+}
+
+.quantumVault::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(1px 1px at 20% 30%, var(--quantum-primary), transparent),
+    radial-gradient(1px 1px at 40% 70%, var(--quantum-secondary), transparent),
+    radial-gradient(1px 1px at 90% 40%, var(--quantum-tertiary), transparent),
+    radial-gradient(1px 1px at 60% 10%, var(--quantum-emerald), transparent);
+  background-size: 100px 100px, 150px 150px, 80px 80px, 120px 120px;
+  animation: cosmicStarfield 60s infinite linear;
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+@keyframes cosmicStarfield {
+  0% { transform: translateY(0) rotate(0deg); }
+  100% { transform: translateY(-1000px) rotate(360deg); }
+}
+
+/* ===== PARTICLE FIELD ===== */
+.particleField {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.quantumParticle {
+  position: absolute;
+  border-radius: 50%;
+  animation: quantumFloat 8s infinite ease-in-out;
+  filter: blur(0.5px);
+  box-shadow: 
+    0 0 10px currentColor,
+    0 0 20px currentColor,
+    0 0 30px currentColor;
+}
+
+@keyframes quantumFloat {
+  0%, 100% { 
+    transform: translate(0, 0) scale(1) rotate(0deg); 
+    opacity: 0.3; 
+  }
+  25% { 
+    transform: translate(20px, -30px) scale(1.2) rotate(90deg); 
+    opacity: 0.8; 
+  }
+  50% { 
+    transform: translate(-15px, -60px) scale(0.8) rotate(180deg); 
+    opacity: 1; 
+  }
+  75% { 
+    transform: translate(25px, -30px) scale(1.1) rotate(270deg); 
+    opacity: 0.6; 
+  }
+}
+
+/* ===== AUDIO CONTROLS ===== */
+.audioControls {
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  z-index: 1000;
+}
+
+.audioToggle {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, 
+    rgba(0, 212, 255, 0.2) 0%, 
+    rgba(168, 85, 247, 0.3) 100%
+  );
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: all var(--quantum-normal);
+  box-shadow: var(--quantum-shadow-1);
+}
+
+.audioToggle:hover {
+  transform: scale(1.1) rotate(10deg);
+  box-shadow: var(--cosmic-glow-blue);
+}
+
+/* ===== VAULT CONTAINER ===== */
+.vaultContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem;
+  position: relative;
+  z-index: 10;
+}
+
+/* ===== QUANTUM APPROACH ===== */
+.quantumApproach {
+  text-align: center;
+  animation: approachSequence 4s ease-out;
+}
+
+@keyframes approachSequence {
+  0% { opacity: 0; transform: translateY(100px); }
+  25% { opacity: 0.3; transform: translateY(50px); }
+  50% { opacity: 0.7; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.cosmicRunner {
+  position: relative;
+  margin-bottom: 3rem;
+}
+
+.runnerFigure {
+  font-size: 4rem;
+  animation: runningTowardsLight 3s ease-in-out infinite;
+  filter: drop-shadow(var(--cosmic-glow-blue));
+}
+
+@keyframes runningTowardsLight {
+  0%, 100% { transform: translateX(0) scale(1); }
+  50% { transform: translateX(20px) scale(1.1); }
+}
+
+.distantLight {
+  position: absolute;
+  top: 50%;
+  right: -200px;
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(circle, 
+    rgba(255, 255, 255, 0.9) 0%, 
+    rgba(0, 212, 255, 0.6) 30%, 
+    transparent 70%
+  );
+  border-radius: 50%;
+  animation: lightPulse 2s ease-in-out infinite;
+  filter: blur(2px);
+}
+
+@keyframes lightPulse {
+  0%, 100% { 
+    transform: translateY(-50%) scale(1); 
+    opacity: 0.6; 
+  }
+  50% { 
+    transform: translateY(-50%) scale(1.3); 
+    opacity: 1; 
+  }
+}
+
+.approachMessage {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.approachMessage h2 {
+  font-size: 2.5rem;
+  font-weight: 300;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, 
+    var(--quantum-primary) 0%, 
+    var(--quantum-secondary) 50%, 
+    var(--quantum-tertiary) 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.approachMessage p {
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.6;
+}
+
+/* ===== QUANTUM DISCOVERY ===== */
+.quantumDiscovery {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3rem;
+  animation: discoveryEntrance 2s ease-out;
+}
+
+@keyframes discoveryEntrance {
+  0% { 
+    opacity: 0; 
+    transform: scale(0.8) translateY(50px); 
+    filter: blur(10px); 
+  }
+  100% { 
+    opacity: 1; 
+    transform: scale(1) translateY(0); 
+    filter: blur(0); 
+  }
+}
+
+/* ===== MYSTIC BOX ===== */
+.mysticBox {
+  width: 400px;
+  height: 300px;
+  perspective: 1000px;
+  cursor: pointer;
+  position: relative;
+  transition: all var(--quantum-slow);
+  animation: boxFloat 6s ease-in-out infinite;
+}
+
+@keyframes boxFloat {
+  0%, 100% { 
+    transform: translateY(0) rotateY(0deg); 
+  }
+  25% { 
+    transform: translateY(-10px) rotateY(5deg); 
+  }
+  50% { 
+    transform: translateY(-5px) rotateY(-3deg); 
+  }
+  75% { 
+    transform: translateY(-15px) rotateY(8deg); 
+  }
+}
+
+.mysticBox:hover {
+  transform: scale(1.05) rotateY(10deg);
+  filter: drop-shadow(var(--cosmic-glow-purple));
+}
+
+.boxBase {
+  width: 100%;
+  height: 200px;
+  background: linear-gradient(145deg, 
+    rgba(0, 212, 255, 0.3) 0%, 
+    rgba(168, 85, 247, 0.4) 30%,
+    rgba(236, 72, 153, 0.3) 60%,
+    rgba(16, 185, 129, 0.2) 100%
+  );
+  border-radius: 20px 20px 15px 15px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 
+    var(--quantum-shadow-1),
+    var(--quantum-shadow-2),
+    inset 0 2px 0 rgba(255, 255, 255, 0.2);
+  position: relative;
+  backdrop-filter: blur(25px);
+  overflow: hidden;
+}
+
+.boxBase::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, 
+    transparent 30%, 
+    rgba(255, 255, 255, 0.1) 50%, 
+    transparent 70%
+  );
+  animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.boxLid {
+  width: 100%;
+  height: 100px;
+  background: linear-gradient(145deg, 
+    rgba(168, 85, 247, 0.5) 0%, 
+    rgba(0, 212, 255, 0.6) 30%,
+    rgba(236, 72, 153, 0.4) 60%,
+    rgba(255, 215, 0, 0.3) 100%
+  );
+  border-radius: 20px 20px 8px 8px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  transform-origin: bottom;
+  transition: transform var(--quantum-cosmic) cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  box-shadow: 
+    var(--quantum-shadow-2),
+    inset 0 3px 0 rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(20px);
+  overflow: hidden;
+}
+
+.boxLid.opening {
+  transform: rotateX(-140deg) translateZ(20px);
+  box-shadow: 
+    var(--cosmic-glow-purple),
+    var(--quantum-shadow-3);
+}
+
+.lidSurface {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quantumSymbols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  font-size: 1.5rem;
+  color: rgba(255, 255, 255, 0.8);
+  animation: symbolsPulse 4s ease-in-out infinite;
+}
+
+@keyframes symbolsPulse {
+  0%, 100% { 
+    opacity: 0.6; 
+    transform: scale(1); 
+  }
+  50% { 
+    opacity: 1; 
+    transform: scale(1.2); 
+  }
+}
+
+.lidGlow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120px;
+  height: 40px;
+  background: radial-gradient(ellipse, 
+    rgba(255, 255, 255, 0.9) 0%, 
+    rgba(0, 212, 255, 0.7) 30%, 
+    rgba(168, 85, 247, 0.4) 60%,
+    transparent 100%
+  );
+  border-radius: 50%;
+  animation: lidGlowPulse 3s ease-in-out infinite;
+  filter: blur(2px);
+}
+
+@keyframes lidGlowPulse {
+  0%, 100% { 
+    opacity: 0.4; 
+    transform: translate(-50%, -50%) scale(1); 
+  }
+  50% { 
+    opacity: 1; 
+    transform: translate(-50%, -50%) scale(1.3); 
+  }
+}
+
+/* ===== QUANTUM CORE ===== */
+.quantumCore {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120px;
+  height: 120px;
+}
+
+.coreOrb {
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 30% 30%, 
+    rgba(255, 255, 255, 0.95) 0%, 
+    rgba(0, 212, 255, 0.9) 20%, 
+    rgba(168, 85, 247, 0.7) 50%, 
+    rgba(236, 72, 153, 0.5) 80%,
+    rgba(16, 185, 129, 0.3) 100%
+  );
+  border-radius: 50%;
+  animation: orbPulse 4s ease-in-out infinite;
+  box-shadow: 
+    var(--cosmic-glow-blue),
+    var(--cosmic-glow-purple),
+    inset 0 0 30px rgba(255, 255, 255, 0.4);
+  position: relative;
+}
+
+@keyframes orbPulse {
+  0%, 100% { 
+    transform: scale(1) rotate(0deg); 
+    box-shadow: 
+      var(--cosmic-glow-blue),
+      var(--cosmic-glow-purple);
+  }
+  25% { 
+    transform: scale(1.1) rotate(90deg); 
+    box-shadow: 
+      var(--cosmic-glow-purple),
+      var(--cosmic-glow-pink);
+  }
+  50% { 
+    transform: scale(1.15) rotate(180deg); 
+    box-shadow: 
+      var(--cosmic-glow-pink),
+      var(--cosmic-glow-gold);
+  }
+  75% { 
+    transform: scale(1.05) rotate(270deg); 
+    box-shadow: 
+      var(--cosmic-glow-gold),
+      var(--cosmic-glow-blue);
+  }
+}
+
+.energyRings {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+  height: 200px;
+}
+
+.ring {
+  position: absolute;
+  border: 2px solid rgba(0, 212, 255, 0.4);
+  border-radius: 50%;
+  animation: ringRotation 8s linear infinite;
+}
+
+.ring:nth-child(1) {
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  border-color: rgba(0, 212, 255, 0.6);
+  animation-duration: 8s;
+}
+
+.ring:nth-child(2) {
+  width: 130%;
+  height: 130%;
+  top: -15%;
+  left: -15%;
+  border-color: rgba(168, 85, 247, 0.4);
+  animation-duration: 12s;
+  animation-direction: reverse;
+}
+
+.ring:nth-child(3) {
+  width: 160%;
+  height: 160%;
+  top: -30%;
+  left: -30%;
+  border-color: rgba(236, 72, 153, 0.3);
+  animation-duration: 16s;
+}
+
+@keyframes ringRotation {
+  0% { transform: rotate(0deg) scale(1); opacity: 0.6; }
+  50% { transform: rotate(180deg) scale(1.1); opacity: 1; }
+  100% { transform: rotate(360deg) scale(1); opacity: 0.6; }
+}
+
+/* ===== QUANTUM BEAM ===== */
+.quantumBeam {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 0;
+  animation: beamExpansion 4s ease-out forwards;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+@keyframes beamExpansion {
+  0% { 
+    height: 0; 
+    opacity: 0; 
+  }
+  20% { 
+    height: 200px; 
+    opacity: 0.4; 
+  }
+  50% { 
+    height: 600px; 
+    opacity: 0.8; 
+  }
+  80% { 
+    height: 100vh; 
+    opacity: 1; 
+  }
+  100% { 
+    height: 100vh; 
+    opacity: 0.7; 
+  }
+}
+
+.beamCore {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to top, 
+    transparent 0%, 
+    rgba(255, 255, 255, 0.95) 10%, 
+    rgba(0, 212, 255, 0.9) 30%, 
+    rgba(168, 85, 247, 0.7) 60%, 
+    rgba(236, 72, 153, 0.5) 80%,
+    transparent 100%
+  );
+  box-shadow: 
+    0 0 30px rgba(255, 255, 255, 0.9),
+    0 0 60px rgba(0, 212, 255, 0.7),
+    0 0 90px rgba(168, 85, 247, 0.5);
+  animation: beamIntensity 2s ease-in-out infinite;
+}
+
+@keyframes beamIntensity {
+  0%, 100% { opacity: 0.7; transform: scaleX(1); }
+  50% { opacity: 1; transform: scaleX(1.2); }
+}
+
+.beamExpansion {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 100%;
+  background: radial-gradient(ellipse at center, 
+    rgba(0, 212, 255, 0.4) 0%, 
+    rgba(168, 85, 247, 0.3) 40%, 
+    rgba(236, 72, 153, 0.2) 70%,
+    transparent 100%
+  );
+  animation: expansionGlow 3s ease-out forwards;
+}
+
+@keyframes expansionGlow {
+  0% { width: 20px; opacity: 0; }
+  50% { width: 200px; opacity: 0.8; }
+  100% { width: 400px; opacity: 0.4; }
+}
+
+.realityDistortion {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  height: 100%;
+  background: 
+    linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent),
+    linear-gradient(45deg, 
+      rgba(0, 212, 255, 0.1) 0%, 
+      rgba(168, 85, 247, 0.1) 25%,
+      rgba(236, 72, 153, 0.1) 50%,
+      rgba(16, 185, 129, 0.1) 75%,
+      rgba(0, 212, 255, 0.1) 100%
+    );
+  animation: realityRipple 4s ease-in-out infinite;
+  filter: blur(1px);
+}
+
+@keyframes realityRipple {
+  0%, 100% { 
+    transform: translateX(-50%) skewX(0deg); 
+    opacity: 0.3; 
+  }
+  25% { 
+    transform: translateX(-50%) skewX(5deg); 
+    opacity: 0.7; 
+  }
+  50% { 
+    transform: translateX(-50%) skewX(-3deg); 
+    opacity: 1; 
+  }
+  75% { 
+    transform: translateX(-50%) skewX(8deg); 
+    opacity: 0.5; 
+  }
+}
+
+/* ===== BIOMETRIC SCANNER ===== */
+.biometricScanner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, 
+    rgba(0, 212, 255, 0.2) 0%, 
+    rgba(168, 85, 247, 0.15) 50%,
+    transparent 100%
+  );
+  border: 2px solid rgba(0, 212, 255, 0.5);
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  backdrop-filter: blur(30px);
+  animation: scannerPulse 2s ease-in-out infinite;
+  z-index: 1001;
+}
+
+@keyframes scannerPulse {
+  0%, 100% { 
+    transform: translate(-50%, -50%) scale(1); 
+    box-shadow: var(--cosmic-glow-blue); 
+  }
+  50% { 
+    transform: translate(-50%, -50%) scale(1.05); 
+    box-shadow: 
+      var(--cosmic-glow-blue),
+      var(--cosmic-glow-purple); 
+  }
+}
+
+.scannerGrid {
+  width: 150px;
+  height: 150px;
+  position: relative;
+}
+
+.fingerprint {
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(circle at 50% 50%, transparent 30%, rgba(0, 212, 255, 0.3) 32%, transparent 34%),
+    radial-gradient(circle at 50% 50%, transparent 45%, rgba(0, 212, 255, 0.3) 47%, transparent 49%),
+    radial-gradient(circle at 50% 50%, transparent 60%, rgba(0, 212, 255, 0.3) 62%, transparent 64%);
+  border: 2px solid rgba(0, 212, 255, 0.6);
+  border-radius: 50%;
+  position: relative;
+  animation: fingerprintScan 3s ease-in-out infinite;
+}
+
+@keyframes fingerprintScan {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+
+.scanLine {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(0, 212, 255, 0.9), 
+    transparent
+  );
+  animation: scanLineMove 2s linear infinite;
+}
+
+@keyframes scanLineMove {
+  0% { transform: translateY(0); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(148px); opacity: 0; }
+}
+
+.biometricScanner p {
+  color: var(--quantum-primary);
+  font-weight: 500;
+  text-align: center;
+  animation: textPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes textPulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+/* ===== DISCOVERY INSTRUCTIONS ===== */
+.discoveryInstructions {
+  text-align: center;
+  max-width: 600px;
+}
+
+.quantumTitle {
+  font-size: 4rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.titleWord {
+  background: linear-gradient(135deg, 
+    var(--quantum-primary) 0%, 
+    var(--quantum-secondary) 30%, 
+    var(--quantum-tertiary) 60%,
+    var(--quantum-gold) 100%
+  );
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: titleGradientShift 4s ease-in-out infinite;
+  filter: drop-shadow(var(--cosmic-glow-blue));
+}
+
+.titleWord:nth-child(2) {
+  animation-delay: 1s;
+}
+
+@keyframes titleGradientShift {
+  0%, 100% { 
+    background-position: 0% 50%; 
+    filter: drop-shadow(var(--cosmic-glow-blue)); 
+  }
+  25% { 
+    background-position: 50% 0%; 
+    filter: drop-shadow(var(--cosmic-glow-purple)); 
+  }
+  50% { 
+    background-position: 100% 50%; 
+    filter: drop-shadow(var(--cosmic-glow-pink)); 
+  }
+  75% { 
+    background-position: 50% 100%; 
+    filter: drop-shadow(var(--cosmic-glow-gold)); 
+  }
+}
+
+.quantumSubtitle {
+  font-size: 1.3rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 2rem;
+  line-height: 1.6;
+  animation: subtitleFloat 3s ease-in-out infinite;
+}
+
+@keyframes subtitleFloat {
+  0%, 100% { transform: translateY(0); opacity: 0.8; }
+  50% { transform: translateY(-5px); opacity: 1; }
+}
+
+.accessIndicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, 
+    rgba(16, 185, 129, 0.2) 0%, 
+    rgba(0, 212, 255, 0.3) 100%
+  );
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  border-radius: 2rem;
+  color: var(--quantum-emerald);
+  font-weight: 600;
+  backdrop-filter: blur(15px);
+  box-shadow: var(--quantum-shadow-1);
+  animation: accessPulse 2s ease-in-out infinite;
+}
+
+@keyframes accessPulse {
+  0%, 100% { 
+    transform: scale(1); 
+    box-shadow: var(--quantum-shadow-1); 
+  }
+  50% { 
+    transform: scale(1.05); 
+    box-shadow: 
+      var(--quantum-shadow-1),
+      0 0 30px rgba(16, 185, 129, 0.6); 
+  }
+}
+
+.statusIcon {
+  font-size: 1.2rem;
+  animation: iconSpin 4s linear infinite;
+}
+
+@keyframes iconSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ===== QUANTUM REVELATION ===== */
+.quantumRevelation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3rem;
+  text-align: center;
+  position: relative;
+  animation: revelationEntrance 3s ease-out;
+}
+
+@keyframes revelationEntrance {
+  0% { 
+    opacity: 0; 
+    transform: scale(0.5); 
+    filter: blur(20px); 
+  }
+  50% { 
+    opacity: 0.5; 
+    transform: scale(0.8); 
+    filter: blur(10px); 
+  }
+  100% { 
+    opacity: 1; 
+    transform: scale(1); 
+    filter: blur(0); 
+  }
+}
+
+.realityShift {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+}
+
+.lightExplosion {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(circle, 
+    rgba(255, 255, 255, 1) 0%, 
+    rgba(0, 212, 255, 0.8) 20%, 
+    rgba(168, 85, 247, 0.6) 40%,
+    rgba(236, 72, 153, 0.4) 60%,
+    transparent 100%
+  );
+  border-radius: 50%;
+  animation: explosionExpand 4s ease-out infinite;
+}
+
+@keyframes explosionExpand {
+  0% { 
+    width: 100px; 
+    height: 100px; 
+    opacity: 1; 
+  }
+  50% { 
+    width: 800px; 
+    height: 800px; 
+    opacity: 0.6; 
+  }
+  100% { 
+    width: 1200px; 
+    height: 1200px; 
+    opacity: 0; 
+  }
+}
+
+.consciousnessWave {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  height: 300px;
+  border: 3px solid rgba(168, 85, 247, 0.6);
+  border-radius: 50%;
+  animation: waveExpansion 6s ease-out infinite;
+}
+
+@keyframes waveExpansion {
+  0% { 
+    width: 300px; 
+    height: 300px; 
+    opacity: 1; 
+    border-width: 3px; 
+  }
+  100% { 
+    width: 1500px; 
+    height: 1500px; 
+    opacity: 0; 
+    border-width: 0; 
+  }
+}
+
+.dimensionalRift {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    linear-gradient(45deg, transparent 40%, rgba(255, 255, 255, 0.1) 50%, transparent 60%),
+    linear-gradient(-45deg, transparent 40%, rgba(0, 212, 255, 0.1) 50%, transparent 60%);
+  animation: riftDistortion 8s ease-in-out infinite;
+}
+
+@keyframes riftDistortion {
+  0%, 100% { 
+    transform: skew(0deg, 0deg); 
+    opacity: 0; 
+  }
+  25% { 
+    transform: skew(2deg, 1deg); 
+    opacity: 0.3; 
+  }
+  50% { 
+    transform: skew(-1deg, 2deg); 
+    opacity: 0.6; 
+  }
+  75% { 
+    transform: skew(3deg, -1deg); 
+    opacity: 0.2; 
+  }
+}
+
+.enlightenmentTitle {
+  font-size: 3rem;
+  font-weight: 300;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 1) 0%, 
+    rgba(0, 212, 255, 0.9) 30%, 
+    rgba(168, 85, 247, 0.8) 60%,
+    rgba(236, 72, 153, 0.7) 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: enlightenmentGlow 3s ease-in-out infinite;
+  position: relative;
+  z-index: 10;
+}
+
+@keyframes enlightenmentGlow {
+  0%, 100% { 
+    filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.8)); 
+  }
+  50% { 
+    filter: drop-shadow(0 0 40px rgba(0, 212, 255, 0.9)); 
+  }
+}
+
+.truthMessage {
+  font-size: 1.4rem;
+  color: rgba(255, 255, 255, 0.9);
+  position: relative;
+  z-index: 10;
+  animation: truthReveal 2s ease-out 1s both;
+}
+
+@keyframes truthReveal {
+  0% { 
+    opacity: 0; 
+    transform: translateY(30px); 
+  }
+  100% { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+/* ===== COSMIC PROGRESS ===== */
+.cosmicProgress {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  position: relative;
+  z-index: 10;
+}
+
+.progressRing {
+  width: 200px;
+  height: 200px;
+  animation: ringFloat 4s ease-in-out infinite;
+}
+
+@keyframes ringFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(10deg); }
+}
+
+.progressCircle {
+  transition: stroke-dashoffset 0.5s ease;
+  filter: drop-shadow(var(--cosmic-glow-purple));
+}
+
+.progressText {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--quantum-primary);
+  animation: progressPulse 2s ease-in-out infinite;
+}
+
+@keyframes progressPulse {
+  0%, 100% { opacity: 0.8; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+
+/* ===== FUTURE SELF EXPERIENCE ===== */
+.futureSelfExperience {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  animation: experienceEntrance 1s ease-out;
+}
+
+@keyframes experienceEntrance {
+  0% { 
+    opacity: 0; 
+    transform: translateY(50px) scale(0.95); 
+  }
+  100% { 
+    opacity: 1; 
+    transform: translateY(0) scale(1); 
+  }
+}
+
+.experienceHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 3rem;
+  padding: 0 2rem;
+}
+
+.backToVault {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 1.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 1rem;
+  color: #ffffff;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--quantum-normal);
+  backdrop-filter: blur(15px);
+}
+
+.backToVault:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateX(-5px);
+  box-shadow: var(--quantum-shadow-1);
+}
+
+.experienceTitle {
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, 
+    var(--quantum-primary) 0%, 
+    var(--quantum-secondary) 50%, 
+    var(--quantum-tertiary) 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(var(--cosmic-glow-blue));
+}
+
+/* ===== FUTURE SELF PROFILE ===== */
+.futureSelfProfile {
+  background: linear-gradient(135deg, 
+    rgba(0, 212, 255, 0.08) 0%, 
+    rgba(168, 85, 247, 0.12) 50%,
+    rgba(236, 72, 153, 0.08) 100%
+  );
+  backdrop-filter: blur(30px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 2rem;
+  padding: 3rem;
+  box-shadow: var(--quantum-shadow-1);
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+.profileHeader {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2rem;
+  align-items: center;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.futureAvatar {
+  width: 200px;
+  height: 200px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.avatarCore {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, 
+    var(--quantum-primary) 0%, 
+    var(--quantum-secondary) 30%, 
+    var(--quantum-tertiary) 60%,
+    var(--quantum-gold) 100%
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  animation: avatarEvolution 6s ease-in-out infinite;
+  box-shadow: 
+    var(--cosmic-glow-blue),
+    var(--cosmic-glow-purple);
+}
+
+@keyframes avatarEvolution {
+  0%, 100% { 
+    transform: scale(1) rotate(0deg); 
+    box-shadow: 
+      var(--cosmic-glow-blue),
+      var(--cosmic-glow-purple); 
+  }
+  25% { 
+    transform: scale(1.05) rotate(90deg); 
+    box-shadow: 
+      var(--cosmic-glow-purple),
+      var(--cosmic-glow-pink); 
+  }
+  50% { 
+    transform: scale(1.1) rotate(180deg); 
+    box-shadow: 
+      var(--cosmic-glow-pink),
+      var(--cosmic-glow-gold); 
+  }
+  75% { 
+    transform: scale(1.03) rotate(270deg); 
+    box-shadow: 
+      var(--cosmic-glow-gold),
+      var(--cosmic-glow-blue); 
+  }
+}
+
+.consciousnessField {
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  right: -20px;
+  bottom: -20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  animation: consciousnessExpansion 8s ease-in-out infinite;
+}
+
+@keyframes consciousnessExpansion {
+  0%, 100% { 
+    transform: scale(1); 
+    opacity: 0.6; 
+    border-color: rgba(0, 212, 255, 0.3); 
+  }
+  25% { 
+    transform: scale(1.1); 
+    opacity: 0.8; 
+    border-color: rgba(168, 85, 247, 0.4); 
+  }
+  50% { 
+    transform: scale(1.2); 
+    opacity: 1; 
+    border-color: rgba(236, 72, 153, 0.5); 
+  }
+  75% { 
+    transform: scale(1.05); 
+    opacity: 0.7; 
+    border-color: rgba(255, 215, 0, 0.4); 
+  }
+}
+
+.avatarSymbol {
+  font-size: 3rem;
+  color: rgba(255, 255, 255, 0.95);
+  filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.8));
+  animation: symbolFloat 4s ease-in-out infinite;
+}
+
+@keyframes symbolFloat {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-5px) scale(1.1); }
+}
+
+.transformationLevel {
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, 
+    rgba(16, 185, 129, 0.3) 0%, 
+    rgba(0, 212, 255, 0.2) 100%
+  );
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  border-radius: 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--quantum-emerald);
+  backdrop-filter: blur(10px);
+}
+
+.futureInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.futureName {
+  font-size: 2.2rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, 
+    var(--quantum-primary) 0%, 
+    var(--quantum-secondary) 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.futureTimeline {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 500;
+}
+
+.evolutionBadge {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, 
+    rgba(255, 215, 0, 0.3) 0%, 
+    rgba(236, 72, 153, 0.2) 100%
+  );
+  border: 1px solid rgba(255, 215, 0, 0.5);
+  border-radius: 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--quantum-gold);
+  backdrop-filter: blur(15px);
+  animation: badgePulse 3s ease-in-out infinite;
+}
+
+@keyframes badgePulse {
+  0%, 100% { 
+    transform: scale(1); 
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); 
+  }
+  50% { 
+    transform: scale(1.05); 
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.5); 
+  }
+}
+
+/* ===== CONSCIOUSNESS METRICS ===== */
+.consciousness {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1.5rem;
+  padding: 2rem;
+}
+
+.consciousness h4 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: var(--quantum-secondary);
+}
+
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.metric {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.75rem;
+  transition: all var(--quantum-normal);
+}
+
+.metric:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-2px);
+}
+
+.metricLabel {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  text-transform: capitalize;
+  font-weight: 500;
+}
+
+.metricBar {
+  flex: 1;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+}
+
+.metricFill {
+  height: 100%;
+  background: linear-gradient(90deg, 
+    var(--quantum-primary) 0%, 
+    var(--quantum-secondary) 50%, 
+    var(--quantum-tertiary) 100%
+  );
+  border-radius: 3px;
+  transition: width 1s ease-out;
+  position: relative;
+}
+
+.metricFill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0.4), 
+    transparent
+  );
+  animation: metricShimmer 2s infinite;
+}
+
+@keyframes metricShimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.metricValue {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--quantum-primary);
+  min-width: 40px;
+  text-align: right;
+}
+
+/* ===== QUANTUM WISDOM ===== */
+.quantumWisdom {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1.5rem;
+  padding: 2rem;
+}
+
+.quantumWisdom h4 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: var(--quantum-tertiary);
+}
+
+.wisdomMessages {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.wisdomCard {
+  background: linear-gradient(135deg, 
+    rgba(0, 212, 255, 0.05) 0%, 
+    rgba(168, 85, 247, 0.08) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  transition: all var(--quantum-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.wisdomCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, 
+    var(--quantum-primary) 0%, 
+    var(--quantum-secondary) 50%, 
+    var(--quantum-tertiary) 100%
+  );
+}
+
+.wisdomCard.high {
+  border-color: rgba(236, 72, 153, 0.3);
+  background: linear-gradient(135deg, 
+    rgba(236, 72, 153, 0.08) 0%, 
+    rgba(0, 212, 255, 0.05) 100%
+  );
+}
+
+.wisdomCard.medium {
+  border-color: rgba(255, 215, 0, 0.3);
+  background: linear-gradient(135deg, 
+    rgba(255, 215, 0, 0.08) 0%, 
+    rgba(168, 85, 247, 0.05) 100%
+  );
+}
+
+.wisdomCard:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--quantum-shadow-1);
+  background: linear-gradient(135deg, 
+    rgba(0, 212, 255, 0.12) 0%, 
+    rgba(168, 85, 247, 0.15) 100%
+  );
+}
+
+.wisdomHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.wisdomCategory {
+  padding: 0.25rem 0.75rem;
+  background: rgba(0, 212, 255, 0.2);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  border-radius: 1rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--quantum-primary);
+  text-transform: uppercase;
+}
+
+.wisdomUrgency {
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.wisdomUrgency.high {
+  background: rgba(236, 72, 153, 0.2);
+  border: 1px solid rgba(236, 72, 153, 0.3);
+  color: var(--quantum-tertiary);
+}
+
+.wisdomUrgency.medium {
+  background: rgba(255, 215, 0, 0.2);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  color: var(--quantum-gold);
+}
+
+.wisdomUrgency.low {
+  background: rgba(16, 185, 129, 0.2);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: var(--quantum-emerald);
+}
+
+.wisdomMessage {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 1rem;
+  font-style: italic;
+}
+
+.wisdomAction {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.wisdomAction span {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 500;
+}
+
+.actionButton {
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, 
+    var(--quantum-secondary) 0%, 
+    var(--quantum-tertiary) 100%
+  );
+  border: none;
+  border-radius: 0.5rem;
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--quantum-normal);
+  box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);
+}
+
+.actionButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(168, 85, 247, 0.4);
+}
+
+/* ===== QUANTUM NAVIGATION ===== */
+.quantumNavigation {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  padding: 2rem 0;
+}
+
+.navButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1.5rem 2rem;
+  background: linear-gradient(135deg, 
+    rgba(0, 212, 255, 0.1) 0%, 
+    rgba(168, 85, 247, 0.15) 50%,
+    rgba(236, 72, 153, 0.1) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 1rem;
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--quantum-normal);
+  backdrop-filter: blur(15px);
+  box-shadow: var(--quantum-shadow-1);
+}
+
+.navButton:hover {
+  background: linear-gradient(135deg, 
+    rgba(0, 212, 255, 0.2) 0%, 
+    rgba(168, 85, 247, 0.25) 50%,
+    rgba(236, 72, 153, 0.2) 100%
+  );
+  transform: translateY(-3px);
+  box-shadow: 
+    var(--quantum-shadow-2),
+    var(--cosmic-glow-blue);
+}
+
+/* ===== LOCKED ACCESS ===== */
+.lockedAccess {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3rem;
+  text-align: center;
+  animation: lockedEntrance 2s ease-out;
+}
+
+@keyframes lockedEntrance {
+  0% { 
+    opacity: 0; 
+    transform: scale(0.9) translateY(30px); 
+  }
+  100% { 
+    opacity: 1; 
+    transform: scale(1) translateY(0); 
+  }
+}
+
+.cosmicBarrier {
+  width: 300px;
+  height: 300px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  animation: barrierPulse 3s ease-in-out infinite;
+}
+
+@keyframes barrierPulse {
+  0%, 100% { 
+    transform: scale(1); 
+    border-color: rgba(255, 255, 255, 0.3); 
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.2); 
+  }
+  50% { 
+    transform: scale(1.05); 
+    border-color: rgba(236, 72, 153, 0.5); 
+    box-shadow: 0 0 50px rgba(236, 72, 153, 0.4); 
+  }
+}
+
+.barrierEffect {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 250px;
+  height: 250px;
+  background: radial-gradient(circle, 
+    transparent 30%, 
+    rgba(236, 72, 153, 0.1) 40%, 
+    rgba(168, 85, 247, 0.1) 60%,
+    transparent 70%
+  );
+  border-radius: 50%;
+  animation: barrierShimmer 4s ease-in-out infinite;
+}
+
+@keyframes barrierShimmer {
+  0%, 100% { opacity: 0.3; transform: translate(-50%, -50%) rotate(0deg); }
+  50% { opacity: 0.7; transform: translate(-50%, -50%) rotate(180deg); }
+}
+
+.lockSymbol {
+  font-size: 4rem;
+  color: rgba(255, 255, 255, 0.8);
+  filter: drop-shadow(0 0 20px rgba(236, 72, 153, 0.6));
+  animation: lockFloat 3s ease-in-out infinite;
+  z-index: 10;
+  position: relative;
+}
+
+@keyframes lockFloat {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-10px) scale(1.1); }
+}
+
+.lockMessage h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, 
+    var(--quantum-primary) 0%, 
+    var(--quantum-secondary) 50%, 
+    var(--quantum-tertiary) 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.lockMessage p {
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 2rem;
+  max-width: 500px;
+}
+
+.unlockButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.5rem 3rem;
+  background: linear-gradient(135deg, 
+    var(--quantum-secondary) 0%, 
+    var(--quantum-tertiary) 100%
+  );
+  border: none;
+  border-radius: 2rem;
+  color: #ffffff;
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--quantum-normal);
+  box-shadow: 
+    var(--quantum-shadow-2),
+    0 0 30px rgba(168, 85, 247, 0.4);
+  text-decoration: none;
+}
+
+.unlockButton:hover {
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 
+    var(--quantum-shadow-3),
+    var(--cosmic-glow-purple),
+    var(--cosmic-glow-pink);
+}
+
+/* ===== COSMIC PROCESSING ===== */
+.cosmicProcessing {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(20px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  z-index: 2000;
+  color: #ffffff;
+  animation: processingEntrance 0.5s ease-out;
+}
+
+@keyframes processingEntrance {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+.processingOrb {
+  width: 150px;
+  height: 150px;
+  position: relative;
+}
+
+.orbCore {
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, 
+    rgba(255, 255, 255, 0.9) 0%, 
+    rgba(0, 212, 255, 0.8) 30%, 
+    rgba(168, 85, 247, 0.6) 60%,
+    transparent 100%
+  );
+  border-radius: 50%;
+  animation: processingPulse 2s ease-in-out infinite;
+}
+
+@keyframes processingPulse {
+  0%, 100% { 
+    transform: scale(1); 
+    opacity: 0.8; 
+  }
+  50% { 
+    transform: scale(1.2); 
+    opacity: 1; 
+  }
+}
+
+.orbRings {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.orbRings div {
+  position: absolute;
+  border: 2px solid rgba(0, 212, 255, 0.4);
+  border-radius: 50%;
+  animation: ringSpinner 3s linear infinite;
+}
+
+.orbRings div:nth-child(1) {
+  width: 180px;
+  height: 180px;
+  top: -90px;
+  left: -90px;
+  border-color: rgba(0, 212, 255, 0.6);
+  animation-duration: 3s;
+}
+
+.orbRings div:nth-child(2) {
+  width: 220px;
+  height: 220px;
+  top: -110px;
+  left: -110px;
+  border-color: rgba(168, 85, 247, 0.4);
+  animation-duration: 4s;
+  animation-direction: reverse;
+}
+
+.orbRings div:nth-child(3) {
+  width: 260px;
+  height: 260px;
+  top: -130px;
+  left: -130px;
+  border-color: rgba(236, 72, 153, 0.3);
+  animation-duration: 5s;
+}
+
+@keyframes ringSpinner {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.cosmicProcessing p {
+  font-size: 1.3rem;
+  font-weight: 500;
+  text-align: center;
+  animation: textFlicker 2s ease-in-out infinite;
+}
+
+@keyframes textFlicker {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+/* ===== COSMIC PORTAL ===== */
+.cosmicPortal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle, 
+    rgba(168, 85, 247, 0.8) 0%, 
+    rgba(0, 0, 0, 0.9) 100%
+  );
+  z-index: 9999;
+  animation: portalTransition 2s ease-out;
+}
+
+@keyframes portalTransition {
+  0% { 
+    opacity: 0; 
+    transform: scale(0.1); 
+  }
+  50% { 
+    opacity: 1; 
+    transform: scale(1.1); 
+  }
+  100% { 
+    opacity: 0.9; 
+    transform: scale(1); 
+  }
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 1200px) {
+  .quantumTitle {
+    font-size: 3rem;
+  }
+  
+  .mysticBox {
+    width: 350px;
+    height: 250px;
+  }
+  
+  .futureSelfProfile {
+    padding: 2rem;
+  }
+  
+  .profileHeader {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .vaultContainer {
+    padding: 1rem;
+  }
+  
+  .quantumTitle {
+    font-size: 2.5rem;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .mysticBox {
+    width: 280px;
+    height: 200px;
+  }
+  
+  .boxBase {
+    height: 140px;
+  }
+  
+  .boxLid {
+    height: 70px;
+  }
+  
+  .experienceHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .futureSelfProfile {
+    padding: 1.5rem;
+    gap: 2rem;
+  }
+  
+  .metricsGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .quantumNavigation {
+    grid-template-columns: 1fr;
+  }
+  
+  .lockMessage h2 {
+    font-size: 2rem;
+  }
+  
+  .unlockButton {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .quantumTitle {
+    font-size: 2rem;
+  }
+  
+  .mysticBox {
+    width: 240px;
+    height: 160px;
+  }
+  
+  .futureAvatar {
+    width: 120px;
+    height: 120px;
+  }
+  
+  .avatarCore {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .avatarSymbol {
+    font-size: 2rem;
+  }
+  
+  .wisdomCard {
+    padding: 1rem;
+  }
+  
+  .navButton {
+    padding: 1rem 1.5rem;
+  }
+}
+
+/* ===== PERFORMANCE OPTIMIZATIONS ===== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ===== HIGH CONTRAST MODE ===== */
+@media (prefers-contrast: high) {
+  :root {
+    --quantum-primary: #00ffff;
+    --quantum-secondary: #ff00ff;
+    --quantum-tertiary: #ffff00;
+    --quantum-gold: #ffffff;
+    --quantum-emerald: #00ff00;
+  }
+}
+
+/* ===== PRINT STYLES ===== */
+@media print {
+  .quantumVault {
+    background: white !important;
+    color: black !important;
+  }
+  
+  .particleField,
+  .audioControls,
+  .cosmicProcessing {
+    display: none !important;
+  }
+}
