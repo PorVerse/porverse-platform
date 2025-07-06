@@ -291,21 +291,32 @@ export default function QuantumVault() {
   }, []);
 
   const checkQuantumAccess = async () => {
-    try {
-      // Check Trinity Combo access
-      const hasTrinityCombos = vaultState.userContext.ecosystemsAccess.includes('por-mind') &&
-                               vaultState.userContext.ecosystemsAccess.includes('por-flow') &&
-                               vaultState.userContext.ecosystemsAccess.includes('por-blu');
-      
+  try {
+    const response = await fetch('/api/quantum-access');
+    const data = await response.json();
+    
+    if (data.hasTrinity) {
       setVaultState(prev => ({
         ...prev,
-        accessLevel: hasTrinityCombos ? 'trinity' : 'locked',
-        phase: hasTrinityCombos ? 'discovery' : 'approach'
+        accessLevel: 'trinity',
+        phase: 'discovery',
+        userContext: {
+          ...prev.userContext,
+          userId: data.userId,
+          ecosystemsAccess: data.ecosystems.map((e: any) => e.ecosystem)
+        }
       }));
-    } catch (error) {
-      console.error('Quantum access check failed:', error);
+    } else {
+      setVaultState(prev => ({
+        ...prev,
+        accessLevel: 'locked',
+        phase: 'approach'
+      }));
     }
-  };
+  } catch (error) {
+    console.error('Quantum access check failed:', error);
+  }
+};
 
   const initializeAudioContext = () => {
     if (typeof window !== 'undefined' && 'AudioContext' in window) {
@@ -432,163 +443,189 @@ export default function QuantumVault() {
     }, 3000);
   };
 
-  const generateQuantumFutureSelf = async () => {
-    try {
-      // Mock AI generation - replace with real OpenAI call
-      const futureSelf: FutureSelf = {
-        id: 'future-self-2035',
-        name: 'Your Quantum Evolved Self',
-        timelineYear: 2035,
-        currentAge: vaultState.userContext.currentAge,
-        futureAge: vaultState.userContext.currentAge + 10,
-        transformationLevel: 95,
-        appearance: {
-          confidence: 96,
-          wisdom: 92,
-          energy: 94,
-          charisma: 89,
-          physicalFitness: 91,
-          mentalClarity: 97
-        },
-        consciousness: {
-          emotionalIntelligence: 93,
-          spiritualGrowth: 88,
-          selfAwareness: 95,
-          empathy: 90,
-          intuition: 86
-        },
-        achievements: [
-          {
-            category: 'career',
-            title: 'Revolutionary Tech Innovation',
-            description: 'Created AI platform that transformed 10M+ lives globally',
-            impactLevel: 95,
-            timelineYear: 2032
-          },
-          {
-            category: 'health',
-            title: 'Optimal Human Performance',
-            description: 'Achieved perfect biomarkers and peak physical condition',
-            impactLevel: 88,
-            timelineYear: 2028
-          },
-          {
-            category: 'impact',
-            title: 'Global Consciousness Shift',
-            description: 'Authored bestselling book that sparked worldwide awakening',
-            impactLevel: 92,
-            timelineYear: 2030
-          }
-        ],
-        lifeSituation: {
-          career: {
-            role: 'Visionary Entrepreneur & Author',
-            company: 'Consciousness Tech Inc',
-            income: 2800000,
-            satisfaction: 97,
-            impact: 'Transforming human potential globally'
-          },
-          health: {
-            physicalScore: 94,
-            mentalScore: 96,
-            energyLevel: 92,
-            longevityIndex: 89
-          },
-          relationships: {
-            romantic: {
-              status: 'Soul-aligned partnership',
-              satisfaction: 94,
-              growth: 'Continuous mutual elevation'
-            },
-            family: {
-              status: 'Harmonious multi-generational bonds',
-              harmony: 91,
-              legacy: 'Wisdom keeper and guide'
-            },
-            social: {
-              networkQuality: 95,
-              influence: 88,
-              connections: 'High-consciousness global community'
-            }
-          },
-          wealth: {
-            netWorth: 12500000,
-            passiveIncome: 180000,
-            financialFreedom: 97,
-            investments: ['Tech startups', 'Real estate', 'Consciousness ventures', 'Sustainable energy']
-          },
-          lifestyle: {
-            location: 'Global nomad with quantum home base',
-            freedom: 96,
-            fulfillment: 94,
-            adventure: 'Constant growth and exploration'
-          }
-        },
-        personalityEvolution: {
-          coreValues: ['Authentic growth', 'Conscious impact', 'Infinite possibility', 'Love-based action'],
-          dominantTraits: ['Visionary leader', 'Compassionate innovator', 'Quantum thinker', 'Heart-centered'],
-          eliminatedLimitations: ['Fear of failure', 'Perfectionism', 'External validation', 'Scarcity mindset'],
-          newCapabilities: ['Quantum intuition', 'Effortless manifestation', 'Telepathic empathy', 'Reality shaping']
-        },
-        wisdomMessages: [
-          {
-            category: 'life',
-            message: 'The universe is not happening TO you, it is happening THROUGH you. You are the conscious creator of your reality.',
-            urgency: 'high',
-            actionRequired: true,
-            timeframe: 'Integrate immediately'
-          },
-          {
-            category: 'career',
-            message: 'Your next breakthrough comes from following your highest excitement, not your fears. Trust the quantum field.',
-            urgency: 'medium',
-            actionRequired: true,
-            timeframe: 'Within 30 days'
-          },
-          {
-            category: 'relationships',
-            message: 'Love yourself so completely that others have no choice but to mirror that frequency back to you.',
-            urgency: 'high',
-            actionRequired: true,
-            timeframe: 'Daily practice'
-          }
-        ],
-        quantumInsights: [
-          {
-            type: 'breakthrough',
-            title: 'Quantum Leap Opportunity',
-            description: 'A major opportunity for exponential growth approaches in Q2 2025. Preparation required now.',
-            probability: 87,
-            impact: 94,
-            actionPlan: [
-              'Develop specific skill set in AI/consciousness',
-              'Build strategic relationships in tech sector',
-              'Create content showcasing unique perspective',
-              'Establish financial foundation for investment'
-            ]
-          },
-          {
-            type: 'pattern',
-            title: 'Success Frequency',
-            description: 'Your optimal creation frequency is 528Hz - the frequency of love and transformation.',
-            probability: 95,
-            impact: 76,
-            actionPlan: [
-              'Listen to 528Hz meditation daily',
-              'Align major decisions with heart coherence',
-              'Create in states of joy and love',
-              'Avoid decision-making from fear states'
-            ]
-          }
-        ]
-      };
+const generateQuantumFutureSelf = async () => {
+  try {
+    setVaultState(prev => ({ ...prev, isProcessing: true }));
 
-      setVaultState(prev => ({ ...prev, futureSelf }));
-      setConsciousnessLevel(85);
-    } catch (error) {
-      console.error('Future Self generation failed:', error);
+    const response = await fetch('/api/quantum-vault/future-self', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-user-age': String(vaultState.userContext.currentAge)
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to generate Future Self');
     }
-  };
+
+    const { futureSelf } = await response.json();
+    
+    setVaultState(prev => ({ 
+      ...prev, 
+      futureSelf,
+      cosmicEnergy: 85
+    }));
+    
+    setConsciousnessLevel(85);
+  } catch (error) {
+    console.error('Future Self generation failed:', error);
+    
+    // Fallback la mock data dacă AI-ul eșuează
+    const mockFutureSelf: FutureSelf = {
+      id: 'future-self-2035',
+      name: 'Your Quantum Evolved Self',
+      timelineYear: 2035,
+      currentAge: vaultState.userContext.currentAge,
+      futureAge: vaultState.userContext.currentAge + 10,
+      transformationLevel: 95,
+      appearance: {
+        confidence: 96,
+        wisdom: 92,
+        energy: 94,
+        charisma: 89,
+        physicalFitness: 91,
+        mentalClarity: 97
+      },
+      consciousness: {
+        emotionalIntelligence: 93,
+        spiritualGrowth: 88,
+        selfAwareness: 95,
+        empathy: 90,
+        intuition: 86
+      },
+      achievements: [
+        {
+          category: 'career',
+          title: 'Revolutionary Tech Innovation',
+          description: 'Created AI platform that transformed 10M+ lives globally',
+          impactLevel: 95,
+          timelineYear: 2032
+        },
+        {
+          category: 'health',
+          title: 'Optimal Human Performance',
+          description: 'Achieved perfect biomarkers and peak physical condition',
+          impactLevel: 88,
+          timelineYear: 2028
+        },
+        {
+          category: 'impact',
+          title: 'Global Consciousness Shift',
+          description: 'Authored bestselling book that sparked worldwide awakening',
+          impactLevel: 92,
+          timelineYear: 2030
+        }
+      ],
+      lifeSituation: {
+        career: {
+          role: 'Visionary Entrepreneur & Author',
+          company: 'Consciousness Tech Inc',
+          income: 2800000,
+          satisfaction: 97,
+          impact: 'Transforming human potential globally'
+        },
+        health: {
+          physicalScore: 94,
+          mentalScore: 96,
+          energyLevel: 92,
+          longevityIndex: 89
+        },
+        relationships: {
+          romantic: {
+            status: 'Soul-aligned partnership',
+            satisfaction: 94,
+            growth: 'Continuous mutual elevation'
+          },
+          family: {
+            status: 'Harmonious multi-generational bonds',
+            harmony: 91,
+            legacy: 'Wisdom keeper and guide'
+          },
+          social: {
+            networkQuality: 95,
+            influence: 88,
+            connections: 'High-consciousness global community'
+          }
+        },
+        wealth: {
+          netWorth: 12500000,
+          passiveIncome: 180000,
+          financialFreedom: 97,
+          investments: ['Tech startups', 'Real estate', 'Consciousness ventures', 'Sustainable energy']
+        },
+        lifestyle: {
+          location: 'Global nomad with quantum home base',
+          freedom: 96,
+          fulfillment: 94,
+          adventure: 'Constant growth and exploration'
+        }
+      },
+      personalityEvolution: {
+        coreValues: ['Authentic growth', 'Conscious impact', 'Infinite possibility', 'Love-based action'],
+        dominantTraits: ['Visionary leader', 'Compassionate innovator', 'Quantum thinker', 'Heart-centered'],
+        eliminatedLimitations: ['Fear of failure', 'Perfectionism', 'External validation', 'Scarcity mindset'],
+        newCapabilities: ['Quantum intuition', 'Effortless manifestation', 'Telepathic empathy', 'Reality shaping']
+      },
+      wisdomMessages: [
+        {
+          category: 'life',
+          message: 'The universe is not happening TO you, it is happening THROUGH you. You are the conscious creator of your reality.',
+          urgency: 'high',
+          actionRequired: true,
+          timeframe: 'Integrate immediately'
+        },
+        {
+          category: 'career',
+          message: 'Your next breakthrough comes from following your highest excitement, not your fears. Trust the quantum field.',
+          urgency: 'medium',
+          actionRequired: true,
+          timeframe: 'Within 30 days'
+        },
+        {
+          category: 'relationships',
+          message: 'Love yourself so completely that others have no choice but to mirror that frequency back to you.',
+          urgency: 'high',
+          actionRequired: true,
+          timeframe: 'Daily practice'
+        }
+      ],
+      quantumInsights: [
+        {
+          type: 'breakthrough',
+          title: 'Quantum Leap Opportunity',
+          description: 'A major opportunity for exponential growth approaches in Q2 2025. Preparation required now.',
+          probability: 87,
+          impact: 94,
+          actionPlan: [
+            'Develop specific skill set in AI/consciousness',
+            'Build strategic relationships in tech sector',
+            'Create content showcasing unique perspective',
+            'Establish financial foundation for investment'
+          ]
+        },
+        {
+          type: 'pattern',
+          title: 'Success Frequency',
+          description: 'Your optimal creation frequency is 528Hz - the frequency of love and transformation.',
+          probability: 95,
+          impact: 76,
+          actionPlan: [
+            'Listen to 528Hz meditation daily',
+            'Align major decisions with heart coherence',
+            'Create in states of joy and love',
+            'Avoid decision-making from fear states'
+          ]
+        }
+      ]
+    };
+
+    setVaultState(prev => ({ ...prev, futureSelf: mockFutureSelf }));
+    setConsciousnessLevel(85);
+  } finally {
+    setVaultState(prev => ({ ...prev, isProcessing: false }));
+  }
+};
 
   // ===== QUANTUM EXPERIENCES =====
   const renderQuantumApproach = () => (
