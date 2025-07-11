@@ -290,9 +290,14 @@ export default function QuantumVault() {
     setParticles(newParticles);
   }, []);
 
-  const checkQuantumAccess = async () => {
+ const checkQuantumAccess = async () => {
   try {
     const response = await fetch('/api/quantum-access');
+    
+    if (!response.ok) {
+      throw new Error('Failed to check quantum access');
+    }
+    
     const data = await response.json();
     
     if (data.hasTrinity) {
@@ -313,6 +318,32 @@ export default function QuantumVault() {
         phase: 'approach'
       }));
     }
+  } catch (error) {
+    console.error('Quantum access check failed:', error);
+    
+    // Fallback pentru development/testing
+    if (process.env.NODE_ENV === 'development') {
+      // În development, permite acces pentru testing
+      const mockEcosystems = ['por-mind', 'por-flow', 'por-blu'];
+      const hasMockTrinity = mockEcosystems.every(eco => 
+        vaultState.userContext.ecosystemsAccess.includes(eco)
+      );
+      
+      setVaultState(prev => ({
+        ...prev,
+        accessLevel: hasMockTrinity ? 'trinity' : 'locked',
+        phase: hasMockTrinity ? 'discovery' : 'approach'
+      }));
+    } else {
+      // În production, blochează accesul dacă verificarea eșuează
+      setVaultState(prev => ({
+        ...prev,
+        accessLevel: 'locked',
+        phase: 'approach'
+      }));
+    }
+  }
+};
   } catch (error) {
     console.error('Quantum access check failed:', error);
   }
