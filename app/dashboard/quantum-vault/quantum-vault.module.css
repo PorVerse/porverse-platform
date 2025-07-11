@@ -1,37 +1,5 @@
 /* app/dashboard/quantum-vault/quantum-vault.module.css */
 
-:root {
-  /* Quantum Color Palette */
-  --quantum-primary: #00d4ff;
-  --quantum-secondary: #a855f7;
-  --quantum-tertiary: #ec4899;
-  --quantum-gold: #ffd700;
-  --quantum-emerald: #10b981;
-  
-  /* Cosmic Gradients */
-  --cosmic-gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --cosmic-gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  --cosmic-gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  --cosmic-gradient-4: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-  
-  /* Quantum Shadows */
-  --quantum-shadow-1: 0 8px 32px rgba(0, 212, 255, 0.3);
-  --quantum-shadow-2: 0 16px 64px rgba(168, 85, 247, 0.3);
-  --quantum-shadow-3: 0 24px 96px rgba(236, 72, 153, 0.3);
-  
-  /* Cosmic Glows */
-  --cosmic-glow-blue: 0 0 30px rgba(0, 212, 255, 0.6);
-  --cosmic-glow-purple: 0 0 30px rgba(168, 85, 247, 0.6);
-  --cosmic-glow-pink: 0 0 30px rgba(236, 72, 153, 0.6);
-  --cosmic-glow-gold: 0 0 30px rgba(255, 215, 0, 0.6);
-  
-  /* Animation Timings */
-  --quantum-fast: 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  --quantum-normal: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  --quantum-slow: 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  --quantum-cosmic: 2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
 /* ===== QUANTUM VAULT CONTAINER ===== */
 .quantumVault {
   min-height: 100vh;
@@ -2001,37 +1969,10 @@
 }
 
 /* ===== PERFORMANCE OPTIMIZATIONS ===== */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
 
-/* ===== HIGH CONTRAST MODE ===== */
-@media (prefers-contrast: high) {
-  :root {
-    --quantum-primary: #00ffff;
-    --quantum-secondary: #ff00ff;
-    --quantum-tertiary: #ffff00;
-    --quantum-gold: #ffffff;
-    --quantum-emerald: #00ff00;
-  }
-}
-
-/* ===== PRINT STYLES ===== */
-@media print {
-  .quantumVault {
-    background: white !important;
-    color: black !important;
-  }
   
   .particleField,
   .audioControls,
   .cosmicProcessing {
     display: none !important;
   }
-}
