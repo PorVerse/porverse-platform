@@ -1,716 +1,282 @@
-/* app/dashboard/por-health/style.module.css */
-/* PorHealth Dashboard CSS Module - FIXED VERSION */
-
-/* ===== MAIN DASHBOARD LAYOUT ===== */
-.dashboard {
-  min-height: 100vh;
-  background: var(--health-bg);
-  color: var(--text-primary);
-  padding: var(--space-lg);
-  font-family: var(--font-family-sans);
-}
-
-/* ===== HEADER SECTION ===== */
-.header {
-  margin-bottom: var(--space-3xl);
-}
-
-.headerContent {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  background: var(--health-glass);
-  backdrop-filter: blur(25px);
-  border: 1px solid var(--health-glass-border);
-  border-radius: var(--radius-xl);
-  padding: 2.5rem;
-  box-shadow: var(--health-shadow);
-  transition: var(--transition-normal);
-}
-
-.headerContent:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-heavy);
-}
-
-.title {
-  font-size: var(--text-5xl);
-  font-weight: var(--font-weight-black);
-  margin: 0 0 var(--space-md) 0;
-  background: linear-gradient(135deg, var(--health-primary), var(--health-secondary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  filter: drop-shadow(0 0 20px rgba(0, 255, 136, 0.4));
-}
-
-.subtitle {
-  font-size: var(--text-lg);
-  color: var(--text-muted);
-  margin: 0;
-  line-height: 1.6;
-  max-width: 600px;
-}
-
-.headerStats {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: var(--space-sm);
-}
-
-.currentTime {
-  font-family: var(--font-family-mono);
-  font-size: var(--text-2xl);
-  font-weight: var(--font-weight-bold);
-  color: var(--health-primary);
-  text-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
-}
-
-.greeting {
-  font-size: var(--text-base);
-  color: var(--text-secondary);
-  font-weight: var(--font-weight-medium);
-}
-
-/* ===== QUICK ACTIONS ===== */
-.quickActions {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: var(--space-lg);
-  margin-bottom: var(--space-3xl);
-}
-
-.actionCard {
-  background: var(--health-glass);
-  backdrop-filter: blur(20px);
-  border: 1px solid var(--health-glass-border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-xl);
-  text-decoration: none;
-  color: inherit;
-  transition: var(--transition-normal);
+.viewAllButton {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #e5e7eb;
+  padding: 0.5rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
   cursor: pointer;
-  position: relative;
-  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(10px);
 }
 
-.actionCard::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, var(--health-warning), var(--health-primary));
-  opacity: 0.8;
-}
-
-.todayWorkout {
-  padding: var(--space-lg);
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--glass-border);
-  margin-bottom: var(--space-lg);
-}
-
-.workoutTitle {
-  font-size: var(--text-lg);
-  font-weight: var(--font-weight-bold);
-  color: var(--text-primary);
-  margin: 0 0 var(--space-sm) 0;
-}
-
-.workoutMeta {
-  display: flex;
-  gap: var(--space-md);
-  font-size: var(--text-sm);
-  color: var(--text-muted);
-  margin-bottom: var(--space-md);
-}
-
-.workoutProgress {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--space-md);
-}
-
-.progressText {
-  font-size: var(--text-sm);
-  color: var(--text-secondary);
-}
-
-.progressBar {
-  flex: 1;
-  height: 6px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 3px;
-  margin: 0 var(--space-md);
-  overflow: hidden;
-}
-
-.progressFill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--health-primary), var(--health-secondary));
-  border-radius: 3px;
-  transition: width 1s ease;
-}
-
-.workoutActions {
-  display: flex;
-  gap: var(--space-md);
-}
-
-.startButton,
-.continueButton {
-  flex: 1;
-  padding: var(--space-md) var(--space-lg);
-  background: linear-gradient(135deg, var(--health-primary), var(--health-secondary));
-  color: white;
-  border: none;
-  border-radius: var(--radius-md);
-  font-weight: var(--font-weight-semibold);
-  cursor: pointer;
-  transition: var(--transition-normal);
-  box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
-}
-
-.startButton:hover,
-.continueButton:hover {
+.viewAllButton:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
   transform: translateY(-2px);
-  box-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
-}
-
-/* ===== BIOMETRICS CARD ===== */
-.biometricsCard {
-  background: var(--health-glass);
-  backdrop-filter: blur(25px);
-  border: 1px solid var(--health-glass-border);
-  border-radius: var(--radius-xl);
-  padding: var(--space-xl);
-  box-shadow: var(--health-shadow);
-  transition: var(--transition-normal);
-  position: relative;
-  overflow: hidden;
-}
-
-.biometricsCard:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-heavy);
-}
-
-.biometricsGlow {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90px, var(--health-accent), var(--health-primary));
-  opacity: 0.8;
-}
-
-.liveStatus {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  font-size: var(--text-sm);
-  color: var(--text-secondary);
-  font-weight: var(--font-weight-medium);
-  margin-bottom: var(--space-lg);
-}
-
-.biometricsGrid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-lg);
-}
-
-.biometricItem {
-  display: flex;
-  align-items: center;
-  gap: var(--space-md);
-  padding: var(--space-lg);
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--glass-border);
-  transition: var(--transition-normal);
-}
-
-.biometricItem:hover {
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateY(-2px);
-}
-
-.biometricIcon {
-  font-size: 1.5rem;
-  filter: drop-shadow(0 0 8px rgba(0, 255, 136, 0.4));
-}
-
-.biometricData {
-  flex: 1;
-}
-
-.biometricValue {
-  font-family: var(--font-family-mono);
-  font-size: var(--text-lg);
-  font-weight: var(--font-weight-bold);
-  color: var(--health-primary);
-  margin-bottom: var(--space-xs);
-}
-
-.biometricLabel {
-  font-size: var(--text-xs);
-  color: var(--text-muted);
-  font-weight: var(--font-weight-medium);
-}
-
-.biometricTrend {
-  font-size: var(--text-xs);
-  color: var(--health-success);
-  margin-top: var(--space-xs);
-}
-
-/* ===== AI INSIGHTS SECTION ===== */
-.aiInsights {
-  margin-top: var(--space-3xl);
-}
-
-.insightsTitle {
-  font-size: var(--text-3xl);
-  font-weight: var(--font-weight-bold);
-  color: var(--text-primary);
-  margin: 0 0 var(--space-xl) 0;
-  text-align: center;
 }
 
 .insightsGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: var(--space-lg);
+  gap: 1.5rem;
 }
 
 .insightCard {
-  background: var(--health-glass);
-  backdrop-filter: blur(20px);
-  border: 1px solid var(--health-glass-border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-xl);
-  transition: var(--transition-normal);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
 .insightCard:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--health-shadow);
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(-2px);
+  border-color: #00ff88;
 }
 
 .insightIcon {
-  font-size: 2rem;
-  margin-bottom: var(--space-md);
+  font-size: 1.875rem;
   filter: drop-shadow(0 0 10px rgba(0, 255, 136, 0.4));
+  position: relative;
+  z-index: 1;
+}
+
+.insightContent {
+  flex: 1;
+  position: relative;
+  z-index: 1;
 }
 
 .insightTitle {
-  font-size: var(--text-lg);
-  font-weight: var(--font-weight-bold);
-  color: var(--text-primary);
-  margin: 0 0 var(--space-md) 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 0.25rem;
 }
 
-.insightDescription {
-  font-size: var(--text-base);
-  color: var(--text-secondary);
-  line-height: 1.6;
-  margin: 0 0 var(--space-lg) 0;
+.insightMessage {
+  font-size: 0.875rem;
+  color: #e5e7eb;
+  line-height: 1.4;
 }
 
 .insightAction {
-  background: linear-gradient(135deg, var(--health-primary), var(--health-secondary));
+  background: #00ff88;
   color: white;
   border: none;
-  padding: var(--space-md) var(--space-lg);
-  border-radius: var(--radius-md);
-  font-weight: var(--font-weight-semibold);
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: var(--transition-normal);
-  width: 100%;
+  transition: all 0.15s ease;
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 0 10px rgba(0, 255, 136, 0.4);
 }
 
 .insightAction:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 255, 136, 0.4);
+  background: #22c55e;
+  transform: scale(1.05);
 }
 
-/* ===== CHAT INTERFACE ===== */
-.chatInterface {
-  position: fixed;
-  bottom: var(--space-xl);
-  right: var(--space-xl);
-  width: 400px;
-  height: 500px;
-  background: var(--health-glass);
+/* ===== HEALTH METRICS GRID ===== */
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin: 0 4rem 2rem;
+}
+
+.metricCard {
+  background: rgba(255, 255, 255, 0.12);
   backdrop-filter: blur(25px);
-  border: 1px solid var(--health-glass-border);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--health-shadow);
-  z-index: var(--z-modal);
-  transform: translateY(100%);
-  opacity: 0;
-  transition: var(--transition-normal);
-}
-
-.chatInterface.open {
-  transform: translateY(0);
-  opacity: 1;
-}
-
-.chatHeader {
-  padding: var(--space-lg);
-  border-bottom: 1px solid var(--glass-border);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.chatTitle {
-  font-size: var(--text-lg);
-  font-weight: var(--font-weight-bold);
-  color: var(--text-primary);
-  margin: 0;
-}
-
-.chatToggle {
-  position: fixed;
-  bottom: var(--space-xl);
-  right: var(--space-xl);
-  width: 60px;
-  height: 60px;
-  background: linear-gradient(135deg, var(--health-primary), var(--health-secondary));
-  border: none;
-  border-radius: 50%;
-  color: white;
-  font-size: var(--text-xl);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 1.5rem;
+  padding: 2rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
-  box-shadow: var(--health-shadow);
-  transition: var(--transition-normal);
-  z-index: var(--z-fixed);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  animation: metricSlideUp 0.8s ease both;
 }
 
-.chatToggle:hover {
-  transform: scale(1.1);
-  box-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
+.metricCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 40px rgba(0, 255, 136, 0.25);
 }
 
-/* ===== RESPONSIVE DESIGN ===== */
-@media (max-width: 768px) {
-  .dashboard {
-    padding: var(--space-md);
-  }
-  
-  .headerContent {
-    flex-direction: column;
-    gap: var(--space-lg);
-    text-align: center;
-    padding: var(--space-xl);
-  }
-  
-  .title {
-    font-size: var(--text-4xl);
-  }
-  
-  .subtitle {
-    font-size: var(--text-base);
-  }
-  
-  .quickActions {
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-md);
-  }
-  
-  .contentGrid {
-    grid-template-columns: 1fr;
-    gap: var(--space-lg);
-  }
-  
-  .healthMetricsGrid {
-    grid-template-columns: 1fr;
-    gap: var(--space-md);
-  }
-  
-  .macrosGrid {
-    grid-template-columns: 1fr;
-    gap: var(--space-md);
-  }
-  
-  .biometricsGrid {
-    grid-template-columns: 1fr;
-    gap: var(--space-md);
-  }
-  
-  .chatInterface {
-    width: calc(100vw - var(--space-xl));
-    height: 400px;
-    bottom: var(--space-md);
-    right: var(--space-md);
-  }
-  
-  .chatToggle {
-    bottom: var(--space-md);
-    right: var(--space-md);
-    width: 50px;
-    height: 50px;
-    font-size: var(--text-lg);
-  }
+.metricSelected {
+  border-color: #00ff88;
+  box-shadow: 0 8px 32px rgba(0, 255, 136, 0.25);
 }
 
-@media (max-width: 480px) {
-  .dashboard {
-    padding: var(--space-sm);
-  }
-  
-  .headerContent {
-    padding: var(--space-lg);
-  }
-  
-  .title {
-    font-size: var(--text-3xl);
-  }
-  
-  .quickActions {
-    grid-template-columns: 1fr;
-    gap: var(--space-sm);
-  }
-  
-  .actionCard {
-    padding: var(--space-lg);
-  }
-  
-  .healthOverview,
-  .nutritionCard,
-  .workoutCard,
-  .biometricsCard {
-    padding: var(--space-lg);
-  }
-  
-  .workoutActions {
-    flex-direction: column;
-    gap: var(--space-sm);
-  }
-}
-
-/* ===== UTILITY CLASSES ===== */
-.fadeIn {
-  animation: fadeIn 0.6s ease-out;
-}
-
-.slideInRight {
-  animation: slideInFromRight 0.5s ease-out;
-}
-
-.pulseGlow {
-  animation: pulse 2s infinite;
-}
-
-.floatEffect {
-  animation: float 3s ease-in-out infinite;
-}
-
-/* ===== LOADING STATES ===== */
-.loadingShimmer {
-  background: linear-gradient(90deg, 
-    rgba(255, 255, 255, 0.1) 0%, 
-    rgba(255, 255, 255, 0.2) 50%, 
-    rgba(255, 255, 255, 0.1) 100%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-}
-
-.skeleton {
-  background: var(--glass-light);
-  border-radius: var(--radius-sm);
-  animation: pulse 1.5s ease-in-out infinite;
-}
-
-/* ===== ERROR STATES ===== */
-.errorCard {
-  background: rgba(239, 68, 68, 0.1);
-  border-color: rgba(239, 68, 68, 0.3);
-}
-
-.warningCard {
-  background: rgba(245, 158, 11, 0.1);
-  border-color: rgba(245, 158, 11, 0.3);
-}
-
-.successCard {
-  background: rgba(34, 197, 94, 0.1);
-  border-color: rgba(34, 197, 94, 0.3);
-};
+.metricGlow {
+  position: absolute;
   top: 0;
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, var(--health-primary), var(--health-secondary));
-  opacity: 0;
-  transition: opacity var(--transition-normal);
-
-
-.actionCard:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--health-shadow);
-  border-color: var(--health-primary);
+  background: linear-gradient(135deg, #00ff88, #22c55e);
+  transform: scaleX(0);
+  transition: transform 0.4s ease;
 }
 
-.actionCard:hover::before {
-  opacity: 1;
+.metricSelected .metricGlow {
+  transform: scaleX(1);
 }
 
-.actionIcon {
-  font-size: 2.5rem;
-  margin-bottom: var(--space-md);
+.metricHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+}
+
+.metricInfo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.metricIcon {
+  font-size: 2.25rem;
   filter: drop-shadow(0 0 10px rgba(0, 255, 136, 0.4));
-  display: block;
 }
 
-.actionTitle {
-  font-size: var(--text-xl);
-  font-weight: var(--font-weight-bold);
-  color: var(--text-primary);
-  margin: 0 0 var(--space-sm) 0;
+.metricName {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 0.25rem;
 }
 
-.actionDescription {
-  font-size: var(--text-sm);
-  color: var(--text-muted);
+.metricTrend {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+}
+
+.metricChange {
+  font-weight: 600;
+}
+
+.metricValue {
+  margin-bottom: 1.5rem;
+}
+
+.valueNumber {
+  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 3rem;
+  font-weight: 900;
+  color: #ffffff;
+  line-height: 1;
+  filter: drop-shadow(0 0 10px rgba(0, 255, 136, 0.4));
+}
+
+.valueUnit {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #9ca3af;
+  margin-left: 0.25rem;
+}
+
+.metricProgress {
+  margin-bottom: 1rem;
+}
+
+.progressTrack {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 9999px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+  position: relative;
+}
+
+.progressBar {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  position: relative;
+  overflow: hidden;
+}
+
+.progressBar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  animation: shimmer 2s infinite;
+}
+
+.targetInfo {
+  font-size: 0.875rem;
+  color: #9ca3af;
+  font-weight: 500;
+}
+
+.metricExpanded {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  animation: metricSlideUp 0.4s ease;
+}
+
+.chartPlaceholder {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0.5rem;
+  padding: 2rem;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+}
+
+.aiAnalysis {
+  font-size: 0.875rem;
+  color: #e5e7eb;
   line-height: 1.5;
-  margin: 0;
 }
 
 /* ===== CONTENT GRID ===== */
 .contentGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: var(--space-xl);
-  margin-bottom: var(--space-xl);
-}
-
-/* ===== HEALTH OVERVIEW CARD ===== */
-.healthOverview {
-  background: var(--health-glass);
-  backdrop-filter: blur(25px);
-  border: 1px solid var(--health-glass-border);
-  border-radius: var(--radius-xl);
-  padding: var(--space-xl);
-  box-shadow: var(--health-shadow);
-  transition: var(--transition-normal);
-  position: relative;
-  overflow: hidden;
-}
-
-.healthOverview:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-heavy);
-}
-
-.healthGlow {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, var(--health-primary), var(--health-secondary));
-  opacity: 0.8;
-}
-
-.cardTitle {
-  font-size: var(--text-xl);
-  font-weight: var(--font-weight-bold);
-  color: var(--text-primary);
-  margin: 0 0 var(--space-lg) 0;
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-}
-
-.healthMetricsGrid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-lg);
-  margin-bottom: var(--space-lg);
-}
-
-.healthMetric {
-  text-align: center;
-  padding: var(--space-lg);
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--glass-border);
-  transition: var(--transition-normal);
-}
-
-.healthMetric:hover {
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateY(-2px);
-}
-
-.metricIcon {
-  font-size: 2rem;
-  margin-bottom: var(--space-sm);
-  filter: drop-shadow(0 0 10px rgba(0, 255, 136, 0.4));
-}
-
-.metricValue {
-  font-family: var(--font-family-mono);
-  font-size: var(--text-2xl);
-  font-weight: var(--font-weight-black);
-  color: var(--health-primary);
-  margin-bottom: var(--space-xs);
-  line-height: 1;
-}
-
-.metricLabel {
-  font-size: var(--text-sm);
-  color: var(--text-muted);
-  font-weight: var(--font-weight-medium);
-}
-
-.metricTrend {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-xs);
-  margin-top: var(--space-xs);
-  font-size: var(--text-xs);
-  color: var(--health-success);
-}
-
-.statusIndicator {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--health-primary);
-  animation: pulse 2s infinite;
-  margin-left: var(--space-xs);
+  gap: 2rem;
+  margin: 0 4rem 2rem;
 }
 
 /* ===== NUTRITION CARD ===== */
 .nutritionCard {
-  background: var(--health-glass);
+  background: rgba(255, 255, 255, 0.12);
   backdrop-filter: blur(25px);
-  border: 1px solid var(--health-glass-border);
-  border-radius: var(--radius-xl);
-  padding: var(--space-xl);
-  box-shadow: var(--health-shadow);
-  transition: var(--transition-normal);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 1.5rem;
+  padding: 2rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
 }
 
 .nutritionCard:hover {
   transform: translateY(-4px);
-  box-shadow: var(--shadow-heavy);
+  box-shadow: 0 8px 40px rgba(0, 255, 136, 0.25);
 }
 
 .nutritionGlow {
@@ -719,73 +285,1716 @@
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg, var(--health-success), var(--health-primary));
+  background: linear-gradient(90deg, #10b981, #00ff88);
   opacity: 0.8;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.cardTitle {
+  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.aiOptimizedBadge {
+  background: #00ff88;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 0 10px rgba(0, 255, 136, 0.4);
+}
+
+.caloriesOverview {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.caloriesDisplay {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.caloriesConsumed {
+  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 2.25rem;
+  font-weight: 900;
+  color: #00ff88;
+  filter: drop-shadow(0 0 10px rgba(0, 255, 136, 0.4));
+}
+
+.caloriesSeparator {
+  font-size: 1.5rem;
+  color: #9ca3af;
+  font-weight: 300;
+}
+
+.caloriesTarget {
+  font-size: 1.875rem;
+  font-weight: 600;
+  color: #e5e7eb;
+}
+
+.caloriesUnit {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #9ca3af;
+  margin-left: 0.25rem;
+}
+
+.caloriesRemaining {
+  font-size: 0.875rem;
+  color: #e5e7eb;
+  font-weight: 500;
 }
 
 .macrosGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-md);
-  margin: var(--space-lg) 0;
+  gap: 1rem;
 }
 
-.macroItem {
+.macroCard {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0.5rem;
+  padding: 1.5rem;
   text-align: center;
-  padding: var(--space-md);
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--glass-border);
-}
-
-.macroName {
-  font-size: var(--text-xs);
-  color: var(--text-muted);
-  font-weight: var(--font-weight-medium);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: var(--space-xs);
-}
-
-.macroValue {
-  font-size: var(--text-lg);
-  font-weight: var(--font-weight-bold);
-  color: var(--text-primary);
-  margin-bottom: var(--space-xs);
-}
-
-.macroProgress {
-  height: 4px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 2px;
-  overflow: hidden;
-}
-
-.macroFill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--health-primary), var(--health-secondary));
-  border-radius: 2px;
-  transition: width 1s ease;
-}
-
-/* ===== WORKOUT CARD ===== */
-.workoutCard {
-  background: var(--health-glass);
-  backdrop-filter: blur(25px);
-  border: 1px solid var(--health-glass-border);
-  border-radius: var(--radius-xl);
-  padding: var(--space-xl);
-  box-shadow: var(--health-shadow);
-  transition: var(--transition-normal);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
 }
 
-.workoutCard:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-heavy);
+.macroCard:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(-2px);
 }
 
-.workoutGlow {
-  position: absolute
+.macroHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.macroName {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #e5e7eb;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.macroPercentage {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #00ff88;
+}
+
+.macroValue {
+  margin-bottom: 0.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.macroCurrent {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.macroTarget {
+  font-size: 0.875rem;
+  color: #9ca3af;
+  font-weight: 500;
+}
+
+.macroProgress {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 9999px;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+
+.macroProgressBar {
+  height: 100%;
+  background: linear-gradient(135deg, #00ff88, #22c55e);
+  border-radius: 9999px;
+  transition: width 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  box-shadow: 0 0 8px rgba(0, 255, 136, 0.4);
+}
+
+/* ===== WORKOUTS CARD ===== */
+.workoutsCard {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(25px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 1.5rem;
+  padding: 2rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.workoutsCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 40px rgba(0, 255, 136, 0.25);
+}
+
+.workoutsGlow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #06b6d4, #0891b2);
+  opacity: 0.8;
+}
+
+.workoutsSummary {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #e5e7eb;
+  font-weight: 500;
+}
+
+.workoutsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.workoutItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 1rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.workoutItem:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(-2px);
+}
+
+.workoutProgress {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  border-radius: 0 2px 2px 0;
+  transition: transform 0.4s ease;
+}
+
+.workoutStatus {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  font-weight: 700;
+  font-size: 0.875rem;
+  color: #ffffff;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.workoutItem:first-child .workoutStatus {
+  background: #00ff88;
+  border-color: #00ff88;
+  color: white;
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.4);
+}
+
+.workoutInfo {
+  flex: 1;
+}
+
+.workoutHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.workoutName {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.workoutType {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: white;
+}
+
+.typeHiit {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.typeStrength {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+}
+
+.typeFlexibility {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+}
+
+.typeCardio {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.workoutStats {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  color: #e5e7eb;
+  font-weight: 500;
+}
+
+.intensityBadge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.intensityLow {
+  background: rgba(34, 197, 94, 0.2);
+  color: #00ff88;
+}
+
+.intensityModerate {
+  background: rgba(251, 191, 36, 0.2);
+  color: #fbbf24;
+}
+
+.intensityHigh {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
+
+.intensityExtreme {
+  background: rgba(139, 92, 246, 0.2);
+  color: #8b5cf6;
+}
+
+.muscleGroups {
+  display: flex;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+}
+
+.muscleGroup {
+  font-size: 0.75rem;
+  background: rgba(255, 255, 255, 0.03);
+  color: #9ca3af;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.workoutActions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.completedLabel {
+  font-size: 0.875rem;
+  color: #00ff88;
+  font-weight: 600;
+}
+
+.continueButton,
+.startButton {
+  background: #00ff88;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 0 10px rgba(0, 255, 136, 0.4);
+}
+
+.continueButton:hover,
+.startButton:hover {
+  background: #22c55e;
+  transform: scale(1.05);
+}
+
+.scheduledWorkout {
+  text-align: center;
+}
+
+.timeRemaining {
+  font-size: 0.875rem;
+  color: #9ca3af;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+/* ===== BIOMETRICS CARD ===== */
+.biometricsCard {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(25px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 1.5rem;
+  padding: 2rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.biometricsCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 40px rgba(0, 255, 136, 0.25);
+}
+
+.biometricsGlow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #8b5cf6, #7c3aed);
+  opacity: 0.8;
+}
+
+.liveStatus {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+  color: #e5e7eb;
+  font-weight: 500;
+}
+
+.biometricsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.biometricItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 1rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.biometricItem:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(-2px);
+}
+
+.biometricIcon {
+  font-size: 1.5rem;
+  filter: drop-shadow(0 0 8px rgba(0, 255, 136, 0.4));
+  position: relative;
+  z-index: 1;
+}
+
+.biometricData {
+  flex: 1;
+  position: relative;
+  z-index: 1;
+}
+
+.biometricValue {
+  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #ffffff;
+  display: block;
+  line-height: 1;
+}
+
+.biometricUnit {
+  font-size: 0.875rem;
+  color: #9ca3af;
+  font-weight: 500;
+  margin-left: 0.25rem;
+}
+
+.biometricLabel {
+  font-size: 0.875rem;
+  color: #e5e7eb;
+  font-weight: 500;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+/* ===== AI CHAT ===== */
+.chatFab {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 70px;
+  height: 70px;
+  background: linear-gradient(135deg, #00ff88, #22c55e);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  font-size: 1.875rem;
+  cursor: pointer;
+  box-shadow: 0 8px 32px rgba(0, 255, 136, 0.25);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 500;
+  animation: fabFloat 3s ease-in-out infinite;
+}
+
+.chatFab:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 40px rgba(0, 255, 136, 0.5);
+}
+
+.chatFabHidden {
+  display: none;
+}
+
+.aiChatOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.aiChatModal {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(30px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 1.5rem;
+  width: 100%;
+  max-width: 500px;
+  max-height: 600px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 40px rgba(0, 255, 136, 0.25);
+  overflow: hidden;
+}
+
+.chatHeader {
+  background: linear-gradient(135deg, #00ff88, #22c55e);
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+  font-weight: 700;
+}
+
+.chatClose {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  font-weight: 700;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: all 0.15s ease;
+}
+
+.chatClose:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.chatContent {
+  flex: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
+  max-height: 400px;
+  scrollbar-width: thin;
+  scrollbar-color: #00ff88 rgba(255, 255, 255, 0.05);
+}
+
+.chatContent::-webkit-scrollbar {
+  width: 8px;
+}
+
+.chatContent::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.chatContent::-webkit-scrollbar-thumb {
+  background: #00ff88;
+  border-radius: 4px;
+}
+
+.chatContent::-webkit-scrollbar-thumb:hover {
+  background: #22c55e;
+}
+
+.chatMessage {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.aiAvatar {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #00ff88, #22c55e);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.messageContent {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  color: #e5e7eb;
+  line-height: 1.5;
+}
+
+.chatInput {
+  padding: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  display: flex;
+  gap: 1rem;
+}
+
+.chatInputField {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.chatInputField::placeholder {
+  color: #9ca3af;
+}
+
+.chatInputField:focus {
+  outline: none;
+  border-color: #00ff88;
+  box-shadow: 0 0 0 3px rgba(0, 255, 136, 0.2);
+}
+
+.chatSend {
+  background: linear-gradient(135deg, #00ff88, #22c55e);
+  border: none;
+  border-radius: 0.5rem;
+  padding: 1rem 1.5rem;
+  color: white;
+  font-size: 1.125rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 20px rgba(0, 255, 136, 0.15);
+  font-weight: 600;
+}
+
+.chatSend:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 32px rgba(0, 255, 136, 0.25);
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 1200px) {
+  .dashboard {
+    grid-template-columns: 1fr;
+  }
+  
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -320px;
+    height: 100vh;
+    width: 320px;
+    z-index: 1000;
+    transition: left 0.3s ease;
+  }
+  
+  .sidebar.open {
+    left: 0;
+  }
+  
+  .mainContent {
+    grid-column: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1.5rem;
+  }
+  
+  .headerTitle {
+    font-size: 1.5rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .headerActions {
+    gap: 0.5rem;
+  }
+  
+  .metricsGrid,
+  .contentGrid {
+    grid-template-columns: 1fr;
+    margin: 0 1rem 2rem;
+  }
+  
+  .insightsBanner {
+    margin: 2rem 1rem;
+  }
+  
+  .insightsGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .macrosGrid,
+  .biometricsGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .chatFab {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+    bottom: 1rem;
+    right: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .loadingTitle {
+    font-size: 2.25rem;
+  }
+  
+  .headerTitle {
+    font-size: 1.25rem;
+  }
+  
+  .valueNumber {
+    font-size: 2.25rem;
+  }
+  
+  .caloriesConsumed {
+    font-size: 1.875rem;
+  }
+  
+  .aiChatModal {
+    margin: 1rem;
+    max-height: calc(100vh - 2rem);
+  }
+}
+
+/* ===== UTILITY CLASSES ===== */
+.statusIndicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.statusActive {
+  background: #00ff88;
+  box-shadow: 0 0 8px #00ff88;
+}
+
+.statusInactive {
+  background: #9ca3af;
+}
+
+.statusWarning {
+  background: #f59e0b;
+  box-shadow: 0 0 8px #f59e0b;
+}
+
+.statusError {
+  background: #ef4444;
+  box-shadow: 0 0 8px #ef4444;
+}
+
+/* ===== PERFORMANCE OPTIMIZATIONS ===== */
+.dashboard * {
+  box-sizing: border-box;
+}
+
+.dashboard img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Force GPU acceleration for animations */
+.loadingOrb,
+.logoIcon,
+.metricCard,
+.chatFab,
+.particle {
+  will-change: transform;
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  .dashboard *,
+  .dashboard *::before,
+  .dashboard *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .dashboard {
+    --health-primary: #00ff00;
+    --health-secondary: #00cc00;
+    --text-primary: #ffffff;
+    --text-secondary: #ffffff;
+    --glass-border: rgba(255, 255, 255, 0.5);
+  }
+}
+
+/* Print styles */
+@media print {
+  .dashboard {
+    grid-template-columns: 1fr;
+    background: white;
+    color: black;
+  }
+  
+  .sidebar,
+  .chatFab,
+  .backgroundAnimation,
+  .particleContainer {
+    display: none;
+  }
+  
+  .mainContent {
+    background: white;
+  }
+  
+  .dashboard * {
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    animation: none !important;
+  }
+}
+  /* app/dashboard/por-health/style.module.css */
+/* PorHealth Dashboard CSS Module - FIXED VERSION */
+
+/* ===== CSS VARIABLES - PorHealth Theme ===== */
+.dashboard {
+  /* PorHealth Brand Colors */
+  --health-primary: #00ff88;
+  --health-secondary: #22c55e;
+  --health-accent: #10b981;
+  --health-bg: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 35%, #16213e 70%, #0f2027 100%);
+  
+  /* Glass & Effects */
+  --health-glass: rgba(255, 255, 255, 0.12);
+  --health-glass-border: rgba(255, 255, 255, 0.15);
+  --glass-light: rgba(255, 255, 255, 0.08);
+  --glass-medium: rgba(255, 255, 255, 0.12);
+  --glass-strong: rgba(255, 255, 255, 0.18);
+  --glass-border: rgba(255, 255, 255, 0.15);
+  
+  /* Text Colors */
+  --text-primary: #ffffff;
+  --text-secondary: #e5e7eb;
+  --text-muted: #9ca3af;
+  
+  /* Shadows & Effects */
+  --health-shadow: 0 8px 32px rgba(0, 255, 136, 0.25);
+  --shadow-light: 0 4px 20px rgba(0, 255, 136, 0.15);
+  --shadow-medium: 0 8px 32px rgba(0, 0, 0, 0.25);
+  --shadow-heavy: 0 8px 40px rgba(0, 255, 136, 0.25);
+  --shadow-glow: 0 0 30px rgba(0, 255, 136, 0.3);
+  
+  /* Spacing */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4rem;
+  
+  /* Border Radius */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-full: 9999px;
+  
+  /* Typography */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+  --text-5xl: 3rem;
+  
+  /* Font Weights */
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-black: 900;
+  
+  /* Font Family */
+  --font-family-sans: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  
+  /* Layout */
+  --transition-fast: all 0.15s ease;
+  --transition-normal: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: all 0.5s ease;
+  
+  /* Z-Index */
+  --z-sidebar: 100;
+  --z-sticky: 90;
+  --z-modal: 1000;
+  --z-fixed: 500;
+  
+  /* Apply main layout */
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  min-height: 100vh;
+  background: var(--health-bg);
+  color: var(--text-primary);
+  font-family: var(--font-family-sans);
+  overflow: hidden;
+  position: relative;
+}
+
+/* ===== KEYFRAME ANIMATIONS ===== */
+@keyframes orbPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+@keyframes orbRipple {
+  0% { transform: scale(0.8); opacity: 1; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+@keyframes progressLoad {
+  0% { width: 0%; }
+  25% { width: 30%; }
+  50% { width: 60%; }
+  75% { width: 85%; }
+  100% { width: 100%; }
+}
+
+@keyframes stepReveal {
+  0% { opacity: 0; transform: translateX(-20px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes particleFloat {
+  0% { transform: translateY(100vh) translateX(0px) rotate(0deg); opacity: 0; }
+  10% { opacity: 0.6; }
+  90% { opacity: 0.6; }
+  100% { transform: translateY(-10vh) translateX(50px) rotate(360deg); opacity: 0; }
+}
+
+@keyframes logoFloat {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-5px) rotate(2deg); }
+}
+
+@keyframes metricSlideUp {
+  0% { opacity: 0; transform: translateY(30px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fabFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes backgroundFloat {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  33% { transform: translate(30px, -30px) rotate(2deg); }
+  66% { transform: translate(-20px, 20px) rotate(-2deg); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* ===== LOADING SCREEN ===== */
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 35%, #16213e 70%, #0f2027 100%);
+  color: white;
+  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.loadingOrb {
+  width: 120px;
+  height: 120px;
+  position: relative;
+  margin-bottom: 3rem;
+}
+
+.orbCore {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #00ff88, #22c55e);
+  animation: orbPulse 2s ease-in-out infinite;
+  box-shadow: 0 0 40px rgba(0, 255, 136, 0.4), inset 0 0 40px rgba(255, 255, 255, 0.1);
+}
+
+.orbRipple {
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  right: -20px;
+  bottom: -20px;
+  border: 2px solid #00ff88;
+  border-radius: 50%;
+  opacity: 0;
+  animation: orbRipple 3s ease-out infinite;
+}
+
+.orbRippleDelay {
+  animation-delay: 1.5s;
+}
+
+.loadingTitle {
+  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 3rem;
+  font-weight: 900;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, #00ff88, #22c55e);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 20px rgba(0, 255, 136, 0.4));
+}
+
+.loadingSubtitle {
+  font-size: 1.125rem;
+  color: #e5e7eb;
+  margin-bottom: 3rem;
+  max-width: 500px;
+  line-height: 1.6;
+  font-weight: 500;
+  text-align: center;
+}
+
+.loadingProgress {
+  width: 400px;
+  max-width: 90vw;
+}
+
+.progressBar {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 9999px;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(135deg, #00ff88, #22c55e);
+  border-radius: 9999px;
+  animation: progressLoad 4s ease-in-out;
+  box-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
+}
+
+.loadingSteps {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: left;
+}
+
+.stepItem {
+  font-size: 0.875rem;
+  color: #9ca3af;
+  opacity: 0;
+  animation: stepReveal 0.8s ease-out forwards;
+  animation-delay: 0.5s;
+  font-weight: 500;
+}
+
+.stepDelay1 { animation-delay: 1.2s; }
+.stepDelay2 { animation-delay: 1.9s; }
+.stepDelay3 { animation-delay: 2.6s; }
+
+/* ===== BACKGROUND ANIMATIONS ===== */
+.backgroundAnimation {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 15% 25%, rgba(0, 255, 136, 0.15) 0%, transparent 25%),
+    radial-gradient(circle at 85% 75%, rgba(34, 197, 94, 0.1) 0%, transparent 25%),
+    radial-gradient(circle at 45% 85%, rgba(16, 185, 129, 0.08) 0%, transparent 25%),
+    radial-gradient(circle at 75% 15%, rgba(0, 255, 136, 0.12) 0%, transparent 25%);
+  pointer-events: none;
+  z-index: 0;
+  animation: backgroundFloat 20s ease-in-out infinite;
+}
+
+.particleContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: #00ff88;
+  border-radius: 50%;
+  animation: particleFloat 25s linear infinite;
+  opacity: 0.6;
+  box-shadow: 0 0 10px rgba(0, 255, 136, 0.4);
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(30px);
+  border-right: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 2rem;
+  z-index: 100;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebarGlow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(135deg, #00ff88, #22c55e);
+  opacity: 0.8;
+  filter: drop-shadow(0 0 10px rgba(0, 255, 136, 0.4));
+}
+
+.logo {
+  margin-bottom: 4rem;
+  text-align: center;
+}
+
+.logoIcon {
+  font-size: 2.25rem;
+  filter: drop-shadow(0 0 15px rgba(0, 255, 136, 0.4));
+  animation: logoFloat 4s ease-in-out infinite;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.logoText {
+  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 1.875rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #00ff88, #22c55e);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.5px;
+  display: block;
+}
+
+.logoSubtitle {
+  font-size: 0.875rem;
+  color: #9ca3af;
+  font-weight: 500;
+  opacity: 0.9;
+  margin-top: 0.5rem;
+}
+
+/* ===== NAVIGATION ===== */
+.navigation {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.navSection {
+  display: flex;
+  flex-direction: column;
+}
+
+.navHeader {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #9ca3af;
+  margin-bottom: 1rem;
+  letter-spacing: 1.5px;
+  padding-left: 1rem;
+  opacity: 0.8;
+}
+
+.navItems {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  border-radius: 0.5rem;
+  color: #e5e7eb;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  position: relative;
+}
+
+.navItem:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  transform: translateX(4px);
+}
+
+.navItemActive {
+  background: linear-gradient(135deg, #00ff88, #22c55e);
+  color: white;
+  box-shadow: 0 8px 32px rgba(0, 255, 136, 0.25);
+  transform: translateX(8px);
+}
+
+.navItemActive:hover {
+  transform: translateX(8px) scale(1.02);
+}
+
+.navIcon {
+  font-size: 1.25rem;
+  min-width: 1.25rem;
+}
+
+.activeIndicator {
+  width: 8px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  margin-left: auto;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.badge {
+  background: #00ff88;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-left: auto;
+  box-shadow: 0 0 10px rgba(0, 255, 136, 0.4);
+}
+
+.counter {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  margin-left: auto;
+}
+
+.liveIndicator {
+  width: 8px;
+  height: 8px;
+  background: #00ff88;
+  border-radius: 50%;
+  margin-left: auto;
+  animation: pulse 2s ease-in-out infinite;
+  box-shadow: 0 0 8px #00ff88;
+}
+
+.premiumBadge {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-left: auto;
+  box-shadow: 0 0 8px rgba(251, 191, 36, 0.4);
+}
+
+/* ===== QUANTUM CTA ===== */
+.quantumCta {
+  margin-top: auto;
+  padding-top: 2rem;
+  background: linear-gradient(135deg, #00ff88, #22c55e);
+  border-radius: 1rem;
+  padding: 2rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 255, 136, 0.25);
+}
+
+.quantumGlow {
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  animation: logoFloat 8s ease-in-out infinite;
+}
+
+.quantumIcon {
+  font-size: 2.25rem;
+  margin-bottom: 1rem;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+  position: relative;
+  z-index: 1;
+}
+
+.quantumTitle {
+  color: white;
+  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 1.125rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.quantumDescription {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.875rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+  position: relative;
+  z-index: 1;
+}
+
+.quantumButton {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  width: 100%;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  z-index: 1;
+}
+
+.quantumButton:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+}
+
+/* ===== MAIN CONTENT ===== */
+.mainContent {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  background: transparent;
+  position: relative;
+  z-index: 1;
+  scrollbar-width: thin;
+  scrollbar-color: #00ff88 rgba(255, 255, 255, 0.05);
+}
+
+.mainContent::-webkit-scrollbar {
+  width: 8px;
+}
+
+.mainContent::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.mainContent::-webkit-scrollbar-thumb {
+  background: #00ff88;
+  border-radius: 4px;
+}
+
+.mainContent::-webkit-scrollbar-thumb:hover {
+  background: #22c55e;
+}
+
+/* ===== HEADER ===== */
+.header {
+  position: sticky;
+  top: 0;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(25px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  z-index: 90;
+  box-shadow: 0 4px 20px rgba(0, 255, 136, 0.15);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem 4rem;
+}
+
+.headerLeft {
+  flex: 1;
+}
+
+.headerTitle {
+  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 2.25rem;
+  font-weight: 900;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, #ffffff, #e5e7eb);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.timeChip {
+  font-size: 1rem;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #e5e7eb;
+  backdrop-filter: blur(10px);
+}
+
+.headerSubtitle {
+  color: #e5e7eb;
+  font-size: 1.125rem;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+.healthScoreText {
+  background: linear-gradient(135deg, #00ff88, #22c55e);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 700;
+  filter: drop-shadow(0 0 10px rgba(0, 255, 136, 0.4));
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+/* ===== HEALTH SCORE CIRCLE ===== */
+.healthScoreCircle {
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+
+.scoreChart {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+  filter: drop-shadow(0 0 10px rgba(0, 255, 136, 0.4));
+}
+
+.scoreProgress {
+  transition: stroke-dashoffset 2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.scoreContent {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.scoreValue {
+  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: #00ff88;
+  line-height: 1;
+  filter: drop-shadow(0 0 8px rgba(0, 255, 136, 0.4));
+}
+
+.scoreLabel {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 0.25rem;
+}
+
+/* ===== HEADER ACTIONS ===== */
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.actionButton {
+  width: 48px;
+  height: 48px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #e5e7eb;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  font-size: 1.25rem;
+}
+
+.actionButton:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #00ff88;
+  border-color: #00ff88;
+  transform: scale(1.05);
+}
+
+.notificationBadge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #ef4444;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 700;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.profileButton {
+  position: relative;
+  cursor: pointer;
+}
+
+.profileImage {
+  width: 48px;
+  height: 48px;
+  border-radius: 0.5rem;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 20px rgba(0, 255, 136, 0.15);
+}
+
+.profileImage:hover {
+  border-color: #00ff88;
+  transform: scale(1.05);
+}
+
+.onlineIndicator {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 12px;
+  height: 12px;
+  background: #00ff88;
+  border-radius: 50%;
+  border: 2px solid #0a0a0f;
+  animation: pulse 2s ease-in-out infinite;
+  box-shadow: 0 0 8px #00ff88;
+}
+
+/* ===== AI INSIGHTS BANNER ===== */
+.insightsBanner {
+  margin: 2rem 4rem;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(25px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 1.5rem;
+  padding: 2rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  position: relative;
+  overflow: hidden;
+}
+
+.insightsGlow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(135deg, #00ff88, #22c55e);
+  opacity: 0.8;
+}
+
+.insightsHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.insightsInfo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.insightsIcon {
+  font-size: 2.25rem;
+  filter: drop-shadow(0 0 15px rgba(0, 255, 136, 0.4));
+  animation: pulse 3s ease-in-out infinite;
+}
+
+.insightsTitle {
+  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 0.25rem;
+}
+
+.insightsSubtitle {
+  color: #9ca3af;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.viewAllButton {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #e5e7eb;
+  padding: 0.5rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bez
   }
