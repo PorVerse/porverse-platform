@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import Link from 'next/link';
-import './style.css';
+import './style.module.css';
 
 export default function PorMindLanding() {
   useEffect(() => {

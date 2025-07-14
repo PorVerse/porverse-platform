@@ -1,5 +1,5 @@
 'use client';
-import './style.css';
+import './style.module.css';
 
 export default function PorWellLanding() {
   // --- Demo AI Chat Logic (doar pentru demo, nu persistă) ---
