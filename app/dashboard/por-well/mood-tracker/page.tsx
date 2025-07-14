@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import './style.css';
+import './style.module.css';
 
 interface MoodEntry {
   id: string;
