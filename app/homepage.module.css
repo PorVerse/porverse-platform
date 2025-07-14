@@ -1,76 +1,47 @@
-/* app/homepage.module.css */
+/* app/homepage.module.css - FIXED WITHOUT :root */
 
-/* CSS Variables */
-:root {
-  /* Primary Palette */
+/* Hero Section */
+.hero {
+  /* CSS Variables moved inside local selector */
   --primary-quantum: #667eea;
   --primary-deep: #4c51bf;
   --primary-light: #a4a8f0;
   
-  /* Backgrounds */
   --bg-primary: #0a0a0f;
   --bg-secondary: #1a1a2e;
   --bg-tertiary: #16213e;
   
-  /* Glass & Effects */
   --glass-light: rgba(255, 255, 255, 0.1);
   --glass-medium: rgba(255, 255, 255, 0.15);
   --glass-strong: rgba(255, 255, 255, 0.25);
   --glass-border: rgba(255, 255, 255, 0.2);
   
-  /* Text */
   --text-primary: #ffffff;
   --text-secondary: #a1a1aa;
   --text-muted: #71717a;
   
-  /* Spacing */
-  --space-xs: 0.25rem;
-  --space-sm: 0.5rem;
-  --space-md: 1rem;
-  --space-lg: 1.5rem;
-  --space-xl: 2rem;
-  --space-2xl: 3rem;
-  --space-3xl: 4rem;
-  
-  /* Radius */
   --radius-sm: 0.25rem;
   --radius-md: 0.5rem;
   --radius-lg: 1rem;
   --radius-xl: 1.5rem;
   
-  /* Shadows */
   --shadow-light: 0 4px 6px rgba(0, 0, 0, 0.1);
   --shadow-medium: 0 10px 15px rgba(0, 0, 0, 0.2);
   --shadow-heavy: 0 25px 50px rgba(0, 0, 0, 0.3);
   --shadow-glow: 0 0 20px rgba(102, 126, 234, 0.4);
   
-  /* Transitions */
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-}
 
-/* Global Styles for Homepage */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  line-height: 1.6;
-  overflow-x: hidden;
-}
-
-/* Hero Section */
-.hero {
+  /* Layout styles */
   min-height: 100vh;
   position: relative;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 35%, #16213e 70%, #0f2027 100%);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 .heroBackground {
@@ -89,8 +60,7 @@ body {
   right: 0;
   bottom: 0;
   background: radial-gradient(circle at 30% 20%, rgba(102, 126, 234, 0.3) 0%, transparent 50%),
-              radial-gradient(circle at 70% 80%, rgba(139, 92, 246, 0.2) 0%, transparent 50%),
-              linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-tertiary) 100%);
+              radial-gradient(circle at 70% 80%, rgba(139, 92, 246, 0.2) 0%, transparent 50%);
 }
 
 .particleField {
@@ -107,7 +77,7 @@ body {
   height: 2px;
   background: var(--primary-quantum);
   border-radius: 50%;
-  animation: particleFloat infinite linear;
+  animation: particleFloat 8s infinite linear;
   opacity: 0.7;
 }
 
@@ -157,11 +127,21 @@ body {
   font-weight: 800;
   text-decoration: none;
   color: var(--text-primary);
+  transition: var(--transition);
+}
+
+.logo:hover {
+  transform: scale(1.05);
 }
 
 .logoIcon {
   font-size: 2rem;
   filter: drop-shadow(0 0 10px rgba(102, 126, 234, 0.6));
+  transition: var(--transition);
+}
+
+.logo:hover .logoIcon {
+  transform: scale(1.1);
 }
 
 .logoText {
@@ -184,11 +164,13 @@ body {
   transition: var(--transition);
   padding: 0.5rem 1rem;
   border-radius: var(--radius-md);
+  position: relative;
 }
 
 .nav a:hover {
   color: var(--text-primary);
   background: var(--glass-light);
+  transform: translateY(-1px);
 }
 
 .loginBtn {
@@ -197,6 +179,7 @@ body {
   border: 1px solid var(--glass-border);
   color: var(--text-primary) !important;
   font-weight: 600;
+  transition: var(--transition);
 }
 
 .loginBtn:hover {
@@ -260,6 +243,8 @@ body {
   -webkit-text-fill-color: transparent;
   background-clip: text;
   filter: drop-shadow(0 0 20px rgba(102, 126, 234, 0.3));
+  display: block;
+  margin-top: 0.5rem;
 }
 
 .heroSubtitle {
@@ -316,6 +301,7 @@ body {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  width: fit-content;
 }
 
 .ctaPrimary:hover {
@@ -337,6 +323,7 @@ body {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  width: fit-content;
 }
 
 .ctaSecondary:hover {
@@ -438,6 +425,28 @@ body {
   animation: cardSlideIn 0.8s ease-out forwards;
   opacity: 0;
   transform: translateY(20px);
+  transition: var(--transition);
+}
+
+.previewCard:hover {
+  transform: translateY(-2px) scale(1.05);
+}
+
+/* Gradient classes for preview cards */
+.gradient1 {
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.gradient2 {
+  background: linear-gradient(135deg, #ec4899, #db2777);
+}
+
+.gradient3 {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+}
+
+.gradient4 {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
 }
 
 @keyframes cardSlideIn {
@@ -540,7 +549,7 @@ body {
 /* Ecosystems Section */
 .ecosystems {
   padding: 6rem 0;
-  background: linear-gradient(180deg, var(--bg-primary), var(--bg-secondary));
+  background: linear-gradient(180deg, transparent, rgba(26, 26, 46, 0.3));
 }
 
 .ecosystemsGrid {
@@ -561,22 +570,13 @@ body {
   position: relative;
   overflow: hidden;
   box-shadow: var(--shadow-light);
+  display: block;
 }
 
 .ecosystemCard:hover {
   transform: translateY(-5px);
   box-shadow: var(--shadow-heavy);
   background: var(--glass-strong);
-}
-
-.cardBackground {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 100px;
-  height: 100px;
-  opacity: 0.1;
-  border-radius: 0 var(--radius-xl) 0 100px;
 }
 
 .cardHeader {
@@ -589,6 +589,11 @@ body {
 .cardIcon {
   font-size: 3rem;
   filter: drop-shadow(0 0 10px rgba(102, 126, 234, 0.3));
+  transition: var(--transition);
+}
+
+.ecosystemCard:hover .cardIcon {
+  transform: scale(1.1);
 }
 
 .cardTier {
@@ -596,21 +601,19 @@ body {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--radius-sm);
 }
 
 .tierFree {
   color: #10b981;
   background: rgba(16, 185, 129, 0.2);
-  padding: 0.4rem 0.8rem;
-  border-radius: var(--radius-sm);
   border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
 .tierPremium {
   color: #f59e0b;
   background: rgba(245, 158, 11, 0.2);
-  padding: 0.4rem 0.8rem;
-  border-radius: var(--radius-sm);
   border: 1px solid rgba(245, 158, 11, 0.3);
 }
 
@@ -622,6 +625,7 @@ body {
   font-size: 1.5rem;
   font-weight: 800;
   margin-bottom: 0.5rem;
+  color: var(--text-primary);
 }
 
 .cardSubtitle {
@@ -647,6 +651,9 @@ body {
   font-size: 0.9rem;
   color: var(--text-secondary);
   font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .cardAction {
@@ -675,7 +682,7 @@ body {
 /* Quantum Section */
 .quantumSection {
   padding: 6rem 0;
-  background: linear-gradient(180deg, var(--bg-secondary), var(--bg-tertiary));
+  background: linear-gradient(180deg, rgba(26, 26, 46, 0.3), rgba(22, 33, 62, 0.3));
   position: relative;
   overflow: hidden;
 }
@@ -725,6 +732,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  color: var(--text-primary);
 }
 
 .quantumSubtitle {
@@ -887,7 +895,7 @@ body {
     opacity: 0;
   }
   50% {
-    transform: translate(var(--random-x, 0), var(--random-y, 0)) scale(1);
+    transform: translate(calc(var(--random-x, 0) * 1px), calc(var(--random-y, 0) * 1px)) scale(1);
     opacity: 1;
   }
 }
@@ -895,7 +903,7 @@ body {
 /* Testimonials Section */
 .testimonials {
   padding: 6rem 0;
-  background: linear-gradient(180deg, var(--bg-tertiary), var(--bg-primary));
+  background: linear-gradient(180deg, rgba(22, 33, 62, 0.3), transparent);
 }
 
 .testimonialsGrid {
@@ -1013,7 +1021,6 @@ body {
   background: linear-gradient(135deg, var(--primary-quantum), var(--primary-deep));
   color: white;
   text-decoration: none;
-  padding: 1.5rem 3rem;
   border-radius: var(--radius-lg);
   font-weight: 700;
   font-size: 1.2rem;
@@ -1074,7 +1081,7 @@ body {
 
 .footerContent {
   display: grid;
-  grid-template-columns: 2fr repeat(5, 1fr);
+  grid-template-columns: 2fr repeat(4, 1fr);
   gap: 3rem;
   margin-bottom: 3rem;
 }
@@ -1194,6 +1201,7 @@ body {
   .nav {
     gap: 1rem;
     flex-wrap: wrap;
+    justify-content: center;
   }
   
   .heroTitle {
@@ -1237,6 +1245,7 @@ body {
   .footerBottom {
     flex-direction: column;
     gap: 1rem;
+    text-align: center;
   }
   
   .ctaActions {
@@ -1257,5 +1266,57 @@ body {
   .quantumOrb {
     width: 150px;
     height: 150px;
+  }
+  
+  .dashboardPreview {
+    max-width: 100%;
+    padding: 1.5rem;
+  }
+  
+  .previewEcosystems {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  
+  .container {
+    padding: 0 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .heroContent {
+    padding: 0 1rem;
+  }
+  
+  .heroTitle {
+    font-size: 2rem;
+  }
+  
+  .sectionHeader h2 {
+    font-size: 2rem;
+  }
+  
+  .ctaContent h2 {
+    font-size: 2.5rem;
+  }
+  
+  .quantumTitle {
+    font-size: 2.5rem;
+  }
+  
+  .ecosystemsGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .ecosystemCard {
+    padding: 1.5rem;
+  }
+  
+  .testimonialCard {
+    padding: 1.5rem;
+  }
+  
+  .quantumFeature {
+    padding: 1rem;
   }
 }

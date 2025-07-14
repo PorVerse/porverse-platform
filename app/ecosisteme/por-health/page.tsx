@@ -1,6 +1,6 @@
 'use client';
 
-import './style.module.css';
+import styles from './style.module.css';
 import Link from 'next/link';
 import { useEffect } from 'react';
 
@@ -26,14 +26,14 @@ export default function PorHealthLandingPage() {
 
     const userInput = input.value;
     const userMessage = document.createElement('div');
-    userMessage.className = 'message user';
+    userMessage.className = styles.messageUser;
     userMessage.textContent = userInput;
     chatInterface.appendChild(userMessage);
     input.value = '';
 
     setTimeout(() => {
       const aiMessage = document.createElement('div');
-      aiMessage.className = 'message ai';
+      aiMessage.className = styles.messageAi;
       let response = "Excelentă întrebare! 🌟 Bazat pe profilul tău, îți recomand să începi cu obiective SMART pentru sănătate.";
 
       if (/antrenament|fitness/i.test(userInput)) {
@@ -51,60 +51,76 @@ export default function PorHealthLandingPage() {
   }
 
   return (
-    <>
-      <nav className="navbar" id="navbar">
-        <div className="container">
-          <div className="nav-content">
-            <Link href="/" className="logo">PorVerse</Link>
-            <div className="nav-links">
-              <Link href="/" className="nav-link">Acasă</Link>
-              <Link href="/ecosisteme/por-health" className="nav-link active">PorHealth</Link>
-              <Link href="/ecosisteme/por-mind" className="nav-link">PorMind</Link>
-              <Link href="/ecosisteme/por-well" className="nav-link">PorWell</Link>
-              <Link href="/ecosisteme/por-flow" className="nav-link">PorFlow</Link>
-              <Link href="/ecosisteme/por-blu" className="nav-link">PorBlu</Link>
-              <Link href="/pricing" className="nav-link">Prețuri</Link>
+    <div className={styles.healthContainer}>
+      <nav className={styles.navbar} id="navbar">
+        <div className={styles.container}>
+          <div className={styles.navContent}>
+            <Link href="/" className={styles.logo}>
+              <span className={styles.logoIcon}>🌿</span>
+              <span className={styles.logoText}>PorHealth</span>
+            </Link>
+            <div className={styles.navLinks}>
+              <Link href="/" className={styles.navLink}>Acasă</Link>
+              <Link href="/ecosisteme/por-health" className={`${styles.navLink} ${styles.active}`}>PorHealth</Link>
+              <Link href="/ecosisteme/por-mind" className={styles.navLink}>PorMind</Link>
+              <Link href="/ecosisteme/por-well" className={styles.navLink}>PorWell</Link>
+              <Link href="/ecosisteme/por-flow" className={styles.navLink}>PorFlow</Link>
+              <Link href="/ecosisteme/por-blu" className={styles.navLink}>PorBlu</Link>
+              <Link href="/pricing" className={styles.navLink}>Prețuri</Link>
             </div>
-            <Link href="/auth/signup" className="cta-button">Începe Gratuit</Link>
+            <Link href="/auth/signup" className={styles.ctaButton}>Începe Gratuit</Link>
           </div>
         </div>
       </nav>
 
-      <section className="hero">
-        <div className="container">
-          <div className="hero-content">
-            <div className="hero-text">
-              <h1>Transformă-ți <span className="highlight">Sănătatea</span> cu AI Personal</h1>
-              <p>Asistentul tău AI pentru nutriție personalizată, antrenamente inteligente și coaching wellness 24/7. Rezultate reale, științifice și personalizate pentru stilul tău de viață.</p>
-              <div className="hero-buttons">
-                <Link href="/auth/signup" className="btn-primary">Începe Gratuit 30 Zile</Link>
-                <a href="#demo" className="btn-secondary">Vezi Demo Live</a>
+      <section className={styles.hero}>
+        <div className={styles.container}>
+          <div className={styles.heroContent}>
+            <div className={styles.heroText}>
+              <div className={styles.badge}>
+                <span>🌟</span>
+                <span>AI Personal pentru Sănătate</span>
               </div>
-              <div className="stats">
-                <div className="stat">
-                  <div className="stat-number">50k+</div>
-                  <div className="stat-label">Utilizatori activi</div>
+              <h1 className={styles.heroTitle}>
+                Transformă-ți <span className={styles.highlight}>Sănătatea</span> cu AI Personal
+              </h1>
+              <p className={styles.heroSubtitle}>
+                Asistentul tău AI pentru nutriție personalizată, antrenamente inteligente și coaching wellness 24/7. 
+                Rezultate reale, științifice și personalizate pentru stilul tău de viață.
+              </p>
+              <div className={styles.heroActions}>
+                <Link href="/auth/signup" className={styles.ctaPrimary}>
+                  🚀 Începe Gratuit 30 Zile
+                </Link>
+                <a href="#demo" className={styles.ctaSecondary}>
+                  🎬 Vezi Demo Live
+                </a>
+              </div>
+              <div className={styles.stats}>
+                <div className={styles.stat}>
+                  <div className={styles.statNumber}>50k+</div>
+                  <div className={styles.statLabel}>Utilizatori activi</div>
                 </div>
-                <div className="stat">
-                  <div className="stat-number">92%</div>
-                  <div className="stat-label">Îmbunătățire sănătate</div>
+                <div className={styles.stat}>
+                  <div className={styles.statNumber}>92%</div>
+                  <div className={styles.statLabel}>Îmbunătățire sănătate</div>
                 </div>
-                <div className="stat">
-                  <div className="stat-number">24/7</div>
-                  <div className="stat-label">Support AI personal</div>
+                <div className={styles.stat}>
+                  <div className={styles.statNumber}>24/7</div>
+                  <div className={styles.statLabel}>Support AI personal</div>
                 </div>
               </div>
             </div>
-            <div className="hero-visual">
-              <div className="floating-card">
+            <div className={styles.heroVisual}>
+              <div className={styles.floatingCard}>
                 <h4>📊 Analiză Nutrițională</h4>
                 <p>Proteine: 85g | Carbohidrați: 120g<br />Optimizare pentru obiectivul tău</p>
               </div>
-              <div className="floating-card">
+              <div className={styles.floatingCard}>
                 <h4>🏃‍♂️ Antrenament AI</h4>
                 <p>Plan personalizat azi<br />3 exerciții pentru core</p>
               </div>
-              <div className="floating-card">
+              <div className={styles.floatingCard}>
                 <h4>😴 Monitorizare Somn</h4>
                 <p>7h 23min somn de calitate<br />Optimizări pentru mâine</p>
               </div>
@@ -113,37 +129,40 @@ export default function PorHealthLandingPage() {
         </div>
       </section>
 
-      <section className="features">
-        <div className="container">
-          <h2>AI Personal pentru Fiecare Aspect al Sănătății Tale</h2>
-          <div className="features-grid">
-            <div className="feature-card">
-              <div className="feature-icon">🥗</div>
+      <section className={styles.features}>
+        <div className={styles.container}>
+          <div className={styles.sectionHeader}>
+            <h2>AI Personal pentru Fiecare Aspect al Sănătății Tale</h2>
+            <p>Tehnologie avansată pentru transformarea completă a stilului tău de viață</p>
+          </div>
+          <div className={styles.featuresGrid}>
+            <div className={styles.featureCard}>
+              <div className={styles.featureIcon}>🥗</div>
               <h3>Nutriție Personalizată</h3>
               <p>AI-ul analizează obiectivele, alergiile și preferințele tale pentru a crea planuri de nutriție perfecte. Rețete, liste de cumpărături și tracking automat al macronutrienților.</p>
             </div>
-            <div className="feature-card">
-              <div className="feature-icon">💪</div>
+            <div className={styles.featureCard}>
+              <div className={styles.featureIcon}>💪</div>
               <h3>Antrenamente Inteligente</h3>
               <p>Programe de exerciții adaptate în timp real pe baza progresului tău. De la începător la expert, AI-ul optimizează fiecare mișcare pentru rezultate maxime.</p>
             </div>
-            <div className="feature-card">
-              <div className="feature-icon">😴</div>
+            <div className={styles.featureCard}>
+              <div className={styles.featureIcon}>😴</div>
               <h3>Optimizare Somn</h3>
               <p>Monitorizează calitatea somnului și primește recomandări personalizate pentru odihnă optimă. Rutine de seară și strategii pentru somn profund.</p>
             </div>
-            <div className="feature-card">
-              <div className="feature-icon">📱</div>
+            <div className={styles.featureCard}>
+              <div className={styles.featureIcon}>📱</div>
               <h3>Integrare Wearables</h3>
               <p>Conectează Apple Watch, Fitbit sau alte dispozitive pentru monitoring continuu. Date în timp real pentru ajustări precise ale planului tău.</p>
             </div>
-            <div className="feature-card">
-              <div className="feature-icon">🧬</div>
+            <div className={styles.featureCard}>
+              <div className={styles.featureIcon}>🧬</div>
               <h3>Analize Biometrice</h3>
-              <p>Urmărește progreses în greutate, masa musculară, procent de grăsime și energie. Grafice detaliate și predicții pentru obiectivele tale.</p>
+              <p>Urmărește progresul în greutate, masa musculară, procent de grăsime și energie. Grafice detaliate și predicții pentru obiectivele tale.</p>
             </div>
-            <div className="feature-card">
-              <div className="feature-icon">🎯</div>
+            <div className={styles.featureCard}>
+              <div className={styles.featureIcon}>🎯</div>
               <h3>Coaching Motivațional</h3>
               <p>AI care te înțelege și te motivează. Mesaje personalizate, reamintiri inteligente și strategii pentru a rămâne pe drumul cel bun.</p>
             </div>
@@ -151,16 +170,18 @@ export default function PorHealthLandingPage() {
         </div>
       </section>
 
-      <section className="ai-demo" id="demo">
-        <div className="container">
-          <h2>Experimentează Puterea AI-ului PorHealth</h2>
-          <p>Vezi cum asistentul tău personal AI înțelege nevoile tale și oferă sfaturi precise pentru sănătatea ta.</p>
-          <div className="demo-container">
-            <div className="chat-interface" id="chatInterface">
-              <div className="message user">
+      <section className={styles.aiDemo} id="demo">
+        <div className={styles.container}>
+          <div className={styles.sectionHeader}>
+            <h2>Experimentează Puterea AI-ului PorHealth</h2>
+            <p>Vezi cum asistentul tău personal AI înțelege nevoile tale și oferă sfaturi precise pentru sănătatea ta.</p>
+          </div>
+          <div className={styles.demoContainer}>
+            <div className={styles.chatInterface} id="chatInterface">
+              <div className={styles.messageUser}>
                 Salut! Vreau să încep să mănânc mai sănătos, dar am puțin timp. Ce îmi recomanzi?
               </div>
-              <div className="message ai">
+              <div className={styles.messageAi}>
                 Salut! 👋 Înțeleg perfect - timpul e prețios! Bazat pe profilul tău, îți recomand meal prep-ul: <br /><br />
                 🥗 <strong>Planul "Quick & Healthy":</strong><br />
                 • Duminica: 2h prep pentru toată săptămâna<br />
@@ -170,41 +191,50 @@ export default function PorHealthLandingPage() {
               </div>
             </div>
 
-            <div className="input-demo">
-              <input type="text" className="demo-input" placeholder="Întreabă orice despre sănătate..." id="demoInput" />
-              <button className="btn-primary" onClick={sendDemoMessage}>Trimite</button>
+            <div className={styles.inputDemo}>
+              <input 
+                type="text" 
+                className={styles.demoInput} 
+                placeholder="Întreabă orice despre sănătate..." 
+                id="demoInput" 
+              />
+              <button className={styles.ctaPrimary} onClick={sendDemoMessage}>
+                Trimite
+              </button>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="pricing">
-        <div className="container">
-          <h2>Investește în Sănătatea Ta</h2>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '1.2rem', marginBottom: '3rem' }}>
-            Alege planul perfect pentru transformarea ta
-          </p>
-          <div className="pricing-cards">
-            <div className="pricing-card">
-              <div className="plan-name">Starter</div>
-              <div className="plan-price">Gratuit</div>
-              <div className="plan-period">Pentru totdeauna</div>
-              <ul className="plan-features">
+      <section className={styles.pricing}>
+        <div className={styles.container}>
+          <div className={styles.sectionHeader}>
+            <h2>Investește în Sănătatea Ta</h2>
+            <p>Alege planul perfect pentru transformarea ta</p>
+          </div>
+          <div className={styles.pricingCards}>
+            <div className={styles.pricingCard}>
+              <div className={styles.planName}>Starter</div>
+              <div className={styles.planPrice}>Gratuit</div>
+              <div className={styles.planPeriod}>Pentru totdeauna</div>
+              <ul className={styles.planFeatures}>
                 <li>Chat AI de bază</li>
                 <li>3 rețete/zi</li>
                 <li>Tracking basic nutriție</li>
                 <li>1 antrenament/săptămână</li>
                 <li>Support email</li>
               </ul>
-              <Link href="/auth/signup" className="btn-secondary" style={{ width: '100%', textAlign: 'center', display: 'block' }}>Începe Gratuit</Link>
+              <Link href="/auth/signup" className={styles.ctaSecondary}>
+                Începe Gratuit
+              </Link>
             </div>
 
-            <div className="pricing-card featured">
-              <div className="featured-badge">Cel mai popular</div>
-              <div className="plan-name">PorHealth Pro</div>
-              <div className="plan-price">19€</div>
-              <div className="plan-period">/lună</div>
-              <ul className="plan-features">
+            <div className={`${styles.pricingCard} ${styles.featured}`}>
+              <div className={styles.featuredBadge}>Cel mai popular</div>
+              <div className={styles.planName}>PorHealth Pro</div>
+              <div className={styles.planPrice}>19€</div>
+              <div className={styles.planPeriod}>/lună</div>
+              <ul className={styles.planFeatures}>
                 <li>AI personal avansat</li>
                 <li>Rețete & planuri nelimitate</li>
                 <li>Antrenamente personalizate</li>
@@ -213,14 +243,16 @@ export default function PorHealthLandingPage() {
                 <li>Coaching motivațional</li>
                 <li>Support prioritar 24/7</li>
               </ul>
-              <Link href="/checkout?plan=porhealth-pro" className="btn-primary" style={{ width: '100%', textAlign: 'center', display: 'block' }}>30 Zile Gratuit</Link>
+              <Link href="/checkout?plan=porhealth-pro" className={styles.ctaPrimary}>
+                30 Zile Gratuit
+              </Link>
             </div>
 
-            <div className="pricing-card">
-              <div className="plan-name">PorVerse Complete</div>
-              <div className="plan-price">49€</div>
-              <div className="plan-period">/lună</div>
-              <ul className="plan-features">
+            <div className={styles.pricingCard}>
+              <div className={styles.planName}>PorVerse Complete</div>
+              <div className={styles.planPrice}>49€</div>
+              <div className={styles.planPeriod}>/lună</div>
+              <ul className={styles.planFeatures}>
                 <li>Toate ecosistemele PorVerse</li>
                 <li>AI cross-ecosystem</li>
                 <li>Analize complexe</li>
@@ -229,52 +261,77 @@ export default function PorHealthLandingPage() {
                 <li>White-glove onboarding</li>
                 <li>Garanție rezultate</li>
               </ul>
-              <Link href="/checkout?plan=complete" className="btn-secondary" style={{ width: '100%', textAlign: 'center', display: 'block' }}>14 Zile Gratuit</Link>
+              <Link href="/checkout?plan=complete" className={styles.ctaSecondary}>
+                14 Zile Gratuit
+              </Link>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="testimonials">
-        <div className="container">
-          <h2>Transformări Reale</h2>
-          <div className="testimonials-grid">
-            <div className="testimonial">
-              <div className="testimonial-text">
+      <section className={styles.testimonials}>
+        <div className={styles.container}>
+          <div className={styles.sectionHeader}>
+            <h2>Transformări Reale</h2>
+            <p>Oameni reali, rezultate măsurabile</p>
+          </div>
+          <div className={styles.testimonialsGrid}>
+            <div className={styles.testimonial}>
+              <div className={styles.testimonialText}>
                 "În 3 luni cu PorHealth am slăbit 12kg și am cel mai bun nivel de energie ever. AI-ul înțelege perfect stilul meu de viață ocupat și se adaptează la programul meu."
               </div>
-              <div className="testimonial-author">Maria T., Marketing Manager</div>
+              <div className={styles.testimonialAuthor}>
+                <span className={styles.authorAvatar}>👩‍💼</span>
+                <div className={styles.authorInfo}>
+                  <div className={styles.authorName}>Maria T.</div>
+                  <div className={styles.authorRole}>Marketing Manager</div>
+                </div>
+              </div>
             </div>
-            <div className="testimonial">
-              <div className="testimonial-text">
+            <div className={styles.testimonial}>
+              <div className={styles.testimonialText}>
                 "Ca dezvoltator, stau mult la birou. PorHealth mi-a creat rutine de antrenament perfect pentru casă și tracking-ul automat m-a motivat să continui. Game changer!"
               </div>
-              <div className="testimonial-author">Alex D., Software Developer</div>
+              <div className={styles.testimonialAuthor}>
+                <span className={styles.authorAvatar}>👨‍💻</span>
+                <div className={styles.authorInfo}>
+                  <div className={styles.authorName}>Alex D.</div>
+                  <div className={styles.authorRole}>Software Developer</div>
+                </div>
+              </div>
             </div>
-            <div className="testimonial">
-              <div className="testimonial-text">
+            <div className={styles.testimonial}>
+              <div className={styles.testimonialText}>
                 "Recomandările de nutriție sunt spot-on! Mi-a identificat deficiențele și a optimizat energia pentru antrenamente. Cel mai bun investiment în sănătatea mea."
               </div>
-              <div className="testimonial-author">Andrei M., Personal Trainer</div>
+              <div className={styles.testimonialAuthor}>
+                <span className={styles.authorAvatar}>💪</span>
+                <div className={styles.authorInfo}>
+                  <div className={styles.authorName}>Andrei M.</div>
+                  <div className={styles.authorRole}>Personal Trainer</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="final-cta">
-        <div className="container">
-          <div className="cta-card">
+      <section className={styles.finalCta}>
+        <div className={styles.container}>
+          <div className={styles.ctaContent}>
             <h2>Începe Transformarea Azi</h2>
             <p>Accesează puterea AI-ului pentru cea mai bună versiune a ta. 30 de zile gratuit, fără card necesar.</p>
-            <Link href="/auth/signup" className="btn-primary" style={{ fontSize: '1.2rem', padding: '1.2rem 3rem' }}>Începe Gratuit Acum</Link>
+            <Link href="/auth/signup" className={styles.ctaPrimary}>
+              🚀 Începe Gratuit Acum
+            </Link>
           </div>
         </div>
       </section>
 
-      <footer className="footer">
-        <div className="container">
-          <div className="footer-content">
-            <div className="footer-section">
+      <footer className={styles.footer}>
+        <div className={styles.container}>
+          <div className={styles.footerContent}>
+            <div className={styles.footerSection}>
               <h3>PorHealth</h3>
               <ul>
                 <li><Link href="/ecosisteme/por-health/features">Funcționalități</Link></li>
@@ -283,7 +340,7 @@ export default function PorHealthLandingPage() {
                 <li><Link href="/ecosisteme/por-health/science">Cercetare</Link></li>
               </ul>
             </div>
-            <div className="footer-section">
+            <div className={styles.footerSection}>
               <h3>Ecosisteme</h3>
               <ul>
                 <li><Link href="/ecosisteme/por-mind">PorMind</Link></li>
@@ -292,7 +349,7 @@ export default function PorHealthLandingPage() {
                 <li><Link href="/ecosisteme/por-blu">PorBlu</Link></li>
               </ul>
             </div>
-            <div className="footer-section">
+            <div className={styles.footerSection}>
               <h3>Support</h3>
               <ul>
                 <li><Link href="/support">Ajutor</Link></li>
@@ -301,7 +358,7 @@ export default function PorHealthLandingPage() {
                 <li><Link href="/status">Status</Link></li>
               </ul>
             </div>
-            <div className="footer-section">
+            <div className={styles.footerSection}>
               <h3>Legal</h3>
               <ul>
                 <li><Link href="/legal/privacy">Confidențialitate</Link></li>
@@ -310,11 +367,11 @@ export default function PorHealthLandingPage() {
               </ul>
             </div>
           </div>
-          <div className="footer-bottom">
+          <div className={styles.footerBottom}>
             <p>© 2025 PorVerse. Toate drepturile rezervate.</p>
           </div>
         </div>
       </footer>
-    </>
+    </div>
   );
 }
