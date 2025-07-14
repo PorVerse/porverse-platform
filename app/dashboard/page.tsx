@@ -1,10 +1,10 @@
+// app/dashboard/page.tsx
 'use client';
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
-import styles from './style.module.css'
-;
+import styles from './style.module.css';
 
 interface UserStats {
   totalDays: number;
@@ -155,89 +155,89 @@ export default function UnifiedDashboard() {
         <meta name="robots" content="noindex" />
       </Head>
 
-      <div className="unified-dashboard">
+      <div className={styles.unifiedDashboard}>
         {/* MOBILE HEADER */}
-        <div className="mobile-header">
+        <div className={styles.mobileHeader}>
           <button 
             onClick={toggleSidebar}
-            className="mobile-menu-button"
+            className={styles.mobileMenuButton}
             aria-label="Toggle menu"
           >
             ☰
           </button>
-          <Link href="/" className="mobile-logo">
+          <Link href="/" className={styles.mobileLogo}>
             PorVerse
           </Link>
-          <div className="mobile-user">AP</div>
+          <div className={styles.mobileUser}>AP</div>
         </div>
 
         {/* SIDEBAR */}
-        <aside className={`dashboard-sidebar ${sidebarOpen ? 'open' : ''}`}>
-          <div className="sidebar-header">
-            <Link href="/" className="dashboard-logo">
-              <span className="logo-icon">🧠</span>
-              <span className="logo-text">PorVerse</span>
+        <aside className={`${styles.dashboardSidebar} ${sidebarOpen ? styles.open : ''}`}>
+          <div className={styles.sidebarHeader}>
+            <Link href="/" className={styles.dashboardLogo}>
+              <span className={styles.logoIcon}>🧠</span>
+              <span className={styles.logoText}>PorVerse</span>
             </Link>
-            <div className="user-info">
-              <div className="user-avatar">AP</div>
-              <div className="user-details">
-                <div className="user-name">Andrei Pop</div>
-                <div className="user-plan">Free Plan</div>
+            <div className={styles.userInfo}>
+              <div className={styles.userAvatar}>AP</div>
+              <div className={styles.userDetails}>
+                <div className={styles.userName}>Andrei Pop</div>
+                <div className={styles.userPlan}>Free Plan</div>
               </div>
             </div>
           </div>
 
-          <nav className="sidebar-nav">
-            <div className="nav-section">
-              <div className="nav-section-title">Overview</div>
-              <Link href="/dashboard" className="nav-item active">
-                <span className="nav-icon">📊</span>
+          <nav className={styles.sidebarNav}>
+            <div className={styles.navSection}>
+              <div className={styles.navSectionTitle}>Overview</div>
+              <Link href="/dashboard" className={`${styles.navItem} ${styles.active}`}>
+                <span className={styles.navIcon}>📊</span>
                 Dashboard
               </Link>
-              <Link href="/dashboard/analytics" className="nav-item">
-                <span className="nav-icon">📈</span>
+              <Link href="/dashboard/analytics" className={styles.navItem}>
+                <span className={styles.navIcon}>📈</span>
                 Analytics
               </Link>
-              <Link href="/dashboard/settings" className="nav-item">
-                <span className="nav-icon">⚙️</span>
+              <Link href="/dashboard/settings" className={styles.navItem}>
+                <span className={styles.navIcon}>⚙️</span>
                 Settings
               </Link>
             </div>
 
-            <div className="nav-section">
-              <div className="nav-section-title">Ecosisteme</div>
+            <div className={styles.navSection}>
+              <div className={styles.navSectionTitle}>Ecosisteme</div>
               {ecosystems.map(ecosystem => (
                 <Link 
                   key={ecosystem.id}
                   href={ecosystem.status === 'free' ? ecosystem.route : '/pricing'}
-                  className={`nav-item ${ecosystem.status === 'locked' ? 'locked' : ''}`}
+                  className={`${styles.navItem} ${ecosystem.status === 'locked' ? styles.locked : ''}`}
                   onClick={() => setSidebarOpen(false)}
                 >
-                  <span className="nav-icon">{ecosystem.icon}</span>
+                  <span className={styles.navIcon}>{ecosystem.icon}</span>
                   {ecosystem.name}
                   {ecosystem.status === 'premium' && (
-                    <span className="premium-badge">PRO</span>
+                    <span className={styles.premiumBadge}>PRO</span>
                   )}
                 </Link>
               ))}
             </div>
 
-            <div className="nav-section">
-              <div className="nav-section-title">Ultimate</div>
+            <div className={styles.navSection}>
+              <div className={styles.navSectionTitle}>Ultimate</div>
               <Link 
                 href={hasQuantumAccess() ? "/dashboard/quantum-vault" : "/pricing"}
-                className={`nav-item quantum-item ${!hasQuantumAccess() ? 'locked' : ''}`}
+                className={`${styles.navItem} ${styles.quantumItem} ${!hasQuantumAccess() ? styles.locked : ''}`}
                 onClick={() => setSidebarOpen(false)}
               >
-                <span className="nav-icon">🔮</span>
+                <span className={styles.navIcon}>🔮</span>
                 Quantum Vault
-                {!hasQuantumAccess() && <span className="lock-icon">🔒</span>}
+                {!hasQuantumAccess() && <span className={styles.lockIcon}>🔒</span>}
               </Link>
             </div>
           </nav>
 
-          <div className="sidebar-footer">
-            <Link href="/pricing" className="upgrade-button">
+          <div className={styles.sidebarFooter}>
+            <Link href="/pricing" className={styles.upgradeButton}>
               <span>⚡</span>
               Upgrade to Premium
             </Link>
@@ -247,26 +247,26 @@ export default function UnifiedDashboard() {
         {/* SIDEBAR OVERLAY (Mobile) */}
         {sidebarOpen && (
           <div 
-            className="sidebar-overlay"
+            className={styles.sidebarOverlay}
             onClick={() => setSidebarOpen(false)}
           ></div>
         )}
 
         {/* MAIN CONTENT */}
-        <main className="dashboard-main">
-          <div className="dashboard-header">
-            <div className="header-content">
-              <h1 className="dashboard-title">Bună dimineața, Andrei! 🌅</h1>
-              <p className="dashboard-subtitle">
+        <main className={styles.dashboardMain}>
+          <div className={styles.dashboardHeader}>
+            <div className={styles.headerContent}>
+              <h1 className={styles.dashboardTitle}>Bună dimineața, Andrei! 🌅</h1>
+              <p className={styles.dashboardSubtitle}>
                 Ești pe drumul cel bun către transformarea ta. Continuă să progresezi!
               </p>
             </div>
-            <div className="header-actions">
-              <button className="action-button">
+            <div className={styles.headerActions}>
+              <button className={styles.actionButton}>
                 <span>📱</span>
                 Mobile App
               </button>
-              <button className="action-button primary">
+              <button className={`${styles.actionButton} ${styles.primary}`}>
                 <span>🎯</span>
                 Set Today's Goals
               </button>
@@ -274,94 +274,94 @@ export default function UnifiedDashboard() {
           </div>
 
           {/* STATS OVERVIEW */}
-          <section className="stats-section">
-            <div className="stats-grid">
-              <div className="stat-card">
-                <div className="stat-icon">🔥</div>
-                <div className="stat-content">
-                  <div className="stat-number">{userStats.streakDays}</div>
-                  <div className="stat-label">Zile consecutive</div>
+          <section className={styles.statsSection}>
+            <div className={styles.statsGrid}>
+              <div className={styles.statCard}>
+                <div className={styles.statIcon}>🔥</div>
+                <div className={styles.statContent}>
+                  <div className={styles.statNumber}>{userStats.streakDays}</div>
+                  <div className={styles.statLabel}>Zile consecutive</div>
                 </div>
               </div>
-              <div className="stat-card">
-                <div className="stat-icon">✅</div>
-                <div className="stat-content">
-                  <div className="stat-number">{userStats.completedTasks}</div>
-                  <div className="stat-label">Taskuri completate</div>
+              <div className={styles.statCard}>
+                <div className={styles.statIcon}>✅</div>
+                <div className={styles.statContent}>
+                  <div className={styles.statNumber}>{userStats.completedTasks}</div>
+                  <div className={styles.statLabel}>Taskuri completate</div>
                 </div>
               </div>
-              <div className="stat-card">
-                <div className="stat-icon">🎯</div>
-                <div className="stat-content">
-                  <div className="stat-number">{userStats.ecosystemsActive}</div>
-                  <div className="stat-label">Ecosisteme active</div>
+              <div className={styles.statCard}>
+                <div className={styles.statIcon}>🎯</div>
+                <div className={styles.statContent}>
+                  <div className={styles.statNumber}>{userStats.ecosystemsActive}</div>
+                  <div className={styles.statLabel}>Ecosisteme active</div>
                 </div>
               </div>
-              <div className="stat-card">
-                <div className="stat-icon">📅</div>
-                <div className="stat-content">
-                  <div className="stat-number">{userStats.totalDays}</div>
-                  <div className="stat-label">Zile totale</div>
+              <div className={styles.statCard}>
+                <div className={styles.statIcon}>📅</div>
+                <div className={styles.statContent}>
+                  <div className={styles.statNumber}>{userStats.totalDays}</div>
+                  <div className={styles.statLabel}>Zile totale</div>
                 </div>
               </div>
             </div>
           </section>
 
           {/* PERFORMANCE OVERVIEW */}
-          <section className="performance-section">
-            <h2 className="section-title">Performanța Ta</h2>
-            <div className="performance-grid">
-              <div className="performance-card">
-                <div className="performance-header">
-                  <span className="performance-icon">🌿</span>
-                  <div className="performance-info">
+          <section className={styles.performanceSection}>
+            <h2 className={styles.sectionTitle}>Performanța Ta</h2>
+            <div className={styles.performanceGrid}>
+              <div className={styles.performanceCard}>
+                <div className={styles.performanceHeader}>
+                  <span className={styles.performanceIcon}>🌿</span>
+                  <div className={styles.performanceInfo}>
                     <h3>Health Score</h3>
                     <p>Nutriție, fitness, wellness</p>
                   </div>
                 </div>
-                <div className="performance-score">
-                  <div className="score-number">{userStats.healthScore}</div>
-                  <div className="score-bar">
+                <div className={styles.performanceScore}>
+                  <div className={styles.scoreNumber}>{userStats.healthScore}</div>
+                  <div className={styles.scoreBar}>
                     <div 
-                      className="score-fill health" 
+                      className={`${styles.scoreFill} ${styles.health}`}
                       style={{width: `${userStats.healthScore}%`}}
                     ></div>
                   </div>
                 </div>
               </div>
 
-              <div className="performance-card">
-                <div className="performance-header">
-                  <span className="performance-icon">🌻</span>
-                  <div className="performance-info">
+              <div className={styles.performanceCard}>
+                <div className={styles.performanceHeader}>
+                  <span className={styles.performanceIcon}>🌻</span>
+                  <div className={styles.performanceInfo}>
                     <h3>Wellness Score</h3>
                     <p>Mental health, mindfulness</p>
                   </div>
                 </div>
-                <div className="performance-score">
-                  <div className="score-number">{userStats.wellnessScore}</div>
-                  <div className="score-bar">
+                <div className={styles.performanceScore}>
+                  <div className={styles.scoreNumber}>{userStats.wellnessScore}</div>
+                  <div className={styles.scoreBar}>
                     <div 
-                      className="score-fill wellness" 
+                      className={`${styles.scoreFill} ${styles.wellness}`}
                       style={{width: `${userStats.wellnessScore}%`}}
                     ></div>
                   </div>
                 </div>
               </div>
 
-              <div className="performance-card">
-                <div className="performance-header">
-                  <span className="performance-icon">🌊</span>
-                  <div className="performance-info">
+              <div className={styles.performanceCard}>
+                <div className={styles.performanceHeader}>
+                  <span className={styles.performanceIcon}>🌊</span>
+                  <div className={styles.performanceInfo}>
                     <h3>Productivity Score</h3>
                     <p>Focus, time management</p>
                   </div>
                 </div>
-                <div className="performance-score">
-                  <div className="score-number">{userStats.productivityScore}</div>
-                  <div className="score-bar">
+                <div className={styles.performanceScore}>
+                  <div className={styles.scoreNumber}>{userStats.productivityScore}</div>
+                  <div className={styles.scoreBar}>
                     <div 
-                      className="score-fill productivity" 
+                      className={`${styles.scoreFill} ${styles.productivity}`}
                       style={{width: `${userStats.productivityScore}%`}}
                     ></div>
                   </div>
@@ -371,35 +371,35 @@ export default function UnifiedDashboard() {
           </section>
 
           {/* ECOSYSTEMS GRID */}
-          <section className="ecosystems-section">
-            <h2 className="section-title">Ecosistemele Tale</h2>
-            <div className="ecosystems-grid">
+          <section className={styles.ecosystemsSection}>
+            <h2 className={styles.sectionTitle}>Ecosistemele Tale</h2>
+            <div className={styles.ecosystemsGrid}>
               {ecosystems.map(ecosystem => (
-                <div key={ecosystem.id} className={`ecosystem-card ${ecosystem.status}`}>
-                  <div className="ecosystem-header">
+                <div key={ecosystem.id} className={`${styles.ecosystemCard} ${ecosystem.status === 'premium' ? styles.premium : ''}`}>
+                  <div className={styles.ecosystemHeader}>
                     <span 
-                      className="ecosystem-icon"
+                      className={styles.ecosystemIcon}
                       style={{color: ecosystem.color}}
                     >
                       {ecosystem.icon}
                     </span>
-                    <div className="ecosystem-info">
+                    <div className={styles.ecosystemInfo}>
                       <h3>{ecosystem.name}</h3>
                       <p>{ecosystem.description}</p>
                     </div>
                     {ecosystem.status === 'premium' && (
-                      <div className="ecosystem-lock">🔒</div>
+                      <div className={styles.ecosystemLock}>🔒</div>
                     )}
                   </div>
 
-                  <div className="ecosystem-progress">
-                    <div className="progress-info">
+                  <div className={styles.ecosystemProgress}>
+                    <div className={styles.progressInfo}>
                       <span>Progress: {ecosystem.progress}%</span>
-                      <span className="last-activity">{ecosystem.lastActivity}</span>
+                      <span className={styles.lastActivity}>{ecosystem.lastActivity}</span>
                     </div>
-                    <div className="progress-bar">
+                    <div className={styles.progressBar}>
                       <div 
-                        className="progress-fill"
+                        className={styles.progressFill}
                         style={{
                           width: `${ecosystem.progress}%`,
                           backgroundColor: ecosystem.color
@@ -408,13 +408,13 @@ export default function UnifiedDashboard() {
                     </div>
                   </div>
 
-                  <div className="ecosystem-actions">
+                  <div className={styles.ecosystemActions}>
                     {ecosystem.status === 'free' ? (
-                      <Link href={ecosystem.route} className="ecosystem-button primary">
+                      <Link href={ecosystem.route} className={`${styles.ecosystemButton} ${styles.primary}`}>
                         Open Dashboard
                       </Link>
                     ) : (
-                      <Link href="/pricing" className="ecosystem-button locked">
+                      <Link href="/pricing" className={`${styles.ecosystemButton} ${styles.locked}`}>
                         <span>⚡</span>
                         Unlock Premium
                       </Link>
@@ -427,23 +427,23 @@ export default function UnifiedDashboard() {
 
           {/* QUANTUM VAULT TEASER */}
           {!hasQuantumAccess() && (
-            <section className="quantum-teaser">
-              <div className="quantum-card">
-                <div className="quantum-background">
-                  <div className="quantum-particles"></div>
-                  <div className="quantum-glow"></div>
+            <section className={styles.quantumTeaser}>
+              <div className={styles.quantumCard}>
+                <div className={styles.quantumBackground}>
+                  <div className={styles.quantumParticles}></div>
+                  <div className={styles.quantumGlow}></div>
                 </div>
-                <div className="quantum-content">
-                  <div className="quantum-icon">🔮</div>
+                <div className={styles.quantumContent}>
+                  <div className={styles.quantumIcon}>🔮</div>
                   <h2>Quantum Vault Awaits</h2>
                   <p>
                     Unlock the ultimate PorVerse experience. Future Self AI, Timeline Simulator, 
                     și Mirror of Other You te așteaptă.
                   </p>
-                  <div className="quantum-requirements">
+                  <div className={styles.quantumRequirements}>
                     <p><strong>Unlock Requirements:</strong> PorMind + PorFlow + PorBlu (Trinity Combo)</p>
                   </div>
-                  <Link href="/pricing" className="quantum-unlock-button">
+                  <Link href="/pricing" className={styles.quantumUnlockButton}>
                     <span>✨</span>
                     Unlock Quantum Powers
                   </Link>
@@ -453,17 +453,17 @@ export default function UnifiedDashboard() {
           )}
 
           {/* RECENT ACTIVITY */}
-          <section className="activity-section">
-            <h2 className="section-title">Activitate Recentă</h2>
-            <div className="activity-list">
+          <section className={styles.activitySection}>
+            <h2 className={styles.sectionTitle}>Activitate Recentă</h2>
+            <div className={styles.activityList}>
               {recentActivities.map((activity, index) => (
-                <div key={index} className="activity-item">
-                  <div className="activity-icon">{activity.icon}</div>
-                  <div className="activity-content">
-                    <div className="activity-action">{activity.action}</div>
-                    <div className="activity-meta">
-                      <span className="activity-ecosystem">{activity.ecosystem}</span>
-                      <span className="activity-time">{activity.time}</span>
+                <div key={index} className={styles.activityItem}>
+                  <div className={styles.activityIcon}>{activity.icon}</div>
+                  <div className={styles.activityContent}>
+                    <div className={styles.activityAction}>{activity.action}</div>
+                    <div className={styles.activityMeta}>
+                      <span className={styles.activityEcosystem}>{activity.ecosystem}</span>
+                      <span className={styles.activityTime}>{activity.time}</span>
                     </div>
                   </div>
                 </div>

@@ -1,0 +1,959 @@
+/* app/dashboard/style.module.css */
+
+/* ===== MAIN LAYOUT ===== */
+.unifiedDashboard {
+  display: flex;
+  min-height: 100vh;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(168, 85, 247, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(0, 212, 255, 0.15) 0%, transparent 50%),
+    linear-gradient(135deg, #0f0f23 0%, #1e1440 100%);
+}
+
+/* ===== MOBILE HEADER ===== */
+.mobileHeader {
+  display: none;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.15) 0%, rgba(168, 85, 247, 0.12) 100%);
+  backdrop-filter: blur(30px);
+  border-bottom: 2px solid rgba(0, 212, 255, 0.3);
+  position: sticky;
+  top: 0;
+  z-index: 200;
+}
+
+.mobileMenuButton {
+  background: rgba(0, 212, 255, 0.2);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  color: #ffffff;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  transition: all 0.15s ease;
+  backdrop-filter: blur(10px);
+}
+
+.mobileMenuButton:hover {
+  background: rgba(0, 212, 255, 0.3);
+  transform: scale(1.05);
+}
+
+.mobileLogo {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #ffffff;
+  text-decoration: none;
+  background: linear-gradient(135deg, #00d4ff, #a855f7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.mobileUser {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #00d4ff, #a855f7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: white;
+}
+
+/* ===== SIDEBAR ===== */
+.dashboardSidebar {
+  width: 280px;
+  background: linear-gradient(145deg, 
+    rgba(0, 212, 255, 0.15) 0%, 
+    rgba(168, 85, 247, 0.12) 30%,
+    rgba(0, 212, 255, 0.08) 100%
+  );
+  backdrop-filter: blur(30px);
+  border-right: 2px solid rgba(0, 212, 255, 0.3);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  height: 100vh;
+  overflow-y: auto;
+  z-index: 100;
+  box-shadow: 0 8px 32px rgba(0, 212, 255, 0.2);
+}
+
+.sidebarHeader {
+  padding: 2rem;
+  border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+}
+
+.dashboardLogo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  text-decoration: none;
+  color: #ffffff;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+.logoIcon {
+  font-size: 2rem;
+  filter: drop-shadow(0 0 10px #00d4ff);
+}
+
+.logoText {
+  background: linear-gradient(135deg, #00d4ff 0%, #a855f7 50%, #ec4899 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.userAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #00d4ff, #0ea5e9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: white;
+}
+
+.userDetails {
+  flex: 1;
+}
+
+.userName {
+  font-weight: 600;
+  color: #ffffff;
+  font-size: 0.9rem;
+}
+
+.userPlan {
+  font-size: 0.8rem;
+  color: #e2e8f0;
+}
+
+/* ===== SIDEBAR NAVIGATION ===== */
+.sidebarNav {
+  flex: 1;
+  padding: 1.5rem 0;
+}
+
+.navSection {
+  margin-bottom: 2rem;
+}
+
+.navSectionTitle {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #a8b2c7;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 0 2rem;
+  margin-bottom: 1rem;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 2rem;
+  color: #e2e8f0;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.navItem:hover {
+  color: #ffffff;
+  background: rgba(0, 212, 255, 0.08);
+}
+
+.navItem.active {
+  color: #ffffff;
+  background: rgba(0, 212, 255, 0.12);
+  border-right: 3px solid #00d4ff;
+}
+
+.navItem.locked {
+  opacity: 0.6;
+}
+
+.navIcon {
+  font-size: 1.1rem;
+  min-width: 20px;
+}
+
+.premiumBadge {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+  font-size: 0.7rem;
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.3rem;
+  font-weight: 600;
+  margin-left: auto;
+}
+
+.lockIcon {
+  margin-left: auto;
+  opacity: 0.6;
+}
+
+.quantumItem {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(139, 92, 246, 0.1));
+  border-radius: 0.5rem;
+  margin: 0 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.quantumItem::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+.quantumItem:hover::before {
+  transform: translateX(100%);
+}
+
+/* ===== SIDEBAR FOOTER ===== */
+.sidebarFooter {
+  padding: 2rem;
+  border-top: 1px solid rgba(0, 212, 255, 0.2);
+}
+
+.upgradeButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 1rem;
+  background: linear-gradient(135deg, #00d4ff, #a855f7);
+  color: white;
+  text-decoration: none;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
+}
+
+.upgradeButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 212, 255, 0.5);
+}
+
+/* ===== MAIN CONTENT ===== */
+.dashboardMain {
+  flex: 1;
+  margin-left: 280px;
+  padding: 2rem;
+  overflow-y: auto;
+  max-height: 100vh;
+}
+
+.dashboardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 3rem;
+  gap: 2rem;
+}
+
+.headerContent {
+  flex: 1;
+}
+
+.dashboardTitle {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, #ffffff 0%, #00d4ff 30%, #a855f7 70%, #ec4899 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 15px rgba(0, 212, 255, 0.3));
+}
+
+.dashboardSubtitle {
+  font-size: 1.1rem;
+  color: #e2e8f0;
+  max-width: 500px;
+}
+
+.headerActions {
+  display: flex;
+  gap: 1rem;
+}
+
+.actionButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 1.5rem;
+  background: rgba(0, 212, 255, 0.08);
+  border: 1px solid rgba(0, 212, 255, 0.25);
+  border-radius: 0.75rem;
+  color: #ffffff;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(15px);
+}
+
+.actionButton:hover {
+  background: rgba(0, 212, 255, 0.12);
+  transform: translateY(-2px);
+}
+
+.actionButton.primary {
+  background: linear-gradient(135deg, #00d4ff, #a855f7);
+  border-color: #00d4ff;
+  box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+}
+
+.actionButton.primary:hover {
+  box-shadow: 0 8px 25px rgba(0, 212, 255, 0.4);
+}
+
+/* ===== STATS SECTION ===== */
+.statsSection {
+  margin-bottom: 3rem;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.statCard {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 2rem;
+  background: rgba(0, 212, 255, 0.12);
+  backdrop-filter: blur(25px);
+  border: 1px solid rgba(0, 212, 255, 0.25);
+  border-radius: 1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 212, 255, 0.1);
+}
+
+.statCard:hover {
+  background: rgba(0, 212, 255, 0.18);
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2);
+}
+
+.statIcon {
+  font-size: 2.5rem;
+  filter: drop-shadow(0 0 15px #00d4ff);
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
+}
+
+.statContent {
+  flex: 1;
+}
+
+.statNumber {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.statLabel {
+  font-size: 0.9rem;
+  color: #e2e8f0;
+}
+
+/* ===== PERFORMANCE SECTION ===== */
+.performanceSection {
+  margin-bottom: 3rem;
+}
+
+.sectionTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: #ffffff;
+  position: relative;
+  padding-left: 1rem;
+}
+
+.sectionTitle::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 60%;
+  background: linear-gradient(135deg, #00d4ff, #a855f7);
+  border-radius: 2px;
+  box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+}
+
+.performanceGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.performanceCard {
+  padding: 2rem;
+  background: rgba(0, 212, 255, 0.12);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 212, 255, 0.25);
+  border-radius: 1rem;
+  transition: all 0.3s ease;
+}
+
+.performanceCard:hover {
+  background: rgba(0, 212, 255, 0.18);
+  transform: translateY(-4px);
+}
+
+.performanceHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.performanceIcon {
+  font-size: 1.5rem;
+}
+
+.performanceInfo h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 0.25rem;
+}
+
+.performanceInfo p {
+  font-size: 0.9rem;
+  color: #e2e8f0;
+}
+
+.performanceScore {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.scoreNumber {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #ffffff;
+  min-width: 60px;
+}
+
+.scoreBar {
+  flex: 1;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.scoreFill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+
+.scoreFill.health {
+  background: linear-gradient(90deg, #00ff88, #00d070);
+}
+
+.scoreFill.wellness {
+  background: linear-gradient(90deg, #bb55ff, #7c3aed);
+}
+
+.scoreFill.productivity {
+  background: linear-gradient(90deg, #00ccdd, #0891b2);
+}
+
+/* ===== ECOSYSTEMS SECTION ===== */
+.ecosystemsSection {
+  margin-bottom: 3rem;
+}
+
+.ecosystemsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 1.5rem;
+}
+
+.ecosystemCard {
+  padding: 2rem;
+  background: rgba(0, 212, 255, 0.12);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 212, 255, 0.25);
+  border-radius: 1rem;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.ecosystemCard:hover {
+  background: rgba(0, 212, 255, 0.18);
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.ecosystemCard.premium {
+  opacity: 0.7;
+}
+
+.ecosystemHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.ecosystemIcon {
+  font-size: 2rem;
+  min-width: 40px;
+}
+
+.ecosystemInfo {
+  flex: 1;
+}
+
+.ecosystemInfo h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 0.5rem;
+}
+
+.ecosystemInfo p {
+  font-size: 0.9rem;
+  color: #e2e8f0;
+  line-height: 1.5;
+}
+
+.ecosystemLock {
+  font-size: 1.2rem;
+  opacity: 0.6;
+}
+
+.ecosystemProgress {
+  margin-bottom: 1.5rem;
+}
+
+.progressInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.progressInfo span:first-child {
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.lastActivity {
+  color: #a8b2c7;
+}
+
+.progressBar {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+.ecosystemActions {
+  text-align: center;
+}
+
+.ecosystemButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem 1.5rem;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  min-width: 140px;
+}
+
+.ecosystemButton.primary {
+  background: linear-gradient(135deg, #00d4ff, #0ea5e9);
+  color: white;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.ecosystemButton.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.ecosystemButton.locked {
+  background: rgba(0, 212, 255, 0.08);
+  border: 1px solid rgba(0, 212, 255, 0.25);
+  color: #e2e8f0;
+}
+
+.ecosystemButton.locked:hover {
+  background: rgba(0, 212, 255, 0.12);
+}
+
+/* ===== QUANTUM TEASER ===== */
+.quantumTeaser {
+  margin-bottom: 3rem;
+}
+
+.quantumCard {
+  position: relative;
+  padding: 3rem;
+  background: rgba(0, 212, 255, 0.12);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 212, 255, 0.25);
+  border-radius: 1.5rem;
+  text-align: center;
+  overflow: hidden;
+}
+
+.quantumBackground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+.quantumParticles {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(2px 2px at 20% 30%, #00d4ff, transparent),
+    radial-gradient(2px 2px at 40% 70%, #bb55ff, transparent),
+    radial-gradient(1px 1px at 90% 40%, #7dd3fc, transparent),
+    radial-gradient(1px 1px at 80% 10%, #00d4ff, transparent);
+  background-size: 50px 50px, 80px 80px, 40px 40px, 90px 90px;
+  animation: quantumFloat 20s infinite linear;
+}
+
+@keyframes quantumFloat {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  33% { transform: translate(30px, -30px) rotate(120deg); }
+  66% { transform: translate(-20px, 20px) rotate(240deg); }
+  100% { transform: translate(0, 0) rotate(360deg); }
+}
+
+.quantumGlow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(102, 126, 234, 0.2), transparent);
+  transform: translate(-50%, -50%);
+  animation: quantumPulse 4s infinite ease-in-out;
+}
+
+@keyframes quantumPulse {
+  0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(0.8); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+}
+
+.quantumContent {
+  position: relative;
+  z-index: 2;
+}
+
+.quantumIcon {
+  font-size: 3rem;
+  margin-bottom: 1.5rem;
+  filter: drop-shadow(0 0 20px #00d4ff);
+}
+
+.quantumCard h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, #00d4ff, #bb55ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.quantumCard p {
+  font-size: 1.1rem;
+  color: #e2e8f0;
+  margin-bottom: 1.5rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.quantumRequirements {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: rgba(102, 126, 234, 0.1);
+  border: 1px solid rgba(102, 126, 234, 0.2);
+  border-radius: 0.75rem;
+}
+
+.quantumRequirements p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #7dd3fc;
+}
+
+.quantumUnlockButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.5rem 3rem;
+  background: linear-gradient(135deg, #00d4ff, #bb55ff);
+  color: white;
+  text-decoration: none;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.quantumUnlockButton:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(102, 126, 234, 0.6);
+}
+
+/* ===== ACTIVITY SECTION ===== */
+.activitySection {
+  margin-bottom: 3rem;
+}
+
+.activityList {
+  background: rgba(0, 212, 255, 0.12);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 212, 255, 0.25);
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.activityItem {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  border-bottom: 1px solid rgba(0, 212, 255, 0.25);
+  transition: all 0.3s ease;
+}
+
+.activityItem:last-child {
+  border-bottom: none;
+}
+
+.activityItem:hover {
+  background: rgba(0, 212, 255, 0.08);
+}
+
+.activityIcon {
+  font-size: 1.5rem;
+  min-width: 40px;
+  text-align: center;
+}
+
+.activityContent {
+  flex: 1;
+}
+
+.activityAction {
+  font-weight: 500;
+  color: #ffffff;
+  margin-bottom: 0.25rem;
+}
+
+.activityMeta {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.9rem;
+  color: #a8b2c7;
+}
+
+.activityEcosystem {
+  font-weight: 500;
+  color: #e2e8f0;
+}
+
+.activityTime {
+  color: #a8b2c7;
+}
+
+/* ===== SIDEBAR OVERLAY ===== */
+.sidebarOverlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 150;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 768px) {
+  .mobileHeader {
+    display: flex;
+  }
+  
+  .sidebarOverlay {
+    display: block;
+  }
+  
+  .dashboardSidebar {
+    position: fixed;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: 300;
+    width: 280px;
+  }
+  
+  .dashboardSidebar.open {
+    transform: translateX(0);
+  }
+  
+  .dashboardMain {
+    margin-left: 0;
+    padding: 1.5rem;
+    padding-top: 0;
+  }
+  
+  .dashboardHeader {
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: stretch;
+    margin-top: 1.5rem;
+  }
+  
+  .headerActions {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  .actionButton {
+    flex: 1;
+    min-width: 140px;
+    justify-content: center;
+  }
+  
+  .dashboardTitle {
+    font-size: 2rem;
+    text-align: center;
+  }
+  
+  .dashboardSubtitle {
+    text-align: center;
+    margin: 0 auto;
+  }
+  
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+  
+  .statCard {
+    padding: 1.5rem;
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+  
+  .statIcon {
+    font-size: 2rem;
+  }
+  
+  .statNumber {
+    font-size: 1.5rem;
+  }
+  
+  .performanceGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .ecosystemsGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .ecosystemCard {
+    padding: 1.5rem;
+  }
+  
+  .quantumCard {
+    padding: 1.5rem;
+  }
+  
+  .quantumCard h2 {
+    font-size: 1.5rem;
+  }
+  
+  .quantumUnlockButton {
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .statsGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .dashboardTitle {
+    font-size: 1.5rem;
+  }
+  
+  .quantumCard p {
+    font-size: 1rem;
+  }
+}
