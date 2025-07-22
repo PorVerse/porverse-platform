@@ -1,503 +1,510 @@
+// app/dashboard/por-flow/page.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import styles from './style.module.css'; // ✅ CSS Module import
+import { Calendar, Clock, Target, TrendingUp, Play, Pause, BarChart3, CheckCircle, Circle, AlertCircle, Zap, Brain, Timer, Plus } from 'lucide-react';
+import styles from './style.module.css';
 
-// Types
 interface Task {
   id: string;
   title: string;
-  description?: string;
-  priority: 'low' | 'medium' | 'high' | 'urgent';
-  status: 'todo' | 'in-progress' | 'review' | 'completed';
-  estimatedTime: number; // minutes
-  actualTime?: number;
+  description: string;
+  priority: 'urgent' | 'high' | 'medium' | 'low';
+  status: 'todo' | 'in-progress' | 'completed';
   category: string;
-  deadline?: string;
-  tags: string[];
-  aiScore?: number; // AI difficulty/importance score
+  estimatedMinutes: number;
+  actualMinutes?: number;
+  dueDate?: Date;
+  dependencies?: string[];
+  aiPriorityScore: number;
 }
 
 interface TimeBlock {
   id: string;
   title: string;
-  start: string;
-  end: string;
-  type: 'work' | 'break' | 'meeting' | 'focus' | 'personal';
-  productivity?: number; // 1-10 scale
-  tasks?: string[]; // task IDs
+  startTime: Date;
+  endTime: Date;
+  type: 'focus' | 'meeting' | 'break' | 'buffer';
+  tasks: string[];
+  productivity?: number;
 }
 
 interface FocusSession {
   id: string;
   type: 'pomodoro' | 'deep-work' | 'flow-state';
-  duration: number; // minutes
-  startTime: string;
-  endTime?: string;
-  isActive: boolean;
-  productivity?: number;
+  duration: number;
+  startTime?: Date;
+  endTime?: Date;
+  taskId?: string;
+  status: 'planned' | 'active' | 'completed' | 'paused';
   distractions: number;
+  productivity: number;
 }
 
 export default function PorFlowDashboard() {
-  const [activeView, setActiveView] = useState('dashboard');
+  const [activeTab, setActiveTab] = useState<'overview' | 'tasks' | 'calendar' | 'focus' | 'analytics'>('overview');
   const [loading, setLoading] = useState(true);
   const [currentFocusSession, setCurrentFocusSession] = useState<FocusSession | null>(null);
-  const [todayTasks, setTodayTasks] = useState<Task[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [timeBlocks, setTimeBlocks] = useState<TimeBlock[]>([]);
-  const [productivityScore, setProductivityScore] = useState(0);
-  const [focusTime, setFocusTime] = useState(0);
-  const [completedTasks, setCompletedTasks] = useState(0);
+  const [focusSessions, setFocusSessions] = useState<FocusSession[]>([]);
 
-  // Mock data
+  // Mock data initialization
   useEffect(() => {
-    const timer = setTimeout(() => {
-      // Mock tasks
-      setTodayTasks([
+    setTimeout(() => {
+      // Initialize mock tasks
+      setTasks([
         {
           id: '1',
-          title: 'Finalizare prezentare Q1',
-          description: 'Completez slide-urile cu rezultatele trimestrului',
-          priority: 'high',
+          title: 'Complete PorVerse AI Integration',
+          description: 'Implement OpenAI and Claude integration for all ecosystems',
+          priority: 'urgent',
           status: 'in-progress',
-          estimatedTime: 120,
-          actualTime: 85,
-          category: 'Lucru',
-          deadline: '2025-01-15T17:00',
-          tags: ['prezentare', 'Q1', 'important'],
-          aiScore: 9.2
+          category: 'Development',
+          estimatedMinutes: 240,
+          actualMinutes: 180,
+          dueDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
+          aiPriorityScore: 9.5
         },
         {
-          id: '2',
-          title: 'Review cod pentru feature nou',
-          description: 'Code review pentru implementarea dashboard-ului',
-          priority: 'medium',
+          id: '2', 
+          title: 'Design Marketing Campaign',
+          description: 'Create comprehensive marketing strategy for Q2 launch',
+          priority: 'high',
           status: 'todo',
-          estimatedTime: 60,
-          category: 'Development',
-          deadline: '2025-01-16T12:00',
-          tags: ['code-review', 'dashboard'],
-          aiScore: 7.5
+          category: 'Marketing',
+          estimatedMinutes: 180,
+          dueDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
+          aiPriorityScore: 8.2
         },
         {
           id: '3',
-          title: 'Planificare sprint următorul',
+          title: 'Team Standup Preparation',
+          description: 'Review sprint progress and prepare status updates',
           priority: 'medium',
-          status: 'completed',
-          estimatedTime: 45,
-          actualTime: 40,
-          category: 'Planning',
-          tags: ['sprint', 'planning'],
-          aiScore: 6.8
+          status: 'todo',
+          category: 'Management',
+          estimatedMinutes: 30,
+          dueDate: new Date(Date.now() + 24 * 60 * 60 * 1000),
+          aiPriorityScore: 6.8
         },
         {
           id: '4',
-          title: 'Răspuns la emailuri importante',
-          priority: 'low',
+          title: 'Code Review: Authentication Module',
+          description: 'Review and approve security enhancements',
+          priority: 'high',
           status: 'todo',
-          estimatedTime: 30,
-          category: 'Comunicare',
-          tags: ['email', 'comunicare'],
-          aiScore: 4.2
-        },
-        {
-          id: '5',
-          title: 'Update documentație API',
-          priority: 'medium',
-          status: 'review',
-          estimatedTime: 90,
-          actualTime: 75,
-          category: 'Documentation',
-          deadline: '2025-01-17T15:00',
-          tags: ['API', 'documentație'],
-          aiScore: 7.0
+          category: 'Development',
+          estimatedMinutes: 90,
+          aiPriorityScore: 8.5
         }
       ]);
 
-      // Mock time blocks pentru azi
+      // Initialize time blocks
       setTimeBlocks([
         {
           id: '1',
-          title: 'Deep Work Session',
-          start: '09:00',
-          end: '11:00',
+          title: 'Deep Work: AI Integration',
+          startTime: new Date(Date.now() + 60 * 60 * 1000),
+          endTime: new Date(Date.now() + 4 * 60 * 60 * 1000),
           type: 'focus',
-          productivity: 9,
-          tasks: ['1']
+          tasks: ['1'],
+          productivity: 85
         },
         {
           id: '2',
-          title: 'Team Meeting',
-          start: '11:30',
-          end: '12:30',
-          type: 'meeting',
-          productivity: 7
-        },
-        {
-          id: '3',
-          title: 'Lunch Break',
-          start: '12:30',
-          end: '13:30',
-          type: 'break'
-        },
-        {
-          id: '4',
-          title: 'Code Review Time',
-          start: '14:00',
-          end: '15:30',
-          type: 'work',
-          productivity: 8,
-          tasks: ['2', '5']
-        },
-        {
-          id: '5',
-          title: 'Admin Tasks',
-          start: '16:00',
-          end: '17:00',
-          type: 'work',
-          productivity: 6,
-          tasks: ['4']
+          title: 'Marketing Strategy Session',
+          startTime: new Date(Date.now() + 5 * 60 * 60 * 1000),
+          endTime: new Date(Date.now() + 8 * 60 * 60 * 1000),
+          type: 'focus',
+          tasks: ['2'],
+          productivity: 78
         }
       ]);
 
-      // Calculate metrics
-      const completed = todayTasks.filter(task => task.status === 'completed').length;
-      setCompletedTasks(completed);
-      setProductivityScore(82); // Mock calculation
-      setFocusTime(4.5); // Hours
-
       setLoading(false);
-    }, 1500);
-
-    return () => clearTimeout(timer);
+    }, 1000);
   }, []);
 
-  const getPriorityColor = (priority: Task['priority']) => {
-    switch (priority) {
-      case 'urgent': return '#ef4444';
-      case 'high': return '#f59e0b';
-      case 'medium': return '#06b6d4';
-      case 'low': return '#10b981';
-      default: return '#6b7280';
-    }
-  };
-
-  const getStatusIcon = (status: Task['status']) => {
-    switch (status) {
-      case 'todo': return '⏳';
-      case 'in-progress': return '🔄';
-      case 'review': return '👀';
-      case 'completed': return '✅';
-      default: return '📝';
-    }
-  };
-
-  const startFocusSession = (type: FocusSession['type'], duration: number) => {
+  const startFocusSession = (type: FocusSession['type'], duration: number, taskId?: string) => {
     const session: FocusSession = {
       id: Date.now().toString(),
       type,
       duration,
-      startTime: new Date().toISOString(),
-      isActive: true,
-      distractions: 0
+      startTime: new Date(),
+      status: 'active',
+      taskId,
+      distractions: 0,
+      productivity: 0
     };
     setCurrentFocusSession(session);
   };
 
-  const stopFocusSession = () => {
+  const endFocusSession = () => {
     if (currentFocusSession) {
-      setCurrentFocusSession({
+      const completedSession = {
         ...currentFocusSession,
-        endTime: new Date().toISOString(),
-        isActive: false,
-        productivity: Math.floor(Math.random() * 3) + 8 // Mock 8-10
-      });
+        endTime: new Date(),
+        status: 'completed' as const,
+        productivity: Math.floor(Math.random() * 30) + 70 // Mock productivity score
+      };
+      setFocusSessions(prev => [...prev, completedSession]);
+      setCurrentFocusSession(null);
     }
   };
 
-  const formatTime = (minutes: number) => {
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-    if (hours > 0) {
-      return `${hours}h ${mins}m`;
+  const getPriorityColor = (priority: Task['priority']) => {
+    switch (priority) {
+      case 'urgent': return 'var(--pf-urgent)';
+      case 'high': return 'var(--pf-warning)';
+      case 'medium': return 'var(--pf-primary)';
+      case 'low': return 'var(--pf-success)';
+      default: return 'var(--pf-primary)';
     }
-    return `${mins}m`;
   };
 
-  const getAITaskSuggestion = () => {
-    const suggestions = [
-      "🎯 Bazat pe energia ta matinală, recomand să începi cu 'Finalizare prezentare Q1' - este taskul cu cel mai mare impact.",
-      "⚡ Ai 30 de minute libere între întâlniri. Perfect pentru 'Răspuns la emailuri importante'.",
-      "🧠 Nivelul tău de focus este optim acum. Perioada ideală pentru taskuri complexe care necesită concentrare profundă.",
-      "📈 Performanța ta este cu 15% mai bună când lucrezi la documentație după-amiaza. Planific 'Update documentație API' pentru după-amiaza.",
-      "⏰ Ai tendința să subestimezi timpul pentru code review. Adaug 15 minute extra la estimarea pentru 'Review cod pentru feature nou'."
-    ];
-    
-    return suggestions[Math.floor(Math.random() * suggestions.length)];
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString('ro-RO', { 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    });
   };
 
   if (loading) {
     return (
-      <div className={styles.dashboard}>
-        <div className={styles.loadingScreen}>
-          <div className={styles.loadingSpinner}></div>
-          <h2>Optimizez workflow-ul tău...</h2>
-          <p>Analizez taskurile și calculez prioritățile AI</p>
-        </div>
+      <div className={styles.loadingScreen}>
+        <div className={styles.loadingSpinner}></div>
+        <h2>Optimizăm productivitatea ta...</h2>
+        <p>Analizăm pattern-urile și pregătim recomendările AI</p>
       </div>
     );
   }
 
   return (
     <div className={styles.dashboard}>
-      {/* SIDEBAR */}
-      <nav className={styles.sidebar}>
-        <div className={styles.sidebarLogo}>
-          <Link href="/" className={styles.logo}>🌊 PorFlow</Link>
-        </div>
-
-        <div className={styles.navSection}>
-          <div className={styles.navSectionTitle}>Overview</div>
-          <button 
-            className={`${styles.navItem} ${activeView === 'dashboard' ? styles.active : ''}`}
-            onClick={() => setActiveView('dashboard')}
-          >
-            <span className={styles.navItemIcon}>📊</span>
-            Dashboard
-          </button>
-          <button 
-            className={`${styles.navItem} ${activeView === 'tasks' ? styles.active : ''}`}
-            onClick={() => setActiveView('tasks')}
-          >
-            <span className={styles.navItemIcon}>✅</span>
-            Task Management
-          </button>
-          <button 
-            className={`${styles.navItem} ${activeView === 'calendar' ? styles.active : ''}`}
-            onClick={() => setActiveView('calendar')}
-          >
-            <span className={styles.navItemIcon}>📅</span>
-            Time Blocking
-          </button>
-          <button 
-            className={`${styles.navItem} ${activeView === 'focus' ? styles.active : ''}`}
-            onClick={() => setActiveView('focus')}
-          >
-            <span className={styles.navItemIcon}>🎯</span>
-            Focus Sessions
-          </button>
-        </div>
-
-        <div className={styles.navSection}>
-          <div className={styles.navSectionTitle}>AI Tools</div>
-          <button 
-            className={`${styles.navItem} ${activeView === 'ai-optimizer' ? styles.active : ''}`}
-            onClick={() => setActiveView('ai-optimizer')}
-          >
-            <span className={styles.navItemIcon}>🤖</span>
-            AI Task Optimizer
-          </button>
-          <button 
-            className={`${styles.navItem} ${activeView === 'workflow' ? styles.active : ''}`}
-            onClick={() => setActiveView('workflow')}
-          >
-            <span className={styles.navItemIcon}>⚡</span>
-            Workflow Builder
-          </button>
-          <button 
-            className={`${styles.navItem} ${activeView === 'analytics' ? styles.active : ''}`}
-            onClick={() => setActiveView('analytics')}
-          >
-            <span className={styles.navItemIcon}>📈</span>
-            Productivity Analytics
-          </button>
-        </div>
-
-        <div className={styles.navSection}>
-          <div className={styles.navSectionTitle}>Integration</div>
-          <button 
-            className={`${styles.navItem} ${activeView === 'calendar-sync' ? styles.active : ''}`}
-            onClick={() => setActiveView('calendar-sync')}
-          >
-            <span className={styles.navItemIcon}>🔄</span>
-            Calendar Sync
-          </button>
-          <button 
-            className={`${styles.navItem} ${activeView === 'automation' ? styles.active : ''}`}
-            onClick={() => setActiveView('automation')}
-          >
-            <span className={styles.navItemIcon}>🔧</span>
-            Automation
-          </button>
-        </div>
-      </nav>
-
-      {/* HEADER */}
-      <header className={styles.header}>
-        <div className={styles.headerLeft}>
-          <h1>⚡ Flow State Dashboard</h1>
-          <p>Scor productivitate: <span className={styles.productivityScore}>{productivityScore}%</span> • Focus astăzi: <span className={styles.focusTime}>{focusTime}h</span></p>
-        </div>
-        <div className={styles.headerRight}>
-          <div className={styles.headerStats}>
-            <div className={styles.statItem}>
-              <div className={styles.statValue}>{completedTasks}</div>
-              <div className={styles.statLabel}>Taskuri finalizate</div>
-            </div>
-            <div className={styles.statItem}>
-              <div className={styles.statValue}>{todayTasks.filter(t => t.status === 'in-progress').length}</div>
-              <div className={styles.statLabel}>În progres</div>
-            </div>
-            <div className={styles.statItem}>
-              <div className={styles.statValue}>{todayTasks.filter(t => t.priority === 'high' || t.priority === 'urgent').length}</div>
-              <div className={styles.statLabel}>Prioritate mare</div>
-            </div>
+      {/* Sidebar */}
+      <aside className={styles.sidebar}>
+        <div className={styles.sidebarHeader}>
+          <div className={styles.logoSection}>
+            <span className={styles.logoIcon}>🌊</span>
+            <h1>PorFlow</h1>
           </div>
-          <div className={styles.headerActions}>
-            {currentFocusSession?.isActive ? (
-              <button 
-                className={`${styles.headerBtn} ${styles.activeFocus}`}
-                onClick={stopFocusSession}
-                title="Stop Focus Session"
-              >
-                ⏸️
-              </button>
-            ) : (
-              <button 
-                className={styles.headerBtn}
-                onClick={() => startFocusSession('pomodoro', 25)}
-                title="Start Focus Session"
-              >
-                🎯
-              </button>
-            )}
-            <button className={styles.headerBtn} title="Notificări">🔔</button>
-            <button className={styles.headerBtn} title="Setări">⚙️</button>
-            <button className={styles.headerBtn} title="Profil">👤</button>
+          <p>Productivitate Maximă</p>
+        </div>
+
+        <nav className={styles.sidebarNav}>
+          <button 
+            className={`${styles.navItem} ${activeTab === 'overview' ? styles.active : ''}`}
+            onClick={() => setActiveTab('overview')}
+          >
+            <TrendingUp size={20} />
+            <span>Overview</span>
+          </button>
+          <button 
+            className={`${styles.navItem} ${activeTab === 'tasks' ? styles.active : ''}`}
+            onClick={() => setActiveTab('tasks')}
+          >
+            <CheckCircle size={20} />
+            <span>Task Manager</span>
+          </button>
+          <button 
+            className={`${styles.navItem} ${activeTab === 'calendar' ? styles.active : ''}`}
+            onClick={() => setActiveTab('calendar')}
+          >
+            <Calendar size={20} />
+            <span>Time Blocks</span>
+          </button>
+          <button 
+            className={`${styles.navItem} ${activeTab === 'focus' ? styles.active : ''}`}
+            onClick={() => setActiveTab('focus')}
+          >
+            <Brain size={20} />
+            <span>Focus Sessions</span>
+          </button>
+          <button 
+            className={`${styles.navItem} ${activeTab === 'analytics' ? styles.active : ''}`}
+            onClick={() => setActiveTab('analytics')}
+          >
+            <BarChart3 size={20} />
+            <span>Analytics</span>
+          </button>
+        </nav>
+
+        {/* Current Focus Session */}
+        {currentFocusSession && (
+          <div className={styles.activeFocus}>
+            <h3>🔥 Sesiune Activă</h3>
+            <div className={styles.focusTimer}>
+              <Timer size={24} />
+              <span>{Math.floor(currentFocusSession.duration / 60)}:{(currentFocusSession.duration % 60).toString().padStart(2, '0')}</span>
+            </div>
+            <p>{currentFocusSession.type === 'pomodoro' ? 'Pomodoro' : 
+               currentFocusSession.type === 'deep-work' ? 'Deep Work' : 'Flow State'}</p>
+            <button className={styles.endFocusBtn} onClick={endFocusSession}>
+              <Pause size={16} />
+              Finalizează
+            </button>
+          </div>
+        )}
+
+        {/* Quick Stats */}
+        <div className={styles.quickStats}>
+          <div className={styles.statItem}>
+            <span>Taskuri Astăzi</span>
+            <strong>{tasks.filter(t => t.status === 'completed').length}/{tasks.length}</strong>
+          </div>
+          <div className={styles.statItem}>
+            <span>Productivitate</span>
+            <strong>85%</strong>
+          </div>
+          <div className={styles.statItem}>
+            <span>Focus Time</span>
+            <strong>4.2h</strong>
           </div>
         </div>
-      </header>
+      </aside>
 
-      {/* MAIN CONTENT */}
+      {/* Main Content */}
       <main className={styles.mainContent}>
-        {activeView === 'dashboard' && (
-          <>
-            {/* Welcome Section */}
-            <section className={styles.welcomeSection}>
-              <h2>🌟 Bună dimineața, Alex!</h2>
-              <p>Ziua ta este optimizată pentru productivitate maximă. Ai 5 taskuri planificate și 4.5h timp de deep work.</p>
-            </section>
+        {activeTab === 'overview' && (
+          <div className={styles.overviewTab}>
+            <header className={styles.tabHeader}>
+              <div>
+                <h1>🌊 Productivity Overview</h1>
+                <p>Analiza completă a productivității tale cu AI insights</p>
+              </div>
+              <div className={styles.headerActions}>
+                <button className={styles.optimizeBtn}>
+                  <Zap size={16} />
+                  Optimizează Ziua
+                </button>
+              </div>
+            </header>
 
-            {/* AI Suggestion Card */}
-            <section className={styles.aiSuggestionSection}>
-              <div className={styles.aiSuggestionCard}>
-                <div className={styles.aiAvatar}>🤖</div>
-                <div className={styles.aiContent}>
-                  <h3>AI Productivity Insight</h3>
-                  <p>{getAITaskSuggestion()}</p>
-                </div>
-                <button className={styles.applySuggestion}>Aplică</button>
+            {/* Priority Tasks */}
+            <section className={styles.prioritySection}>
+              <h2>🎯 Priorități Astăzi</h2>
+              <div className={styles.priorityTasksGrid}>
+                {tasks.filter(t => t.priority === 'urgent' || t.priority === 'high').map(task => (
+                  <div key={task.id} className={styles.priorityTask}>
+                    <div className={styles.taskHeader}>
+                      <span className={styles.priorityBadge} style={{ backgroundColor: getPriorityColor(task.priority) }}>
+                        {task.priority.toUpperCase()}
+                      </span>
+                      <span className={styles.aiScore}>AI: {task.aiPriorityScore}/10</span>
+                    </div>
+                    <h3>{task.title}</h3>
+                    <p>{task.description}</p>
+                    <div className={styles.taskMeta}>
+                      <span>⏱️ {task.estimatedMinutes}min</span>
+                      <span>📁 {task.category}</span>
+                    </div>
+                  </div>
+                ))}
               </div>
             </section>
 
-            {/* Current Focus Session */}
-            {currentFocusSession?.isActive && (
-              <section className={styles.focusSessionActive}>
-                <div className={styles.focusHeader}>
-                  <h3>🎯 Focus Session Activ</h3>
-                  <span className={styles.sessionType}>
-                    {currentFocusSession.type === 'pomodoro' && '🍅 Pomodoro'}
-                    {currentFocusSession.type === 'deep-work' && '🧠 Deep Work'}
-                    {currentFocusSession.type === 'flow-state' && '🌊 Flow State'}
-                  </span>
+            {/* AI Optimizer */}
+            <section className={styles.aiOptimizerSection}>
+              <h2>🤖 AI Productivity Optimizer</h2>
+              <div className={styles.optimizerCards}>
+                <div className={styles.optimizerCard}>
+                  <Brain size={32} />
+                  <h3>Schedule Optimization</h3>
+                  <p>AI analizează pattern-urile tale și sugerează cel mai eficient program</p>
+                  <button className={styles.cardAction}>Optimizează Schedule</button>
                 </div>
-                <div className={styles.focusTimer}>
-                  <div className={styles.timerDisplay}>24:35</div>
-                  <div className={styles.timerProgress}>
-                    <div className={styles.progressBar} style={{ width: '65%' }}></div>
+                
+                <div className={styles.optimizerCard}>
+                  <Target size={32} />
+                  <h3>Focus Block Planner</h3>
+                  <p>Creează automat blocuri de timp pentru deep work bazat pe energia ta</p>
+                  <button className={styles.cardAction}>Planifică Focus</button>
+                </div>
+                
+                <div className={styles.optimizerCard}>
+                  <TrendingUp size={32} />
+                  <h3>Productivity Insights</h3>
+                  <p>Analiză avansată a performanței cu recomendări personalizate</p>
+                  <button className={styles.cardAction}>Vezi Insights</button>
+                </div>
+              </div>
+            </section>
+
+            {/* Schedule Comparison */}
+            <section className={styles.scheduleSection}>
+              <h2>📅 AI vs Current Schedule</h2>
+              <div className={styles.scheduleComparison}>
+                <div className={styles.scheduleColumn}>
+                  <h3>Current Schedule</h3>
+                  <div className={styles.scheduleBlocks}>
+                    <div className={styles.scheduleBlock}>
+                      <span>09:00 - 11:00</span>
+                      <p>Mixed Tasks</p>
+                    </div>
+                    <div className={styles.scheduleBlock}>
+                      <span>11:00 - 12:30</span>
+                      <p>Meetings</p>
+                    </div>
+                    <div className={styles.scheduleBlock}>
+                      <span>13:00 - 17:00</span>
+                      <p>Development</p>
+                    </div>
+                  </div>
+                  <div className={styles.scheduleStats}>
+                    <span>Productivitate estimată: 68%</span>
                   </div>
                 </div>
-                <div className={styles.focusActions}>
-                  <button className={styles.pauseBtn}>⏸️ Pauză</button>
-                  <button className={styles.stopBtn} onClick={stopFocusSession}>⏹️ Stop</button>
-                  <button className={styles.distractionBtn}>📱 Distracție</button>
+                
+                <div className={styles.scheduleArrow}>→</div>
+                
+                <div className={styles.scheduleColumn}>
+                  <h3>AI Optimized</h3>
+                  <div className={styles.scheduleBlocks}>
+                    <div className={styles.scheduleBlock}>
+                      <span>09:00 - 11:30</span>
+                      <p>Deep Work Block</p>
+                    </div>
+                    <div className={styles.scheduleBlock}>
+                      <span>11:30 - 12:00</span>
+                      <p>Quick Tasks</p>
+                    </div>
+                    <div className={styles.scheduleBlock}>
+                      <span>13:00 - 15:00</span>
+                      <p>Focus Development</p>
+                    </div>
+                  </div>
+                  <div className={styles.scheduleStats}>
+                    <span>Productivitate estimată: 89%</span>
+                  </div>
                 </div>
-              </section>
-            )}
+              </div>
+            </section>
+          </div>
+        )}
 
-            {/* Today's Priority Tasks */}
-            <section className={styles.priorityTasksSection}>
-              <h3>🎯 Taskuri Prioritare Astăzi</h3>
-              <div className={styles.priorityTasksGrid}>
-                {todayTasks
-                  .filter(task => task.priority === 'high' || task.priority === 'urgent')
-                  .map(task => (
-                    <div key={task.id} className={styles.priorityTaskCard}>
+        {activeTab === 'tasks' && (
+          <div className={styles.tasksTab}>
+            <header className={styles.tabHeader}>
+              <div>
+                <h1>📋 Task Manager AI</h1>
+                <p>Gestionează taskurile cu prioritizare inteligentă</p>
+              </div>
+              <div className={styles.headerActions}>
+                <button className={styles.addTaskBtn}>
+                  <Plus size={16} />
+                  Adaugă Task
+                </button>
+              </div>
+            </header>
+
+            {/* Tasks Kanban Board */}
+            <div className={styles.tasksKanban}>
+              <div className={styles.kanbanColumn}>
+                <h3>To Do ({tasks.filter(t => t.status === 'todo').length})</h3>
+                <div className={styles.kanbanTasks}>
+                  {tasks.filter(t => t.status === 'todo').map(task => (
+                    <div key={task.id} className={styles.kanbanTask}>
                       <div className={styles.taskHeader}>
-                        <span className={styles.taskStatus}>{getStatusIcon(task.status)}</span>
                         <h4>{task.title}</h4>
-                        <div 
-                          className={styles.taskPriority}
-                          style={{ backgroundColor: getPriorityColor(task.priority) }}
-                        >
+                        <span className={styles.priorityBadge} style={{ backgroundColor: getPriorityColor(task.priority) }}>
                           {task.priority}
-                        </div>
+                        </span>
                       </div>
-                      <p className={styles.taskDescription}>{task.description}</p>
-                      <div className={styles.taskMeta}>
-                        <span className={styles.taskTime}>⏱️ {formatTime(task.estimatedTime)}</span>
-                        <span className={styles.taskAI}>🤖 {task.aiScore}/10</span>
-                        {task.deadline && (
-                          <span className={styles.taskDeadline}>
-                            📅 {new Date(task.deadline).toLocaleDateString('ro-RO')}
-                          </span>
-                        )}
-                      </div>
-                      <div className={styles.taskTags}>
-                        {task.tags.map(tag => (
-                          <span key={tag} className={styles.taskTag}>{tag}</span>
-                        ))}
+                      <p>{task.description}</p>
+                      <div className={styles.taskFooter}>
+                        <span>⏱️ {task.estimatedMinutes}min</span>
+                        <span>AI: {task.aiPriorityScore}/10</span>
                       </div>
                     </div>
                   ))}
+                </div>
               </div>
-            </section>
-
-            {/* Time Blocks Today */}
-            <section className={styles.timeBlocksSection}>
-              <h3>📅 Programul de Astăzi</h3>
-              <div className={styles.timeBlocksTimeline}>
-                {timeBlocks.map(block => (
-                  <div key={block.id} className={`${styles.timeBlock} ${styles[block.type]}`}>
-                    <div className={styles.timeBlockTime}>
-                      {block.start} - {block.end}
-                    </div>
-                    <div className={styles.timeBlockContent}>
-                      <h4>{block.title}</h4>
-                      {block.productivity && (
-                        <div className={styles.productivityIndicator}>
-                          <span>Productivitate: {block.productivity}/10</span>
-                          <div className={styles.productivityBar}>
+              
+              <div className={styles.kanbanColumn}>
+                <h3>In Progress ({tasks.filter(t => t.status === 'in-progress').length})</h3>
+                <div className={styles.kanbanTasks}>
+                  {tasks.filter(t => t.status === 'in-progress').map(task => (
+                    <div key={task.id} className={styles.kanbanTask}>
+                      <div className={styles.taskHeader}>
+                        <h4>{task.title}</h4>
+                        <span className={styles.priorityBadge} style={{ backgroundColor: getPriorityColor(task.priority) }}>
+                          {task.priority}
+                        </span>
+                      </div>
+                      <p>{task.description}</p>
+                      {task.actualMinutes && (
+                        <div className={styles.progressIndicator}>
+                          <span>Progres: {Math.round((task.actualMinutes / task.estimatedMinutes) * 100)}%</span>
+                          <div className={styles.progressBar}>
                             <div 
-                              className={styles.productivityFill}
-                              style={{ width: `${block.productivity * 10}%` }}
+                              className={styles.progressFill} 
+                              style={{ width: `${Math.min((task.actualMinutes / task.estimatedMinutes) * 100, 100)}%` }}
                             ></div>
                           </div>
                         </div>
                       )}
-                      {block.tasks && block.tasks.length > 0 && (
-                        <div className={styles.blockTasks}>
-                          {block.tasks.map(taskId => {
-                            const task = todayTasks.find(t => t.id === taskId);
-                            return task ? (
-                              <span key={taskId} className={styles.blockTask}>
-                                {task.title}
-                              </span>
-                            ) : null;
-                          })}
+                      <div className={styles.taskFooter}>
+                        <span>⏱️ {task.actualMinutes || 0}/{task.estimatedMinutes}min</span>
+                        <span>AI: {task.aiPriorityScore}/10</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              <div className={styles.kanbanColumn}>
+                <h3>Completed ({tasks.filter(t => t.status === 'completed').length})</h3>
+                <div className={styles.kanbanTasks}>
+                  {tasks.filter(t => t.status === 'completed').map(task => (
+                    <div key={task.id} className={`${styles.kanbanTask} ${styles.completedTask}`}>
+                      <div className={styles.taskHeader}>
+                        <h4>{task.title}</h4>
+                        <CheckCircle className={styles.completedIcon} size={20} />
+                      </div>
+                      <p>{task.description}</p>
+                      <div className={styles.taskFooter}>
+                        <span>✅ Completat</span>
+                        <span>AI: {task.aiPriorityScore}/10</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'calendar' && (
+          <div className={styles.calendarTab}>
+            <header className={styles.tabHeader}>
+              <div>
+                <h1>📅 Time Blocks & Calendar</h1>
+                <p>Optimizează timpul cu blocuri inteligente de productivitate</p>
+              </div>
+            </header>
+
+            {/* Today's Schedule */}
+            <section className={styles.todaySchedule}>
+              <h2>Programul de Astăzi</h2>
+              <div className={styles.timelineContainer}>
+                {timeBlocks.map(block => (
+                  <div key={block.id} className={styles.timeBlock}>
+                    <div className={styles.timeBlockTime}>
+                      <span>{formatTime(block.startTime)}</span>
+                      <span>{formatTime(block.endTime)}</span>
+                    </div>
+                    <div className={styles.timeBlockContent}>
+                      <h3>{block.title}</h3>
+                      <p>Tip: {block.type}</p>
+                      {block.productivity && (
+                        <div className={styles.productivityBadge}>
+                          Productivitate: {block.productivity}%
                         </div>
                       )}
+                    </div>
+                    <div className={styles.timeBlockActions}>
+                      <button className={styles.editBlockBtn}>Edit</button>
                     </div>
                   </div>
                 ))}
@@ -506,309 +513,169 @@ export default function PorFlowDashboard() {
 
             {/* Quick Actions */}
             <section className={styles.quickActionsSection}>
-              <h3>⚡ Quick Actions</h3>
+              <h2>Acțiuni Rapide</h2>
               <div className={styles.quickActions}>
-                <button 
-                  className={styles.actionBtn}
-                  onClick={() => startFocusSession('pomodoro', 25)}
-                >
-                  <span className={styles.actionIcon}>🍅</span>
-                  Start Pomodoro (25min)
+                <button className={styles.quickActionBtn}>
+                  <Plus size={20} />
+                  Adaugă Bloc Focus
                 </button>
-                <button 
-                  className={styles.actionBtn}
-                  onClick={() => startFocusSession('deep-work', 90)}
-                >
-                  <span className={styles.actionIcon}>🧠</span>
-                  Deep Work (90min)
+                <button className={styles.quickActionBtn}>
+                  <Calendar size={20} />
+                  Sincronizează Calendar
                 </button>
-                <button className={styles.actionBtn}>
-                  <span className={styles.actionIcon}>📝</span>
-                  Add Quick Task
-                </button>
-                <button className={styles.actionBtn}>
-                  <span className={styles.actionIcon}>📊</span>
-                  View Analytics
-                </button>
-                <button className={styles.actionBtn}>
-                  <span className={styles.actionIcon}>🔄</span>
-                  Auto-Schedule
+                <button className={styles.quickActionBtn}>
+                  <Zap size={20} />
+                  Auto-Optimizare
                 </button>
               </div>
             </section>
-          </>
+          </div>
         )}
 
-        {activeView === 'ai-optimizer' && (
-          <section className={styles.aiOptimizerSection}>
-            <div className={styles.optimizerHeader}>
-              <h2>🤖 AI Task Optimizer</h2>
-              <p>Algoritmul AI analizează taskurile tale și optimizează ordinea pentru productivitate maximă</p>
-            </div>
-
-            <div className={styles.optimizerInterface}>
-              <div className={styles.optimizerCards}>
-                <div className={styles.optimizerCard}>
-                  <h3>📊 Analiză Curentă</h3>
-                  <div className={styles.analysisMetrics}>
-                    <div className={styles.metric}>
-                      <span className={styles.metricLabel}>Taskuri analizate:</span>
-                      <span className={styles.metricValue}>{todayTasks.length}</span>
-                    </div>
-                    <div className={styles.metric}>
-                      <span className={styles.metricLabel}>Timp total estimat:</span>
-                      <span className={styles.metricValue}>
-                        {formatTime(todayTasks.reduce((sum, task) => sum + task.estimatedTime, 0))}
-                      </span>
-                    </div>
-                    <div className={styles.metric}>
-                      <span className={styles.metricLabel}>Scor AI mediu:</span>
-                      <span className={styles.metricValue}>
-                        {(todayTasks.reduce((sum, task) => sum + (task.aiScore || 0), 0) / todayTasks.length).toFixed(1)}/10
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className={styles.optimizerCard}>
-                  <h3>⚡ Optimizare Sugerată</h3>
-                  <div className={styles.optimizationSuggestions}>
-                    <div className={styles.suggestion}>
-                      <span className={styles.suggestionIcon}>🎯</span>
-                      <span>Reprogramează taskurile în funcție de energia naturală</span>
-                    </div>
-                    <div className={styles.suggestion}>
-                      <span className={styles.suggestionIcon}>⏰</span>
-                      <span>Grupează taskurile similare pentru eficiență maximă</span>
-                    </div>
-                    <div className={styles.suggestion}>
-                      <span className={styles.suggestionIcon}>🧠</span>
-                      <span>Plasează taskurile complexe în orele de vârf</span>
-                    </div>
-                  </div>
-                  <button className={styles.applyOptimization}>Aplică Optimizarea</button>
-                </div>
+        {activeTab === 'focus' && (
+          <div className={styles.focusTab}>
+            <header className={styles.tabHeader}>
+              <div>
+                <h1>🧠 Focus Sessions</h1>
+                <p>Sesiuni de concentrare profundă cu tracking AI</p>
               </div>
+            </header>
 
-              <div className={styles.optimizedSchedule}>
-                <h3>📋 Program Optimizat AI</h3>
-                <div className={styles.scheduleComparison}>
-                  <div className={styles.scheduleColumn}>
-                    <h4>Program Actual</h4>
-                    <div className={styles.taskList}>
-                      {todayTasks.map(task => (
-                        <div key={task.id} className={styles.scheduleTask}>
-                          <span className={styles.taskTitle}>{task.title}</span>
-                          <span className={styles.taskDuration}>{formatTime(task.estimatedTime)}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div className={styles.scheduleArrow}>→</div>
-                  
-                  <div className={styles.scheduleColumn}>
-                    <h4>Program Optimizat AI</h4>
-                    <div className={styles.taskList}>
-                      {[...todayTasks]
-                        .sort((a, b) => (b.aiScore || 0) - (a.aiScore || 0))
-                        .map(task => (
-                        <div key={task.id} className={styles.scheduleTask}>
-                          <span className={styles.taskTitle}>{task.title}</span>
-                          <span className={styles.taskDuration}>{formatTime(task.estimatedTime)}</span>
-                          <span className={styles.aiImprovement}>+{Math.floor(Math.random() * 20 + 10)}%</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-        )}
-
-        {activeView === 'focus' && (
-          <section className={styles.focusSection}>
-            <h2>🎯 Focus Sessions & Deep Work</h2>
-            
-            <div className={styles.focusOptions}>
-              <div className={styles.focusCard} onClick={() => startFocusSession('pomodoro', 25)}>
-                <div className={styles.focusIcon}>🍅</div>
-                <h3>Pomodoro</h3>
-                <p>25 minute focus + 5 minute break</p>
-                <div className={styles.focusStats}>
-                  <span>Sessions astăzi: 3</span>
-                  <span>Success rate: 85%</span>
-                </div>
-              </div>
-
-              <div className={styles.focusCard} onClick={() => startFocusSession('deep-work', 90)}>
-                <div className={styles.focusIcon}>🧠</div>
-                <h3>Deep Work</h3>
-                <p>90 minute intensive focus session</p>
-                <div className={styles.focusStats}>
-                  <span>Sessions astăzi: 1</span>
-                  <span>Avg productivity: 9.2/10</span>
-                </div>
-              </div>
-
-              <div className={styles.focusCard} onClick={() => startFocusSession('flow-state', 120)}>
-                <div className={styles.focusIcon}>🌊</div>
-                <h3>Flow State</h3>
-                <p>2+ ore pentru proiecte complexe</p>
-                <div className={styles.focusStats}>
-                  <span>Sessions această săptămână: 2</span>
-                  <span>Peak performance: 9.8/10</span>
-                </div>
-              </div>
-            </div>
-
-            <div className={styles.focusHistory}>
-              <h3>📈 Istoric Focus Sessions</h3>
-              <div className={styles.sessionHistory}>
-                <div className={styles.historyItem}>
-                  <div className={styles.historyTime}>09:00 - 10:30</div>
-                  <div className={styles.historyType}>🧠 Deep Work</div>
-                  <div className={styles.historyProductivity}>
-                    <span>Productivitate: 9.2/10</span>
-                    <div className={styles.productivityBar}>
-                      <div className={styles.productivityFill} style={{ width: '92%' }}></div>
-                    </div>
-                  </div>
-                  <div className={styles.historyDistractions}>2 distracții</div>
+            {/* Focus Options */}
+            <section className={styles.focusOptionsSection}>
+              <h2>Selectează Tipul de Sesiune</h2>
+              <div className={styles.focusOptions}>
+                <div className={styles.focusOption} onClick={() => startFocusSession('pomodoro', 25)}>
+                  <div className={styles.focusIcon}>🍅</div>
+                  <h3>Pomodoro</h3>
+                  <p>25 min focus + 5 min pauză</p>
+                  <span className={styles.duration}>25 min</span>
                 </div>
                 
-                <div className={styles.historyItem}>
-                  <div className={styles.historyTime}>11:45 - 12:10</div>
-                  <div className={styles.historyType}>🍅 Pomodoro</div>
-                  <div className={styles.historyProductivity}>
-                    <span>Productivitate: 8.5/10</span>
-                    <div className={styles.productivityBar}>
-                      <div className={styles.productivityFill} style={{ width: '85%' }}></div>
+                <div className={styles.focusOption} onClick={() => startFocusSession('deep-work', 90)}>
+                  <div className={styles.focusIcon}>🧠</div>
+                  <h3>Deep Work</h3>
+                  <p>1.5 ore de muncă profundă</p>
+                  <span className={styles.duration}>90 min</span>
+                </div>
+                
+                <div className={styles.focusOption} onClick={() => startFocusSession('flow-state', 120)}>
+                  <div className={styles.focusIcon}>🌊</div>
+                  <h3>Flow State</h3>
+                  <p>2 ore de flow complet</p>
+                  <span className={styles.duration}>120 min</span>
+                </div>
+              </div>
+            </section>
+
+            {/* Recent Sessions */}
+            <section className={styles.recentSessionsSection}>
+              <h2>Sesiuni Recente</h2>
+              <div className={styles.sessionsHistory}>
+                {focusSessions.slice(-5).map(session => (
+                  <div key={session.id} className={styles.historyItem}>
+                    <div className={styles.sessionIcon}>
+                      {session.type === 'pomodoro' ? '🍅' : 
+                       session.type === 'deep-work' ? '🧠' : '🌊'}
+                    </div>
+                    <div className={styles.sessionDetails}>
+                      <h4>{session.type === 'pomodoro' ? 'Pomodoro' : 
+                           session.type === 'deep-work' ? 'Deep Work' : 'Flow State'}</h4>
+                      <p>{session.duration} min • Productivitate: {session.productivity}%</p>
+                    </div>
+                    <div className={styles.sessionTime}>
+                      {session.startTime && formatTime(session.startTime)}
                     </div>
                   </div>
-                  <div className={styles.historyDistractions}>1 distracție</div>
-                </div>
+                ))}
               </div>
-            </div>
-          </section>
+            </section>
+          </div>
         )}
 
-        {activeView === 'tasks' && (
-          <section className={styles.tasksSection}>
-            <div className={styles.tasksHeader}>
-              <h2>✅ Task Management</h2>
-              <button className={styles.addTaskBtn}>+ Adaugă Task</button>
-            </div>
+        {activeTab === 'analytics' && (
+          <div className={styles.analyticsTab}>
+            <header className={styles.tabHeader}>
+              <div>
+                <h1>📊 Productivity Analytics</h1>
+                <p>Insights detaliate despre productivitatea ta</p>
+              </div>
+            </header>
 
-            <div className={styles.tasksFilters}>
-              <button className={styles.filterBtn}>Toate</button>
-              <button className={styles.filterBtn}>Astăzi</button>
-              <button className={styles.filterBtn}>Prioritate mare</button>
-              <button className={styles.filterBtn}>În progres</button>
-              <button className={styles.filterBtn}>Completate</button>
-            </div>
+            {/* Analytics Dashboard */}
+            <div className={styles.analyticsGrid}>
+              <div className={styles.analyticsCard}>
+                <h3>📈 Productivitate Săptămânală</h3>
+                <div className={styles.chartPlaceholder}>
+                  <div className={styles.mockChart}>
+                    <div className={styles.chartBar} style={{ height: '70%' }}>L</div>
+                    <div className={styles.chartBar} style={{ height: '85%' }}>M</div>
+                    <div className={styles.chartBar} style={{ height: '60%' }}>M</div>
+                    <div className={styles.chartBar} style={{ height: '90%' }}>J</div>
+                    <div className={styles.chartBar} style={{ height: '75%' }}>V</div>
+                    <div className={styles.chartBar} style={{ height: '45%' }}>S</div>
+                    <div className={styles.chartBar} style={{ height: '20%' }}>D</div>
+                  </div>
+                </div>
+                <p>Cea mai productivă zi: Joi (90%)</p>
+              </div>
 
-            <div className={styles.tasksKanban}>
-              <div className={styles.kanbanColumn}>
-                <h3>📝 To Do ({todayTasks.filter(t => t.status === 'todo').length})</h3>
-                <div className={styles.kanbanTasks}>
-                  {todayTasks.filter(task => task.status === 'todo').map(task => (
-                    <div key={task.id} className={styles.kanbanTask}>
-                      <div className={styles.taskHeader}>
-                        <h4>{task.title}</h4>
-                        <div 
-                          className={styles.taskPriority}
-                          style={{ backgroundColor: getPriorityColor(task.priority) }}
-                        >
-                          {task.priority}
-                        </div>
-                      </div>
-                      <p>{task.description}</p>
-                      <div className={styles.taskFooter}>
-                        <span>⏱️ {formatTime(task.estimatedTime)}</span>
-                        <span>🤖 {task.aiScore}/10</span>
-                      </div>
+              <div className={styles.analyticsCard}>
+                <h3>⏰ Focus Time Distribution</h3>
+                <div className={styles.focusDistribution}>
+                  <div className={styles.distributionItem}>
+                    <span>🍅 Pomodoro</span>
+                    <div className={styles.distributionBar}>
+                      <div style={{ width: '45%', backgroundColor: 'var(--pf-pomodoro)' }}></div>
                     </div>
-                  ))}
+                    <span>45%</span>
+                  </div>
+                  <div className={styles.distributionItem}>
+                    <span>🧠 Deep Work</span>
+                    <div className={styles.distributionBar}>
+                      <div style={{ width: '35%', backgroundColor: 'var(--pf-deep-work)' }}></div>
+                    </div>
+                    <span>35%</span>
+                  </div>
+                  <div className={styles.distributionItem}>
+                    <span>🌊 Flow State</span>
+                    <div className={styles.distributionBar}>
+                      <div style={{ width: '20%', backgroundColor: 'var(--pf-flow-state)' }}></div>
+                    </div>
+                    <span>20%</span>
+                  </div>
                 </div>
               </div>
 
-              <div className={styles.kanbanColumn}>
-                <h3>🔄 În Progres ({todayTasks.filter(t => t.status === 'in-progress').length})</h3>
-                <div className={styles.kanbanTasks}>
-                  {todayTasks.filter(task => task.status === 'in-progress').map(task => (
-                    <div key={task.id} className={styles.kanbanTask}>
-                      <div className={styles.taskHeader}>
-                        <h4>{task.title}</h4>
-                        <div 
-                          className={styles.taskPriority}
-                          style={{ backgroundColor: getPriorityColor(task.priority) }}
-                        >
-                          {task.priority}
-                        </div>
-                      </div>
-                      <p>{task.description}</p>
-                      <div className={styles.progressIndicator}>
-                        <div className={styles.progressBar}>
-                          <div className={styles.progressFill} style={{ width: '65%' }}></div>
-                        </div>
-                        <span>65% complet</span>
-                      </div>
-                      <div className={styles.taskFooter}>
-                        <span>⏱️ {task.actualTime ? `${formatTime(task.actualTime)} / ${formatTime(task.estimatedTime)}` : formatTime(task.estimatedTime)}</span>
-                        <span>🤖 {task.aiScore}/10</span>
-                      </div>
-                    </div>
-                  ))}
+              <div className={styles.analyticsCard}>
+                <h3>🎯 Task Completion Rate</h3>
+                <div className={styles.completionStats}>
+                  <div className={styles.statCircle}>
+                    <span className={styles.statNumber}>85%</span>
+                    <span className={styles.statLabel}>Completate</span>
+                  </div>
+                  <div className={styles.completionBreakdown}>
+                    <div>✅ Completate: 34 taskuri</div>
+                    <div>🔄 În progres: 6 taskuri</div>
+                    <div>📋 În așteptare: 8 taskuri</div>
+                  </div>
                 </div>
               </div>
 
-              <div className={styles.kanbanColumn}>
-                <h3>👀 Review ({todayTasks.filter(t => t.status === 'review').length})</h3>
-                <div className={styles.kanbanTasks}>
-                  {todayTasks.filter(task => task.status === 'review').map(task => (
-                    <div key={task.id} className={styles.kanbanTask}>
-                      <div className={styles.taskHeader}>
-                        <h4>{task.title}</h4>
-                        <div 
-                          className={styles.taskPriority}
-                          style={{ backgroundColor: getPriorityColor(task.priority) }}
-                        >
-                          {task.priority}
-                        </div>
-                      </div>
-                      <p>{task.description}</p>
-                      <div className={styles.taskFooter}>
-                        <span>⏱️ {formatTime(task.actualTime || task.estimatedTime)}</span>
-                        <span>🤖 {task.aiScore}/10</span>
-                      </div>
-                    </div>
-                  ))}
+              <div className={styles.analyticsCard}>
+                <h3>🚀 AI Insights</h3>
+                <div className={styles.aiInsights}>
+                  <div className={styles.insight}>
+                    <AlertCircle size={16} />
+                    <p>Ești cel mai productiv între 9-11 AM. Programează taskurile importante în această perioadă.</p>
+                  </div>
+                  <div className={styles.insight}>
+                    <TrendingUp size={16} />
+                    <p>Productivitatea ta a crescut cu 23% în ultima săptămână. Continuă așa!</p>
+                  </div>
+                  <div className={styles.insight}>
+                    <Brain size={16} />
+                    <p>Sesiunile de Deep Work îți aduc cea mai mare satisfacție. Consideră să le creștești.</p>
+                  </div>
                 </div>
-              </div>
-
-              <div className={styles.kanbanColumn}>
-                <h3>✅ Completate ({todayTasks.filter(t => t.status === 'completed').length})</h3>
-                <div className={styles.kanbanTasks}>
-                  {todayTasks.filter(task => task.status === 'completed').map(task => (
-                    <div key={task.id} className={`${styles.kanbanTask} ${styles.completedTask}`}>
-                      <div className={styles.taskHeader}>
-                        <h4>{task.title}</h4>
-                        <span className={styles.completedIcon}>✅</span>
-                      </div>
-                      <div className={styles.taskFooter}>
-                        <span>⏱️ {task.actualTime ? `${formatTime(task.actualTime)} (estimat: ${formatTime(task.estimatedTime)})` : formatTime(task.estimatedTime)}</span>
-                        <span>🤖 {task.aiScore}/10</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </section>
-        )}
-      </main>
-    </div>
-  );
-}
+              </div
