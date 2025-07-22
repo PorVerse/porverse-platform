@@ -1,6 +1,7 @@
 // lib/database/porflow.ts
+// PorFlow Database Operations - RAPID Implementation
+
 import { createServerSupabase } from '@/lib/supabase'
-import type { Database } from '@/lib/supabase'
 
 // ===========================
 // TYPE DEFINITIONS
@@ -45,9 +46,6 @@ export interface PorFlowTimeBlock {
   productivity_score?: number
   is_locked: boolean
   is_completed: boolean
-  actual_start_time?: Date
-  actual_end_time?: Date
-  notes?: string
   created_at: Date
   updated_at: Date
 }
@@ -72,13 +70,45 @@ export interface PorFlowFocusSession {
   updated_at: Date
 }
 
-export interface ProductivityStats {
-  total_tasks: number
-  completed_tasks: number
-  completion_rate: number
-  total_focus_minutes: number
-  avg_productivity_score: number
-  peak_productivity_hour: number
+// ===========================
+// AI PRIORITY CALCULATION
+// ===========================
+
+export function calculateAIPriorityScore(task: {
+  priority: PorFlowTask['priority']
+  due_date?: Date
+  estimated_minutes: number
+  category?: string
+}): number {
+  let score = 5.0;
+
+  // Priority weight
+  const priorityWeights = { urgent: 4, high: 3, medium: 2, low: 1 };
+  score += priorityWeights[task.priority];
+
+  // Due date proximity
+  if (task.due_date) {
+    const daysUntilDue = (task.due_date.getTime() - Date.now()) / (1000 * 60 * 60 * 24);
+    if (daysUntilDue < 1) score += 2;
+    else if (daysUntilDue < 3) score += 1.5;
+    else if (daysUntilDue < 7) score += 1;
+  }
+
+  // Category importance
+  const categoryWeights: Record<string, number> = {
+    'Development': 1.5,
+    'Security': 2,
+    'Marketing': 1.2,
+    'Management': 0.8
+  };
+  score += categoryWeights[task.category || 'Development'] || 1;
+
+  // Estimated effort vs impact
+  const estimatedHours = task.estimated_minutes / 60;
+  if (estimatedHours < 1) score += 0.5; // Quick wins
+  if (estimatedHours > 4) score -= 0.3; // Large tasks
+
+  return Math.min(Math.max(score, 1), 10);
 }
 
 // ===========================
@@ -102,17 +132,9 @@ export async function getUserTasks(
     .eq('user_id', userId)
     .order('ai_priority_score', { ascending: false })
 
-  if (filters?.status) {
-    query = query.eq('status', filters.status)
-  }
-  
-  if (filters?.priority) {
-    query = query.eq('priority', filters.priority)
-  }
-  
-  if (filters?.category) {
-    query = query.eq('category', filters.category)
-  }
+  if (filters?.status) query = query.eq('status', filters.status)
+  if (filters?.priority) query = query.eq('priority', filters.priority)
+  if (filters?.category) query = query.eq('category', filters.category)
   
   if (filters?.due_within_days) {
     const futureDate = new Date()
@@ -121,12 +143,7 @@ export async function getUserTasks(
   }
 
   const { data, error } = await query
-
-  if (error) {
-    console.error('Error fetching tasks:', error)
-    throw new Error('Failed to fetch tasks')
-  }
-
+  if (error) throw new Error(`Failed to fetch tasks: ${error.message}`)
   return data || []
 }
 
@@ -144,49 +161,63 @@ export async function createTask(taskData: {
 }): Promise<PorFlowTask> {
   const supabase = createServerSupabase()
 
+  // Calculate AI priority score
+  const aiScore = calculateAIPriorityScore({
+    priority: taskData.priority || 'medium',
+    due_date: taskData.due_date,
+    estimated_minutes: taskData.estimated_minutes || 60,
+    category: taskData.category
+  });
+
   const { data, error } = await supabase
     .from('por_flow_tasks')
     .insert([{
-      user_id: taskData.user_id,
-      title: taskData.title,
-      description: taskData.description,
+      ...taskData,
       priority: taskData.priority || 'medium',
-      category: taskData.category,
       estimated_minutes: taskData.estimated_minutes || 60,
-      due_date: taskData.due_date?.toISOString(),
-      assignee: taskData.assignee,
       tags: taskData.tags || [],
-      dependencies: taskData.dependencies || []
+      dependencies: taskData.dependencies || [],
+      ai_priority_score: aiScore,
+      due_date: taskData.due_date?.toISOString()
     }])
     .select()
     .single()
 
-  if (error) {
-    console.error('Error creating task:', error)
-    throw new Error('Failed to create task')
-  }
-
+  if (error) throw new Error(`Failed to create task: ${error.message}`)
   return data
 }
 
 export async function updateTask(
   taskId: string,
   userId: string,
-  updates: Partial<Omit<PorFlowTask, 'id' | 'user_id' | 'created_at'>>
+  updates: Partial<PorFlowTask>
 ): Promise<PorFlowTask> {
   const supabase = createServerSupabase()
 
-  const updateData: any = {}
+  const updateData: any = { ...updates }
   
-  Object.keys(updates).forEach(key => {
-    if (updates[key as keyof typeof updates] !== undefined) {
-      if (key === 'due_date' && updates.due_date) {
-        updateData[key] = updates.due_date.toISOString()
-      } else {
-        updateData[key] = updates[key as keyof typeof updates]
-      }
+  // Recalculate AI score if relevant fields changed
+  if (updates.priority || updates.due_date || updates.estimated_minutes || updates.category) {
+    const currentTask = await supabase
+      .from('por_flow_tasks')
+      .select('*')
+      .eq('id', taskId)
+      .eq('user_id', userId)
+      .single()
+    
+    if (currentTask.data) {
+      updateData.ai_priority_score = calculateAIPriorityScore({
+        priority: updates.priority || currentTask.data.priority,
+        due_date: updates.due_date || (currentTask.data.due_date ? new Date(currentTask.data.due_date) : undefined),
+        estimated_minutes: updates.estimated_minutes || currentTask.data.estimated_minutes,
+        category: updates.category || currentTask.data.category
+      });
     }
-  })
+  }
+
+  if (updateData.due_date) {
+    updateData.due_date = updateData.due_date.toISOString()
+  }
 
   const { data, error } = await supabase
     .from('por_flow_tasks')
@@ -196,53 +227,20 @@ export async function updateTask(
     .select()
     .single()
 
-  if (error) {
-    console.error('Error updating task:', error)
-    throw new Error('Failed to update task')
-  }
-
+  if (error) throw new Error(`Failed to update task: ${error.message}`)
   return data
 }
 
 export async function deleteTask(taskId: string, userId: string): Promise<void> {
   const supabase = createServerSupabase()
-
+  
   const { error } = await supabase
     .from('por_flow_tasks')
     .delete()
     .eq('id', taskId)
     .eq('user_id', userId)
 
-  if (error) {
-    console.error('Error deleting task:', error)
-    throw new Error('Failed to delete task')
-  }
-}
-
-export async function updateTaskOrder(
-  userId: string,
-  taskUpdates: { id: string; order_index: number; status?: PorFlowTask['status'] }[]
-): Promise<void> {
-  const supabase = createServerSupabase()
-
-  const promises = taskUpdates.map(update => 
-    supabase
-      .from('por_flow_tasks')
-      .update({ 
-        order_index: update.order_index,
-        ...(update.status && { status: update.status })
-      })
-      .eq('id', update.id)
-      .eq('user_id', userId)
-  )
-
-  const results = await Promise.allSettled(promises)
-  
-  const failed = results.filter(r => r.status === 'rejected')
-  if (failed.length > 0) {
-    console.error('Some task updates failed:', failed)
-    throw new Error('Failed to update task order')
-  }
+  if (error) throw new Error(`Failed to delete task: ${error.message}`)
 }
 
 // ===========================
@@ -264,11 +262,7 @@ export async function getUserTimeBlocks(
     .lte('end_time', endDate.toISOString())
     .order('start_time', { ascending: true })
 
-  if (error) {
-    console.error('Error fetching time blocks:', error)
-    throw new Error('Failed to fetch time blocks')
-  }
-
+  if (error) throw new Error(`Failed to fetch time blocks: ${error.message}`)
   return data || []
 }
 
@@ -290,48 +284,31 @@ export async function createTimeBlock(blockData: {
   const { data, error } = await supabase
     .from('por_flow_time_blocks')
     .insert([{
-      user_id: blockData.user_id,
-      title: blockData.title,
-      description: blockData.description,
-      start_time: blockData.start_time.toISOString(),
-      end_time: blockData.end_time.toISOString(),
+      ...blockData,
       block_type: blockData.block_type || 'focus',
       priority: blockData.priority || 'medium',
-      energy_level: blockData.energy_level,
-      location: blockData.location,
       attendees: blockData.attendees || [],
-      task_ids: blockData.task_ids || []
+      task_ids: blockData.task_ids || [],
+      start_time: blockData.start_time.toISOString(),
+      end_time: blockData.end_time.toISOString()
     }])
     .select()
     .single()
 
-  if (error) {
-    console.error('Error creating time block:', error)
-    throw new Error('Failed to create time block')
-  }
-
+  if (error) throw new Error(`Failed to create time block: ${error.message}`)
   return data
 }
 
 export async function updateTimeBlock(
   blockId: string,
   userId: string,
-  updates: Partial<Omit<PorFlowTimeBlock, 'id' | 'user_id' | 'created_at'>>
+  updates: Partial<PorFlowTimeBlock>
 ): Promise<PorFlowTimeBlock> {
   const supabase = createServerSupabase()
 
-  const updateData: any = {}
-  
-  Object.keys(updates).forEach(key => {
-    const value = updates[key as keyof typeof updates]
-    if (value !== undefined) {
-      if (key === 'start_time' || key === 'end_time') {
-        updateData[key] = (value as Date).toISOString()
-      } else {
-        updateData[key] = value
-      }
-    }
-  })
+  const updateData: any = { ...updates }
+  if (updateData.start_time) updateData.start_time = updateData.start_time.toISOString()
+  if (updateData.end_time) updateData.end_time = updateData.end_time.toISOString()
 
   const { data, error } = await supabase
     .from('por_flow_time_blocks')
@@ -341,11 +318,7 @@ export async function updateTimeBlock(
     .select()
     .single()
 
-  if (error) {
-    console.error('Error updating time block:', error)
-    throw new Error('Failed to update time block')
-  }
-
+  if (error) throw new Error(`Failed to update time block: ${error.message}`)
   return data
 }
 
@@ -358,10 +331,7 @@ export async function deleteTimeBlock(blockId: string, userId: string): Promise<
     .eq('id', blockId)
     .eq('user_id', userId)
 
-  if (error) {
-    console.error('Error deleting time block:', error)
-    throw new Error('Failed to delete time block')
-  }
+  if (error) throw new Error(`Failed to delete time block: ${error.message}`)
 }
 
 // ===========================
@@ -384,11 +354,7 @@ export async function getUserFocusSessions(
     .gte('created_at', startDate.toISOString())
     .order('start_time', { ascending: false })
 
-  if (error) {
-    console.error('Error fetching focus sessions:', error)
-    throw new Error('Failed to fetch focus sessions')
-  }
-
+  if (error) throw new Error(`Failed to fetch focus sessions: ${error.message}`)
   return data || []
 }
 
@@ -405,44 +371,37 @@ export async function createFocusSession(sessionData: {
   const { data, error } = await supabase
     .from('por_flow_focus_sessions')
     .insert([{
-      user_id: sessionData.user_id,
-      session_type: sessionData.session_type,
-      planned_duration: sessionData.planned_duration,
-      task_id: sessionData.task_id,
-      time_block_id: sessionData.time_block_id,
+      ...sessionData,
       background_sound: sessionData.background_sound || 'none',
       status: 'planned'
     }])
     .select()
     .single()
 
-  if (error) {
-    console.error('Error creating focus session:', error)
-    throw new Error('Failed to create focus session')
-  }
-
+  if (error) throw new Error(`Failed to create focus session: ${error.message}`)
   return data
 }
 
-export async function startFocusSession(sessionId: string, userId: string): Promise<PorFlowFocusSession> {
+export async function updateFocusSession(
+  sessionId: string,
+  userId: string,
+  updates: Partial<PorFlowFocusSession>
+): Promise<PorFlowFocusSession> {
   const supabase = createServerSupabase()
+
+  const updateData: any = { ...updates }
+  if (updateData.start_time) updateData.start_time = updateData.start_time.toISOString()
+  if (updateData.end_time) updateData.end_time = updateData.end_time.toISOString()
 
   const { data, error } = await supabase
     .from('por_flow_focus_sessions')
-    .update({
-      status: 'active',
-      start_time: new Date().toISOString()
-    })
+    .update(updateData)
     .eq('id', sessionId)
     .eq('user_id', userId)
     .select()
     .single()
 
-  if (error) {
-    console.error('Error starting focus session:', error)
-    throw new Error('Failed to start focus session')
-  }
-
+  if (error) throw new Error(`Failed to update focus session: ${error.message}`)
   return data
 }
 
@@ -464,7 +423,7 @@ export async function completeFocusSession(
       status: 'completed',
       end_time: new Date().toISOString(),
       actual_duration: sessionData.actual_duration,
-      productivity_score: sessionData.productivity_score,
+      productivity_score: sessionData.productivity_score || calculateProductivityScore(sessionData),
       distractions_count: sessionData.distractions_count || 0,
       session_notes: sessionData.session_notes
     })
@@ -473,81 +432,7 @@ export async function completeFocusSession(
     .select()
     .single()
 
-  if (error) {
-    console.error('Error completing focus session:', error)
-    throw new Error('Failed to complete focus session')
-  }
-
-  return data
-}
-
-export async function pauseFocusSession(sessionId: string, userId: string): Promise<PorFlowFocusSession> {
-  const supabase = createServerSupabase()
-
-  const { data, error } = await supabase
-    .from('por_flow_focus_sessions')
-    .update({ status: 'paused' })
-    .eq('id', sessionId)
-    .eq('user_id', userId)
-    .select()
-    .single()
-
-  if (error) {
-    console.error('Error pausing focus session:', error)
-    throw new Error('Failed to pause focus session')
-  }
-
-  return data
-}
-
-export async function cancelFocusSession(sessionId: string, userId: string): Promise<void> {
-  const supabase = createServerSupabase()
-
-  const { error } = await supabase
-    .from('por_flow_focus_sessions')
-    .update({ 
-      status: 'cancelled',
-      end_time: new Date().toISOString()
-    })
-    .eq('id', sessionId)
-    .eq('user_id', userId)
-
-  if (error) {
-    console.error('Error cancelling focus session:', error)
-    throw new Error('Failed to cancel focus session')
-  }
-}
-
-export async function addDistraction(sessionId: string, userId: string): Promise<PorFlowFocusSession> {
-  const supabase = createServerSupabase()
-
-  // First get current distraction count
-  const { data: current, error: fetchError } = await supabase
-    .from('por_flow_focus_sessions')
-    .select('distractions_count')
-    .eq('id', sessionId)
-    .eq('user_id', userId)
-    .single()
-
-  if (fetchError) {
-    throw new Error('Failed to fetch current session')
-  }
-
-  const { data, error } = await supabase
-    .from('por_flow_focus_sessions')
-    .update({ 
-      distractions_count: (current.distractions_count || 0) + 1 
-    })
-    .eq('id', sessionId)
-    .eq('user_id', userId)
-    .select()
-    .single()
-
-  if (error) {
-    console.error('Error adding distraction:', error)
-    throw new Error('Failed to add distraction')
-  }
-
+  if (error) throw new Error(`Failed to complete focus session: ${error.message}`)
   return data
 }
 
@@ -555,262 +440,92 @@ export async function addDistraction(sessionId: string, userId: string): Promise
 // ANALYTICS & INSIGHTS
 // ===========================
 
-export async function getUserProductivityStats(
-  userId: string,
-  days: number = 30
-): Promise<ProductivityStats> {
-  const supabase = createServerSupabase()
-
-  const { data, error } = await supabase
-    .rpc('get_user_productivity_stats', {
-      user_uuid: userId,
-      days_back: days
-    })
-
-  if (error) {
-    console.error('Error fetching productivity stats:', error)
-    throw new Error('Failed to fetch productivity stats')
-  }
-
-  return data[0] || {
-    total_tasks: 0,
-    completed_tasks: 0,
-    completion_rate: 0,
-    total_focus_minutes: 0,
-    avg_productivity_score: 0,
-    peak_productivity_hour: 9
-  }
-}
-
-export async function getDailyProductivitySummary(
-  userId: string,
-  date: Date
-): Promise<{
-  pomodoro_sessions: number
-  deep_work_sessions: number
-  flow_sessions: number
-  total_focus_minutes: number
-  avg_productivity: number
-  total_distractions: number
-}> {
-  const supabase = createServerSupabase()
-
-  const { data, error } = await supabase
-    .from('por_flow_daily_summary')
-    .select('*')
-    .eq('user_id', userId)
-    .eq('date', date.toISOString().split('T')[0])
-    .single()
-
-  if (error && error.code !== 'PGRST116') { // Not found is OK
-    console.error('Error fetching daily summary:', error)
-    throw new Error('Failed to fetch daily summary')
-  }
-
-  return data || {
-    pomodoro_sessions: 0,
-    deep_work_sessions: 0,
-    flow_sessions: 0,
-    total_focus_minutes: 0,
-    avg_productivity: 0,
-    total_distractions: 0
-  }
-}
-
-export async function getWeeklyTaskTrends(
-  userId: string,
-  startDate: Date
-): Promise<Array<{
-  date: string
-  tasks_created: number
-  tasks_completed: number
-  avg_priority_score: number
-  avg_completion_time: number
-}>> {
+export async function getUserProductivityStats(userId: string, days: number = 30) {
   const supabase = createServerSupabase()
   
-  const endDate = new Date(startDate)
-  endDate.setDate(endDate.getDate() + 7)
+  const startDate = new Date()
+  startDate.setDate(startDate.getDate() - days)
 
-  const { data, error } = await supabase
-    .from('por_flow_task_trends')
-    .select('*')
+  // Get task stats
+  const { data: taskStats } = await supabase
+    .from('por_flow_tasks')
+    .select('status, actual_minutes, estimated_minutes')
     .eq('user_id', userId)
-    .gte('date', startDate.toISOString().split('T')[0])
-    .lt('date', endDate.toISOString().split('T')[0])
-    .order('date', { ascending: true })
+    .gte('created_at', startDate.toISOString())
 
-  if (error) {
-    console.error('Error fetching task trends:', error)
-    throw new Error('Failed to fetch task trends')
-  }
+  // Get focus session stats
+  const { data: sessionStats } = await supabase
+    .from('por_flow_focus_sessions')
+    .select('actual_duration, productivity_score, distractions_count, start_time')
+    .eq('user_id', userId)
+    .eq('status', 'completed')
+    .gte('created_at', startDate.toISOString())
 
-  return data || []
-}
-
-// ===========================
-// AI OPTIMIZATION SUGGESTIONS
-// ===========================
-
-export async function generateAIOptimizationSuggestions(userId: string): Promise<Array<{
-  id: string
-  type: 'reorder' | 'merge' | 'split' | 'move' | 'add-buffer'
-  title: string
-  description: string
-  impact: 'low' | 'medium' | 'high'
-  blocks: string[]
-}>> {
-  // Get user's productivity patterns
-  const stats = await getUserProductivityStats(userId, 7)
-  const today = new Date()
-  const timeBlocks = await getUserTimeBlocks(userId, today, today)
-  const tasks = await getUserTasks(userId, { status: 'todo' })
-
-  const suggestions = []
-
-  // Analyze energy vs work type alignment
-  if (stats.peak_productivity_hour && stats.peak_productivity_hour !== 9) {
-    const creativeBlocks = timeBlocks.filter(b => b.block_type === 'creative')
-    if (creativeBlocks.length > 0) {
-      suggestions.push({
-        id: 'energy-alignment-1',
-        type: 'reorder' as const,
-        title: 'Optimize Energy Alignment',
-        description: `Move creative work to ${stats.peak_productivity_hour}:00 when your energy peaks`,
-        impact: 'high' as const,
-        blocks: creativeBlocks.map(b => b.id)
-      })
-    }
-  }
-
-  // Suggest buffer time between meetings
-  const meetings = timeBlocks.filter(b => b.block_type === 'meeting').sort((a, b) => 
-    a.start_time.getTime() - b.start_time.getTime()
-  )
+  const totalTasks = taskStats?.length || 0
+  const completedTasks = taskStats?.filter(t => t.status === 'completed').length || 0
+  const completionRate = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0
   
-  for (let i = 0; i < meetings.length - 1; i++) {
-    const current = meetings[i]
-    const next = meetings[i + 1]
-    const gap = (next.start_time.getTime() - current.end_time.getTime()) / (1000 * 60)
-    
-    if (gap < 15) { // Less than 15 minutes between meetings
-      suggestions.push({
-        id: `buffer-${i}`,
-        type: 'add-buffer' as const,
-        title: 'Add Buffer Time',
-        description: 'Add 15-minute buffers between meetings to prevent context switching fatigue',
-        impact: 'medium' as const,
-        blocks: [current.id, next.id]
-      })
+  const totalFocusMinutes = sessionStats?.reduce((sum, s) => sum + (s.actual_duration || 0), 0) || 0
+  const avgProductivityScore = sessionStats?.length > 0 
+    ? sessionStats.reduce((sum, s) => sum + (s.productivity_score || 0), 0) / sessionStats.length 
+    : 0
+
+  // Calculate peak productivity hour
+  const hourlyProductivity: Record<number, number[]> = {}
+  sessionStats?.forEach(s => {
+    if (s.start_time && s.productivity_score) {
+      const hour = new Date(s.start_time).getHours()
+      if (!hourlyProductivity[hour]) hourlyProductivity[hour] = []
+      hourlyProductivity[hour].push(s.productivity_score)
     }
-  }
-
-  // Suggest task batching
-  const adminTasks = tasks.filter(t => t.category?.toLowerCase() === 'admin')
-  if (adminTasks.length > 3) {
-    suggestions.push({
-      id: 'batch-admin',
-      type: 'merge' as const,
-      title: 'Batch Administrative Tasks',
-      description: 'Group admin tasks into one focused block for better efficiency',
-      impact: 'medium' as const,
-      blocks: adminTasks.map(t => t.id)
-    })
-  }
-
-  return suggestions
-}
-
-// ===========================
-// BULK OPERATIONS
-// ===========================
-
-export async function bulkUpdateTasks(
-  userId: string,
-  updates: Array<{
-    id: string
-    updates: Partial<PorFlowTask>
-  }>
-): Promise<void> {
-  const supabase = createServerSupabase()
-
-  const promises = updates.map(({ id, updates: taskUpdates }) => {
-    const updateData: any = {}
-    Object.keys(taskUpdates).forEach(key => {
-      const value = taskUpdates[key as keyof PorFlowTask]
-      if (value !== undefined) {
-        if (key === 'due_date' && value) {
-          updateData[key] = (value as Date).toISOString()
-        } else {
-          updateData[key] = value
-        }
-      }
-    })
-
-    return supabase
-      .from('por_flow_tasks')
-      .update(updateData)
-      .eq('id', id)
-      .eq('user_id', userId)
   })
 
-  const results = await Promise.allSettled(promises)
-  const failed = results.filter(r => r.status === 'rejected')
-  
-  if (failed.length > 0) {
-    console.error('Some task updates failed:', failed)
-    throw new Error(`Failed to update ${failed.length} tasks`)
+  let peakHour = 9
+  let peakScore = 0
+  Object.entries(hourlyProductivity).forEach(([hour, scores]) => {
+    const avgScore = scores.reduce((a, b) => a + b, 0) / scores.length
+    if (avgScore > peakScore) {
+      peakScore = avgScore
+      peakHour = parseInt(hour)
+    }
+  })
+
+  return {
+    total_tasks: totalTasks,
+    completed_tasks: completedTasks,
+    completion_rate: Math.round(completionRate * 100) / 100,
+    total_focus_minutes: totalFocusMinutes,
+    avg_productivity_score: Math.round(avgProductivityScore * 100) / 100,
+    peak_productivity_hour: peakHour
   }
-}
-
-export async function syncCalendarIntegration(
-  userId: string,
-  externalEvents: Array<{
-    title: string
-    start_time: Date
-    end_time: Date
-    location?: string
-    attendees?: string[]
-  }>
-): Promise<PorFlowTimeBlock[]> {
-  const supabase = createServerSupabase()
-
-  // Convert external events to time blocks
-  const timeBlocksData = externalEvents.map(event => ({
-    user_id: userId,
-    title: event.title,
-    start_time: event.start_time.toISOString(),
-    end_time: event.end_time.toISOString(),
-    block_type: 'meeting' as const,
-    priority: 'medium' as const,
-    location: event.location,
-    attendees: event.attendees || [],
-    is_locked: true // External events shouldn't be modified
-  }))
-
-  const { data, error } = await supabase
-    .from('por_flow_time_blocks')
-    .insert(timeBlocksData)
-    .select()
-
-  if (error) {
-    console.error('Error syncing calendar:', error)
-    throw new Error('Failed to sync calendar events')
-  }
-
-  return data
 }
 
 // ===========================
 // UTILITY FUNCTIONS
 // ===========================
 
+function calculateProductivityScore(sessionData: {
+  actual_duration: number
+  distractions_count?: number
+}): number {
+  let score = 8.0 // Base score
+  
+  // Deduct for distractions
+  score -= (sessionData.distractions_count || 0) * 0.5
+  
+  // Bonus for longer sessions (shows focus)
+  if (sessionData.actual_duration >= 90) score += 1
+  if (sessionData.actual_duration >= 120) score += 0.5
+  
+  return Math.min(Math.max(score, 1), 10)
+}
+
 export async function detectScheduleConflicts(
   userId: string,
   newBlock: {
     start_time: Date
     end_time: Date
-    id?: string // Exclude this ID if updating
+    id?: string
   }
 ): Promise<PorFlowTimeBlock[]> {
   const supabase = createServerSupabase()
@@ -825,95 +540,6 @@ export async function detectScheduleConflicts(
     query = query.neq('id', newBlock.id)
   }
 
-  const { data, error } = await query
-
-  if (error) {
-    console.error('Error detecting conflicts:', error)
-    return []
-  }
-
+  const { data } = await query
   return data || []
-}
-
-export async function calculateOptimalSchedule(
-  userId: string,
-  tasks: PorFlowTask[],
-  preferences: {
-    work_start_hour: number
-    work_end_hour: number
-    break_duration: number
-    max_focus_duration: number
-  }
-): Promise<Array<{
-  task_id: string
-  suggested_start: Date
-  suggested_end: Date
-  reasoning: string
-}>> {
-  const stats = await getUserProductivityStats(userId)
-  const suggestions = []
-
-  // Sort tasks by AI priority score
-  const sortedTasks = [...tasks].sort((a, b) => b.ai_priority_score - a.ai_priority_score)
-  
-  let currentTime = new Date()
-  currentTime.setHours(preferences.work_start_hour, 0, 0, 0)
-
-  for (const task of sortedTasks) {
-    if (currentTime.getHours() >= preferences.work_end_hour) {
-      // Move to next day
-      currentTime.setDate(currentTime.getDate() + 1)
-      currentTime.setHours(preferences.work_start_hour, 0, 0, 0)
-    }
-
-    const duration = Math.min(task.estimated_minutes, preferences.max_focus_duration)
-    const endTime = new Date(currentTime.getTime() + duration * 60 * 1000)
-
-    let reasoning = `Scheduled based on AI priority score (${task.ai_priority_score})`
-    
-    // Add energy-based reasoning
-    if (task.category?.toLowerCase() === 'creative' && stats.peak_productivity_hour) {
-      reasoning += `. Creative work scheduled during peak energy (${stats.peak_productivity_hour}:00)`
-    }
-
-    suggestions.push({
-      task_id: task.id,
-      suggested_start: new Date(currentTime),
-      suggested_end: endTime,
-      reasoning
-    })
-
-    // Add break time
-    currentTime = new Date(endTime.getTime() + preferences.break_duration * 60 * 1000)
-  }
-
-  return suggestions
-}
-
-// ===========================
-// ANALYTICS STORAGE
-// ===========================
-
-export async function recordAnalyticsMetric(
-  userId: string,
-  metricType: string,
-  value: number,
-  metadata?: any
-): Promise<void> {
-  const supabase = createServerSupabase()
-
-  const { error } = await supabase
-    .from('por_flow_analytics')
-    .upsert({
-      user_id: userId,
-      metric_type: metricType,
-      metric_value: value,
-      metadata: metadata || {},
-      date_recorded: new Date().toISOString().split('T')[0]
-    })
-
-  if (error) {
-    console.error('Error recording analytics:', error)
-    // Don't throw here as analytics shouldn't break functionality
-  }
 }
