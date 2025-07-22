@@ -1,0 +1,805 @@
+/* app/dashboard/por-flow/components/TimeBlocking.module.css */
+
+.timeBlocking {
+  padding: 2rem;
+  background: linear-gradient(135deg, #0a0a0f 0%, #0a1f2e 50%, #0f1419 100%);
+  min-height: 100vh;
+  color: #ffffff;
+}
+
+/* Loading State */
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 1rem;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(6, 182, 212, 0.3);
+  border-top: 3px solid #06b6d4;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(6, 182, 212, 0.3);
+}
+
+.headerLeft h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin: 0 0 0.5rem 0;
+  background: linear-gradient(45deg, #06b6d4, #0891b2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.headerLeft p {
+  color: #94a3b8;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.headerControls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+/* View Mode Toggle */
+.viewModeToggle {
+  display: flex;
+  background: rgba(6, 182, 212, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  overflow: hidden;
+}
+
+.viewModeToggle button {
+  padding: 0.5rem 1rem;
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.viewModeToggle button.active {
+  background: #06b6d4;
+  color: white;
+}
+
+.viewModeToggle button:hover:not(.active) {
+  background: rgba(6, 182, 212, 0.2);
+  color: #22d3ee;
+}
+
+.optimizerButton,
+.addButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #06b6d4, #0891b2);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(6, 182, 212, 0.3);
+}
+
+.optimizerButton:hover,
+.addButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(6, 182, 212, 0.4);
+}
+
+.optimizerButton {
+  background: linear-gradient(135deg, #7c3aed, #6d28d9);
+  box-shadow: 0 4px 20px rgba(124, 58, 237, 0.3);
+}
+
+.optimizerButton:hover {
+  box-shadow: 0 8px 30px rgba(124, 58, 237, 0.4);
+}
+
+/* Date Navigation */
+.dateNavigation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.navButton {
+  background: rgba(6, 182, 212, 0.1);
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #22d3ee;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.navButton:hover {
+  background: rgba(6, 182, 212, 0.2);
+  transform: scale(1.1);
+}
+
+.dateDisplay h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+  color: #ffffff;
+  text-align: center;
+  min-width: 300px;
+}
+
+/* AI Optimizer Panel */
+.optimizerPanel {
+  background: rgba(124, 58, 237, 0.05);
+  border: 1px solid rgba(124, 58, 237, 0.2);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  backdrop-filter: blur(10px);
+}
+
+.optimizerHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+  color: #a78bfa;
+}
+
+.optimizerHeader h3 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.suggestions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.suggestion {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(124, 58, 237, 0.1);
+  border: 1px solid rgba(124, 58, 237, 0.3);
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.suggestion:hover {
+  background: rgba(124, 58, 237, 0.15);
+  transform: translateX(4px);
+}
+
+.suggestionContent {
+  flex: 1;
+}
+
+.suggestionContent h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+  color: #ffffff;
+}
+
+.suggestionContent p {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  margin: 0 0 0.5rem 0;
+  line-height: 1.4;
+}
+
+.impact {
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.impact.low {
+  background: rgba(16, 185, 129, 0.2);
+  color: #10b981;
+}
+
+.impact.medium {
+  background: rgba(245, 158, 11, 0.2);
+  color: #f59e0b;
+}
+
+.impact.high {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
+
+.applyButton {
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, #7c3aed, #6d28d9);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-left: 1rem;
+}
+
+.applyButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+}
+
+.noSuggestions {
+  text-align: center;
+  padding: 2rem;
+  color: #94a3b8;
+}
+
+.noSuggestions svg {
+  color: #7c3aed;
+  margin-bottom: 1rem;
+}
+
+/* Calendar Container */
+.calendarContainer {
+  background: rgba(6, 182, 212, 0.05);
+  border: 1px solid rgba(6, 182, 212, 0.2);
+  border-radius: 16px;
+  overflow: hidden;
+  min-height: 600px;
+}
+
+/* Day View */
+.dayView {
+  display: flex;
+  height: 100%;
+  min-height: 600px;
+}
+
+.timeSlots {
+  width: 80px;
+  background: rgba(6, 182, 212, 0.08);
+  border-right: 1px solid rgba(6, 182, 212, 0.2);
+  flex-shrink: 0;
+}
+
+.timeSlot {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid rgba(6, 182, 212, 0.1);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.timeSlot:hover {
+  background: rgba(6, 182, 212, 0.1);
+}
+
+.timeLabel {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.blocksContainer {
+  flex: 1;
+  position: relative;
+  padding: 0 1rem;
+}
+
+/* Time Block Cards */
+.timeBlockCard {
+  position: absolute;
+  left: 1rem;
+  right: 1rem;
+  border-radius: 8px;
+  padding: 0.75rem;
+  cursor: move;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+  border-left-width: 4px;
+  border-left-style: solid;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.timeBlockCard:hover {
+  transform: translateX(4px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+}
+
+.blockHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.blockTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: #ffffff;
+  font-size: 0.9rem;
+}
+
+.blockActions {
+  display: flex;
+  gap: 0.25rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.timeBlockCard:hover .blockActions {
+  opacity: 1;
+}
+
+.editButton,
+.deleteButton {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 4px;
+  padding: 0.25rem;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.editButton:hover {
+  background: rgba(6, 182, 212, 0.2);
+  color: #22d3ee;
+}
+
+.deleteButton:hover {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
+
+.blockTime {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  margin-bottom: 0.5rem;
+}
+
+.blockDescription {
+  font-size: 0.8rem;
+  color: #e2e8f0;
+  line-height: 1.3;
+  margin-bottom: 0.5rem;
+}
+
+.blockMeta {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.priority {
+  padding: 0.125rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.priority.low {
+  background: rgba(16, 185, 129, 0.2);
+  color: #10b981;
+}
+
+.priority.medium {
+  background: rgba(6, 182, 212, 0.2);
+  color: #06b6d4;
+}
+
+.priority.high {
+  background: rgba(245, 158, 11, 0.2);
+  color: #f59e0b;
+}
+
+.priority.critical {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
+
+.energy,
+.productivity {
+  font-size: 0.65rem;
+  color: #94a3b8;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.125rem 0.5rem;
+  border-radius: 12px;
+}
+
+/* Agenda View */
+.agendaView {
+  padding: 2rem;
+}
+
+.agendaList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.agendaItem {
+  display: flex;
+  gap: 1.5rem;
+  background: rgba(6, 182, 212, 0.08);
+  border: 1px solid rgba(6, 182, 212, 0.2);
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.agendaItem:hover {
+  background: rgba(6, 182, 212, 0.12);
+  transform: translateX(4px);
+}
+
+.agendaTime {
+  min-width: 120px;
+  font-weight: 600;
+  color: #22d3ee;
+  font-size: 0.9rem;
+}
+
+.agendaContent {
+  flex: 1;
+}
+
+.agendaTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+.agendaDescription {
+  color: #94a3b8;
+  margin: 0 0 0.75rem 0;
+  line-height: 1.4;
+  font-size: 0.9rem;
+}
+
+.agendaLocation,
+.agendaAttendees {
+  display: block;
+  font-size: 0.8rem;
+  color: #64748b;
+  margin-bottom: 0.25rem;
+}
+
+.emptyAgenda {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #94a3b8;
+}
+
+.emptyAgenda svg {
+  color: #06b6d4;
+  margin-bottom: 1rem;
+}
+
+.emptyAgenda h3 {
+  font-size: 1.2rem;
+  margin: 0 0 0.5rem 0;
+  color: #ffffff;
+}
+
+.emptyAgenda p {
+  margin: 0;
+}
+
+/* Modal Styles */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.modal {
+  background: linear-gradient(135deg, #0f1419 0%, #0a1f2e 100%);
+  border-radius: 16px;
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid rgba(6, 182, 212, 0.3);
+}
+
+.modalHeader h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+  color: #ffffff;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.closeButton:hover {
+  color: #ef4444;
+}
+
+.modalForm {
+  padding: 1.5rem;
+}
+
+.formGroup {
+  margin-bottom: 1.5rem;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #e2e8f0;
+  font-size: 0.9rem;
+}
+
+.formGroup input,
+.formGroup textarea,
+.formGroup select {
+  width: 100%;
+  padding: 0.75rem;
+  background: rgba(6, 182, 212, 0.1);
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.formGroup input:focus,
+.formGroup textarea:focus,
+.formGroup select:focus {
+  outline: none;
+  border-color: #06b6d4;
+  box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.2);
+}
+
+.formGroup textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.modalActions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(6, 182, 212, 0.3);
+}
+
+.cancelButton {
+  padding: 0.75rem 1.5rem;
+  background: transparent;
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  border-radius: 8px;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.cancelButton:hover {
+  border-color: #06b6d4;
+  color: #22d3ee;
+}
+
+.saveButton {
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #06b6d4, #0891b2);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(6, 182, 212, 0.3);
+}
+
+.saveButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 25px rgba(6, 182, 212, 0.4);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .timeBlocking {
+    padding: 1rem;
+  }
+
+  .header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .headerControls {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .viewModeToggle {
+    justify-content: center;
+  }
+
+  .dateNavigation {
+    gap: 1rem;
+  }
+
+  .dateDisplay h2 {
+    font-size: 1.2rem;
+    min-width: auto;
+  }
+
+  .dayView {
+    flex-direction: column;
+  }
+
+  .timeSlots {
+    width: 100%;
+    display: flex;
+    overflow-x: auto;
+    border-right: none;
+    border-bottom: 1px solid rgba(6, 182, 212, 0.2);
+  }
+
+  .timeSlot {
+    min-width: 60px;
+    height: 40px;
+    border-right: 1px solid rgba(6, 182, 212, 0.1);
+    border-bottom: none;
+  }
+
+  .blocksContainer {
+    padding: 1rem;
+  }
+
+  .timeBlockCard {
+    position: static;
+    margin-bottom: 1rem;
+  }
+
+  .agendaItem {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .agendaTime {
+    min-width: auto;
+  }
+
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+
+  .modalActions {
+    flex-direction: column-reverse;
+  }
+
+  .optimizerPanel {
+    padding: 1rem;
+  }
+
+  .suggestion {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .applyButton {
+    margin-left: 0;
+    margin-top: 0.5rem;
+  }
+}
+
+/* Focus and Accessibility */
+.navButton:focus,
+.optimizerButton:focus,
+.addButton:focus,
+.editButton:focus,
+.deleteButton:focus,
+.saveButton:focus,
+.cancelButton:focus,
+.applyButton:focus {
+  outline: 2px solid #06b6d4;
+  outline-offset: 2px;
+}
+
+/* Drag and Drop States */
+.timeBlockCard[draggable="true"]:active {
+  opacity: 0.7;
+  transform: rotate(2deg);
+  z-index: 1000;
+  box-shadow: 0 8px 30px rgba(6, 182, 212, 0.3);
+}
+
+.timeSlot[data-drop-target="true"] {
+  background: rgba(6, 182, 212, 0.15);
+  border: 2px dashed #06b6d4;
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
