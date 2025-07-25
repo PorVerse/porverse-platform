@@ -1,4 +1,4 @@
-// app/dashboard/por-flow/page.tsx - VERSIUNEA ACTUALIZATĂ COMPLETĂ
+// app/dashboard/por-flow/page.tsx - FIX pentru hydration error
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -32,6 +32,8 @@ interface QuickAction {
 export default function PorFlowDashboard() {
   const [activeView, setActiveView] = useState<'dashboard' | 'tasks' | 'timer' | 'planner' | 'automation'>('dashboard');
   const [loading, setLoading] = useState(true);
+  const [mounted, setMounted] = useState(false); // FIX: Pentru hydration
+  const [currentTime, setCurrentTime] = useState(''); // FIX: Pentru time display
   const [metrics, setMetrics] = useState<ProductivityMetrics>({
     todayTasks: 0,
     completedTasks: 0,
@@ -43,6 +45,24 @@ export default function PorFlowDashboard() {
   const [userId, setUserId] = useState<string | null>(null);
 
   const supabase = createClientSupabase();
+
+  // FIX: Mounted check pentru hydration
+  useEffect(() => {
+    setMounted(true);
+    
+    // Set initial time
+    const updateTime = () => {
+      setCurrentTime(new Date().toLocaleTimeString('ro-RO', {
+        hour: '2-digit',
+        minute: '2-digit'
+      }));
+    };
+    
+    updateTime();
+    const timeInterval = setInterval(updateTime, 1000);
+    
+    return () => clearInterval(timeInterval);
+  }, []);
 
   // Get current user
   useEffect(() => {
@@ -177,6 +197,18 @@ export default function PorFlowDashboard() {
     }
   ];
 
+  // FIX: Prevent hydration mismatch
+  if (!mounted) {
+    return (
+      <div className={styles.dashboard}>
+        <div className={styles.loadingScreen}>
+          <div className={styles.loadingSpinner}></div>
+          <h2>Loading PorFlow...</h2>
+        </div>
+      </div>
+    );
+  }
+
   if (loading) {
     return (
       <div className={styles.dashboard}>
@@ -280,11 +312,9 @@ export default function PorFlowDashboard() {
               month: 'long'
             })}
           </div>
+          {/* FIX: Use state for time to avoid hydration mismatch */}
           <div className="text-cyan-300">
-            {new Date().toLocaleTimeString('ro-RO', {
-              hour: '2-digit',
-              minute: '2-digit'
-            })}
+            {currentTime}
           </div>
         </div>
       </div>
