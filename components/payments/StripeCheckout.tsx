@@ -1,11 +1,11 @@
-// components/payments/PayPalCheckout.tsx
+// components/payments/StripeCheckout.tsx
 'use client'
 
 import { useState } from 'react'
-import { Loader2 } from 'lucide-react'
+import { Loader2, CreditCard } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 
-interface PayPalCheckoutProps {
+interface StripeCheckoutProps {
   planId: string
   planName: string
   price: number
@@ -14,49 +14,50 @@ interface PayPalCheckoutProps {
   children?: React.ReactNode
 }
 
-export default function PayPalCheckout({
+export default function StripeCheckout({
   planId,
   planName,
   price,
   currency,
   className = "",
   children
-}: PayPalCheckoutProps) {
+}: StripeCheckoutProps) {
   const [loading, setLoading] = useState(false)
 
-  const handlePayPalCheckout = async () => {
+  const handleStripeCheckout = async () => {
     setLoading(true)
     
     try {
-      const response = await fetch('/api/payments/paypal/create-subscription', {
+      const response = await fetch('/api/payments/checkout', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           planId,
           planName,
           price,
-          currency
+          currency,
+          paymentMethod: 'stripe'
         })
       })
 
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to create PayPal subscription')
+        throw new Error(data.error || 'Failed to create Stripe checkout')
       }
 
-      if (data.approvalUrl) {
-        // Redirect to PayPal for approval
-        window.location.href = data.approvalUrl
+      if (data.url) {
+        // Redirect to Stripe Checkout
+        window.location.href = data.url
       } else {
-        throw new Error('No approval URL received from PayPal')
+        throw new Error('No checkout URL received from Stripe')
       }
 
     } catch (error: any) {
-      console.error('PayPal checkout error:', error)
-      toast.error(error.message || 'Eroare la inițializarea plății PayPal')
+      console.error('Stripe checkout error:', error)
+      toast.error(error.message || 'Eroare la inițializarea plății cu cardul')
     } finally {
       setLoading(false)
     }
@@ -65,14 +66,14 @@ export default function PayPalCheckout({
   if (children) {
     return (
       <button
-        onClick={handlePayPalCheckout}
+        onClick={handleStripeCheckout}
         disabled={loading}
         className={className}
       >
         {loading ? (
           <div className="flex items-center justify-center space-x-2">
             <Loader2 className="w-4 h-4 animate-spin" />
-            <span>PayPal...</span>
+            <span>Stripe...</span>
           </div>
         ) : (
           children
@@ -83,19 +84,19 @@ export default function PayPalCheckout({
 
   return (
     <button
-      onClick={handlePayPalCheckout}
+      onClick={handleStripeCheckout}
       disabled={loading}
-      className={`w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:from-gray-400 disabled:to-gray-500 text-white font-bold py-3 px-4 rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 ${className}`}
+      className={`w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 disabled:from-gray-400 disabled:to-gray-500 text-white font-bold py-3 px-4 rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 ${className}`}
     >
       {loading ? (
         <>
           <Loader2 className="w-4 h-4 animate-spin" />
-          <span>PayPal...</span>
+          <span>Card...</span>
         </>
       ) : (
         <>
-          <span>💳</span>
-          <span>PayPal</span>
+          <CreditCard className="w-4 h-4" />
+          <span>Card</span>
         </>
       )}
     </button>
