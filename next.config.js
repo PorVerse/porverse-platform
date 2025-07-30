@@ -10,6 +10,7 @@ const nextConfig = {
       'avatars.githubusercontent.com',
       'lh3.googleusercontent.com',
       'x8ki-letl-twmt.n7.xano.io', // Pentru avataruri Xano
+      'rngqbthiezvwlebrcoxj.supabase.co', // Adăugat pentru Supabase
     ],
     formats: ['image/webp', 'image/avif'],
   },
@@ -18,6 +19,24 @@ const nextConfig = {
       {
         source: '/(.*)',
         headers: [
+          {
+            key: 'Content-Security-Policy',
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-eval' 'unsafe-inline'",
+              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+              "font-src 'self' https://fonts.gstatic.com data:",
+              "img-src 'self' data: https: blob:",
+              "media-src 'self' https:",
+              "object-src 'none'",
+              "base-uri 'self'",
+              "form-action 'self'",
+              "frame-ancestors 'none'",
+              "frame-src 'self'",
+              // IMPORTANT: Allow connections to Supabase and APIs
+              "connect-src 'self' https://*.supabase.co https://*.supabase.io wss://*.supabase.co https://api.openai.com https://api.stripe.com https://api.paypal.com https://fonts.googleapis.com https://fonts.gstatic.com"
+            ].join('; ')
+          },
           {
             key: 'X-Frame-Options',
             value: 'DENY',
