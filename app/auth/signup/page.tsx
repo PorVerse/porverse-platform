@@ -1,4 +1,4 @@
-// app/auth/signup/page.tsx
+// app/auth/signup/page.tsx - COMPLET REPARAT
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -284,22 +284,24 @@ export default function SignupPage() {
     try {
       console.log('Starting signup process...')
       
-      // Create account with Supabase Auth
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
         options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
           data: {
             first_name: formData.firstName,
             last_name: formData.lastName,
             country: formData.country,
             date_of_birth: formData.dateOfBirth,
-            onboarding_completed: true
+            onboarding_completed: true,
+            goals: onboardingData.goals,
+            challenges: onboardingData.currentChallenges,
+            ecosystems: onboardingData.ecosystemInterest,
+            experience: onboardingData.experience
           }
         }
       })
-
-      console.log('Auth response:', { authData, authError })
 
       if (authError) {
         console.error('Auth error:', authError)
@@ -309,26 +311,34 @@ export default function SignupPage() {
       if (authData.user) {
         console.log('User created successfully:', authData.user.id)
         
-        // Skip database operations for now - just go to success
+        localStorage.setItem('signup_email', formData.email)
+        localStorage.setItem('signup_data', JSON.stringify({
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          ecosystems: onboardingData.ecosystemInterest,
+          goals: onboardingData.goals
+        }))
+        
         setStep(5)
         
-        // Redirect after showing success
         setTimeout(() => {
-          router.push('/dashboard')
-        }, 3000)
+          router.push(`/auth/verify-email?email=${encodeURIComponent(formData.email)}`)
+        }, 2000)
+        
       } else {
         throw new Error('No user data returned from signup')
       }
     } catch (err: any) {
       console.error('Signup error:', err)
       
-      // Better error messages
       if (err.message?.includes('fetch')) {
         setError('Problemă de conexiune. Verifică internetul și încearcă din nou.')
       } else if (err.message?.includes('email')) {
         setError('Acest email este deja înregistrat sau nu este valid.')
       } else if (err.message?.includes('password')) {
         setError('Parola nu îndeplinește cerințele de securitate.')
+      } else if (err.message?.includes('Email rate limit exceeded')) {
+        setError('Prea multe email-uri trimise. Așteaptă 1 minut și încearcă din nou.')
       } else {
         setError(err.message || 'A apărut o eroare neașteptată. Te rog încearcă din nou.')
       }
@@ -839,9 +849,10 @@ export default function SignupPage() {
                 <div className={styles.successIcon}>🎉</div>
               </div>
               
-              <h1 className={styles.successTitle}>Bine ai venit în PorVerse!</h1>
+              <h1 className={styles.successTitle}>Contul creat cu succes!</h1>
               <p className={styles.successMessage}>
-                Contul tău a fost creat cu succes. În câteva secunde vei fi redirecționat către dashboard-ul tău personalizat.
+                <strong>Bine ai venit în PorVerse, {formData.firstName}!</strong><br />
+                În câteva secunde vei fi redirecționat către pagina de verificare email.
               </p>
               
               <div className={styles.successStats}>
@@ -875,6 +886,16 @@ export default function SignupPage() {
                     <span>Începe călătoria către cea mai bună versiune a ta</span>
                   </div>
                 </div>
+              </div>
+              
+              <div style={{ marginTop: '2rem' }}>
+                <button 
+                  onClick={() => router.push(`/auth/verify-email?email=${encodeURIComponent(formData.email)}`)}
+                  className={styles.primaryButton}
+                >
+                  <span>📧 Verifică Email Acum</span>
+                  <span className={styles.buttonIcon}>→</span>
+                </button>
               </div>
             </div>
           </div>
