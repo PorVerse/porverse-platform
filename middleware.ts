@@ -1,8 +1,8 @@
 // ================================
-// MIDDLEWARE.TS - SECURITY FOUNDATION WITH SUPABASE CSP FIX
+// MIDDLEWARE.TS - SECURITY FOUNDATION WITH SUPABASE CSP FIX + ADMIN PROTECTION
 // ================================
 import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/request'
+import type { NextRequest } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 import crypto from 'crypto'
 
@@ -55,6 +55,7 @@ export async function middleware(request: NextRequest) {
   
   // Granular rate limits pentru different endpoints
   const rateLimits: Record<string, { requests: number; window: number }> = {
+    '/admin': { requests: 20, window: 3600000 }, // 20 requests per hour for admin dashboard
     '/api/quantum-vault/future-self/generate': { requests: 3, window: 3600000 }, // 3 per hour - expensive AI
     '/api/quantum-vault/future-self/conversation': { requests: 30, window: 60000 }, // 30 per minute
     '/api/quantum-vault/future-self/avatar': { requests: 5, window: 3600000 }, // 5 avatar generations per hour
@@ -104,7 +105,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // ================================
-  // 3. AUTHENTICATION CHECK - ENHANCED
+  // 3. AUTHENTICATION CHECK - ENHANCED WITH ADMIN PROTECTION
   // ================================
   if (isProtectedRoute(pathname)) {
     const supabase = createServerClient(
@@ -141,6 +142,28 @@ export async function middleware(request: NextRequest) {
         } else {
           return NextResponse.redirect(new URL('/auth/login', request.url))
         }
+      }
+
+      // 🚀 ADMIN PROTECTION - Only for /admin routes
+      if (pathname.startsWith('/admin')) {
+        const userEmail = session.user.email?.toLowerCase()
+        const adminEmails = [
+          'admin@porverse.ro',
+          'porverseofficial@gmail.com', // Your main email
+          // Add more admin emails here if needed
+        ]
+        
+        const isAdmin = adminEmails.includes(userEmail || '')
+        
+        if (!isAdmin) {
+          console.warn(`[SECURITY] Admin access denied: ${userEmail} - ${pathname} - ${ip}`)
+          
+          // Redirect non-admin users to dashboard
+          return NextResponse.redirect(new URL('/dashboard', request.url))
+        }
+        
+        // Log admin access
+        console.log(`[ADMIN] Dashboard access: ${userEmail} - ${pathname} - ${ip}`)
       }
 
       // Add user context to API requests
@@ -270,11 +293,11 @@ export async function middleware(request: NextRequest) {
   // ================================
   // 7. LOGGING & MONITORING - ENHANCED
   // ================================
-  if (pathname.startsWith('/api/')) {
+  if (pathname.startsWith('/api/') || pathname.startsWith('/admin')) {
     const logLevel = getLogLevel(pathname)
     const logMessage = `[${logLevel}] ${request.method} ${pathname} - IP: ${ip} - UA: ${userAgent.substring(0, 100)}`
     
-    if (logLevel === 'HIGH' || pathname.includes('quantum-vault')) {
+    if (logLevel === 'HIGH' || pathname.includes('quantum-vault') || pathname.startsWith('/admin')) {
       console.log(`🔒 ${logMessage}`)
     } else if (logLevel === 'MEDIUM') {
       console.log(`⚠️ ${logMessage}`)
@@ -316,6 +339,7 @@ export async function middleware(request: NextRequest) {
 function isProtectedRoute(pathname: string): boolean {
   const protectedRoutes = [
     '/dashboard',
+    '/admin', // 🚀 Added admin route protection
     '/quantum-vault',
     '/api/quantum-vault',
     '/api/payments',
@@ -330,7 +354,7 @@ function isProtectedRoute(pathname: string): boolean {
 }
 
 function getLogLevel(pathname: string): 'LOW' | 'MEDIUM' | 'HIGH' {
-  if (pathname.includes('quantum-vault') || pathname.includes('payments')) {
+  if (pathname.includes('quantum-vault') || pathname.includes('payments') || pathname.startsWith('/admin')) {
     return 'HIGH'
   } else if (pathname.includes('/api/ai') || pathname.includes('/api/user')) {
     return 'MEDIUM'

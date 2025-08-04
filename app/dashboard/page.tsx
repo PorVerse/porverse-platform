@@ -1,193 +1,327 @@
-// app/dashboard/page.tsx
-// REAL DATA DASHBOARD - Transform Mock to Living Intelligence
-
 'use client'
 
 import { useState, useEffect } from 'react'
 import { createClientSupabase } from '@/lib/supabase'
-import { porHealthService } from '@/lib/services/porhealth-service'
-import { porKidsService } from '@/lib/services/porkids-service'
-import { porWellService } from '@/lib/services/porwell-service'
 import styles from './dashboard.module.css'
 
-interface DashboardData {
-  health: HealthDashboardData | null
-  kids: ParentDashboard | null
-  wellness: WellnessDashboard | null
-  crossEcosystemInsights: CrossEcosystemInsight[]
-  quantumVaultAccess: boolean
-  loading: boolean
-  error: string | null
+interface CrossEcosystemInsight {
+  type: string
+  title: string
+  description: string
+  action_items: string[]
+  ecosystems_involved: string[]
+  priority: 'low' | 'medium' | 'high'
+  confidence: number
 }
 
 export default function RealDataDashboard() {
   const [user, setUser] = useState<any>(null)
-  const [dashboardData, setDashboardData] = useState<DashboardData>({
-    health: null,
-    kids: null,
-    wellness: null,
-    crossEcosystemInsights: [],
-    quantumVaultAccess: false,
-    loading: true,
-    error: null
-  })
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [debugInfo, setDebugInfo] = useState<string[]>([])
 
   const supabase = createClientSupabase()
 
   useEffect(() => {
-    loadRealDashboardData()
+    loadDashboard()
   }, [])
 
-  // ===========================
-  // REAL DATA LOADING
-  // ===========================
+  const addDebugInfo = (info: string) => {
+    console.log('🔍 DEBUG:', info)
+    setDebugInfo(prev => [...prev, `${new Date().toLocaleTimeString()}: ${info}`])
+  }
 
-  const loadRealDashboardData = async () => {
+  const loadDashboard = async () => {
     try {
-      setDashboardData(prev => ({ ...prev, loading: true, error: null }))
+      addDebugInfo('Starting dashboard load...')
+      setLoading(true)
+      setError(null)
 
-      // Get current user
-      const { data: { user: currentUser } } = await supabase.auth.getUser()
+      // Add delay to see debug info
+      await new Promise(resolve => setTimeout(resolve, 1000))
+
+      // Test 1: Check Supabase connection
+      addDebugInfo('Testing Supabase connection...')
+      await new Promise(resolve => setTimeout(resolve, 500))
+      
+      // Test 2: Get current user
+      addDebugInfo('Getting current user...')
+      await new Promise(resolve => setTimeout(resolve, 500))
+      const { data: { user: currentUser }, error: userError } = await supabase.auth.getUser()
+      
+      if (userError) {
+        throw new Error(`Auth error: ${userError.message}`)
+      }
+      
       if (!currentUser) {
-        throw new Error('User not authenticated')
+        throw new Error('No authenticated user found')
       }
+      
+      addDebugInfo(`User found: ${currentUser.email}`)
       setUser(currentUser)
+      await new Promise(resolve => setTimeout(resolve, 500))
 
-      // Load real data from all ecosystems in parallel
-      const [healthData, kidsData, wellnessData] = await Promise.allSettled([
-        porHealthService.getDashboardData(currentUser.id),
-        porKidsService.getParentDashboardData(currentUser.id),
-        porWellService.getWellnessDashboardData(currentUser.id)
-      ])
+      // Test 3: Check user profile exists
+      addDebugInfo('Checking user profile...')
+      await new Promise(resolve => setTimeout(resolve, 500))
+      const { data: profile, error: profileError } = await supabase
+        .from('user_profiles')
+        .select('*')
+        .eq('id', currentUser.id)
+        .single()
 
-      // Process results
-      const processedData: Partial<DashboardData> = {
-        health: healthData.status === 'fulfilled' ? healthData.value : null,
-        kids: kidsData.status === 'fulfilled' ? kidsData.value : null,
-        wellness: wellnessData.status === 'fulfilled' ? wellnessData.value : null,
+      if (profileError && profileError.code !== 'PGRST116') {
+        addDebugInfo(`Profile error: ${profileError.message}`)
+        // Create profile if it doesn't exist
+        addDebugInfo('Creating user profile...')
+        const { error: insertError } = await supabase
+          .from('user_profiles')
+          .insert({
+            id: currentUser.id,
+            email: currentUser.email || '',
+            subscription_tier: 'free',
+            subscription_status: 'active',
+            onboarding_completed: false
+          })
+        
+        if (insertError) {
+          throw new Error(`Failed to create profile: ${insertError.message}`)
+        }
+        addDebugInfo('User profile created successfully')
+        await new Promise(resolve => setTimeout(resolve, 500))
+      } else {
+        addDebugInfo('User profile exists')
+        await new Promise(resolve => setTimeout(resolve, 500))
       }
 
-      // Generate cross-ecosystem insights
-      if (processedData.health && processedData.wellness) {
-        processedData.crossEcosystemInsights = await generateCrossEcosystemInsights(
-          processedData.health,
-          processedData.wellness,
-          currentUser.id
-        )
+      // Test 4: Check ecosystems access
+      addDebugInfo('Checking ecosystem access...')
+      await new Promise(resolve => setTimeout(resolve, 500))
+      const { data: ecosystems, error: ecosystemError } = await supabase
+        .from('user_ecosystems')
+        .select('*')
+        .eq('user_id', currentUser.id)
+
+      if (ecosystemError) {
+        addDebugInfo(`Ecosystem error: ${ecosystemError.message}`)
+      } else {
+        addDebugInfo(`Found ${ecosystems?.length || 0} ecosystem access records`)
       }
 
-      // Check Quantum Vault access (Trinity combo)
-      processedData.quantumVaultAccess = await checkQuantumVaultAccess(currentUser.id)
+      addDebugInfo('Dashboard loaded successfully!')
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      setLoading(false)
 
-      setDashboardData(prev => ({
-        ...prev,
-        ...processedData,
-        loading: false
-      }))
-
-    } catch (error) {
-      console.error('Dashboard loading error:', error)
-      setDashboardData(prev => ({
-        ...prev,
-        loading: false,
-        error: error instanceof Error ? error.message : 'Unknown error occurred'
-      }))
+    } catch (error: any) {
+      console.error('Dashboard error:', error)
+      addDebugInfo(`ERROR: ${error.message}`)
+      setError(error.message)
+      setLoading(false)
     }
   }
 
-  // ===========================
-  // CROSS-ECOSYSTEM AI INSIGHTS
-  // ===========================
+  if (loading) {
+    return (
+      <div style={{ 
+        minHeight: '100vh', 
+        display: 'flex', 
+        flexDirection: 'column',
+        alignItems: 'center', 
+        justifyContent: 'center',
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        color: 'white',
+        fontFamily: 'system-ui',
+        padding: '20px'
+      }}>
+        <div style={{ 
+          width: '60px', 
+          height: '60px', 
+          border: '4px solid rgba(255,255,255,0.3)', 
+          borderTop: '4px solid white',
+          borderRadius: '50%',
+          animation: 'spin 1s linear infinite',
+          marginBottom: '20px'
+        }}></div>
+        
+        <h2 style={{ marginBottom: '10px' }}>🔄 Loading your personalized dashboard...</h2>
+        <p style={{ opacity: 0.8, marginBottom: '30px' }}>Gathering insights from all ecosystems...</p>
+        
+        {/* Debug Info */}
+        <div style={{ 
+          background: 'rgba(0,0,0,0.2)', 
+          padding: '15px', 
+          borderRadius: '8px',
+          width: '100%',
+          maxWidth: '600px',
+          maxHeight: '200px',
+          overflow: 'auto'
+        }}>
+          <h3 style={{ margin: '0 0 10px 0', fontSize: '14px' }}>Debug Info:</h3>
+          {debugInfo.map((info, index) => (
+            <div key={index} style={{ fontSize: '12px', marginBottom: '5px', opacity: 0.9 }}>
+              {info}
+            </div>
+          ))}
+        </div>
 
-  const generateCrossEcosystemInsights = async (
-    healthData: HealthDashboardData,
-    wellnessData: WellnessDashboard,
-    userId: string
-  ): Promise<CrossEcosystemInsight[]> => {
-    
-    const insights: CrossEcosystemInsight[] = []
-
-    // Sleep Impact Analysis
-    if (healthData.biometrics.latest_readings.sleep_hours && wellnessData.mood_tracking.recent_entries.length > 0) {
-      const avgSleep = healthData.biometrics.latest_readings.sleep_hours
-      const avgMood = wellnessData.mood_tracking.average_mood
-      
-      if (avgSleep < 7 && avgMood < 6) {
-        insights.push({
-          type: 'sleep_mood_correlation',
-          title: '😴 Somnul afectează dispoziția',
-          description: `Dormi în medie ${avgSleep}h/noapte și ai dispoziția la ${avgMood}/10. Somnul insuficient poate afecta starea emoțională.`,
-          action_items: [
-            'Stabilește o rutină de somn consistentă',
-            'Evită ecranele cu 1h înainte de culcare',
-            'Încearcă meditația pentru somn din PorWell'
-          ],
-          ecosystems_involved: ['PorHealth', 'PorWell'],
-          priority: 'high',
-          confidence: 0.85
-        })
-      }
-    }
-
-    // Nutrition Mood Impact
-    if (healthData.nutrition.macro_breakdown && wellnessData.mood_tracking.recent_entries.length > 0) {
-      const avgMood = wellnessData.mood_tracking.average_mood
-      const proteinIntake = healthData.nutrition.macro_breakdown.protein_g
-      
-      if (proteinIntake < 80 && avgMood < 6) {
-        insights.push({
-          type: 'nutrition_mood_correlation',
-          title: '🥗 Nutriția influențează mintea',
-          description: `Consumul redus de proteine (${proteinIntake}g/zi) poate contribui la dispoziția scăzută (${avgMood}/10).`,
-          action_items: [
-            'Crește aportul de proteine la 1.2g/kg corp',
-            'Include surse de triptofan (pui, pește, ouă)',
-            'Consultă planul de nutriție AI din PorHealth'
-          ],
-          ecosystems_involved: ['PorHealth', 'PorWell'],
-          priority: 'medium',
-          confidence: 0.72
-        })
-      }
-    }
-
-    // Exercise Stress Relief
-    if (healthData.fitness.recent_sessions.length > 0 && wellnessData.mood_tracking.recent_entries.length > 0) {
-      const exerciseFrequency = healthData.fitness.recent_sessions.length
-      const avgStress = wellnessData.mood_tracking.recent_entries.reduce((sum, entry) => sum + (entry.stress_level || 5), 0) / wellnessData.mood_tracking.recent_entries.length
-      
-      if (exerciseFrequency < 3 && avgStress > 6) {
-        insights.push({
-          type: 'exercise_stress_correlation',
-          title: '💪 Exercițiul reduce stresul',
-          description: `Doar ${exerciseFrequency} antrenamente în ultima săptămână, iar nivelul de stres este ${avgStress.toFixed(1)}/10. Exercițiul regulat poate reduce semnificativ stresul.`,
-          action_items: [
-            'Programează 3-4 antrenamente/săptămână',
-            'Încearcă yoga sau pilates pentru relaxare',
-            'Folosește workout-urile anti-stres din PorHealth'
-          ],
-          ecosystems_involved: ['PorHealth', 'PorWell'],
-          priority: 'high',
-          confidence: 0.91
-        })
-      }
-    }
-
-    return insights
+        <style jsx>{`
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}</style>
+      </div>
+    )
   }
 
-  // ===========================
-  // QUANTUM VAULT ACCESS CHECK
-  // ===========================
+  if (error) {
+    return (
+      <div style={{ 
+        minHeight: '100vh', 
+        display: 'flex', 
+        flexDirection: 'column',
+        alignItems: 'center', 
+        justifyContent: 'center',
+        background: 'linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%)',
+        color: 'white',
+        fontFamily: 'system-ui',
+        padding: '20px'
+      }}>
+        <h2 style={{ marginBottom: '10px' }}>❌ Dashboard Error</h2>
+        <p style={{ marginBottom: '20px', textAlign: 'center' }}>{error}</p>
+        
+        <button 
+          onClick={loadDashboard}
+          style={{
+            background: 'rgba(255,255,255,0.2)',
+            border: '1px solid rgba(255,255,255,0.3)',
+            color: 'white',
+            padding: '10px 20px',
+            borderRadius: '5px',
+            cursor: 'pointer',
+            marginBottom: '30px'
+          }}
+        >
+          Try Again
+        </button>
 
-  const checkQuantumVaultAccess = async (userId: string): Promise<boolean> => {
-    const { data } = await supabase
-      .from('user_ecosystems')
-      .select('ecosystem, access_level')
-      .eq('user_id', userId)
-      .eq('access_level', 'premium')
+        {/* Debug Info */}
+        <div style={{ 
+          background: 'rgba(0,0,0,0.2)', 
+          padding: '15px', 
+          borderRadius: '8px',
+          width: '100%',
+          maxWidth: '600px',
+          maxHeight: '300px',
+          overflow: 'auto'
+        }}>
+          <h3 style={{ margin: '0 0 10px 0', fontSize: '14px' }}>Debug Info:</h3>
+          {debugInfo.map((info, index) => (
+            <div key={index} style={{ fontSize: '12px', marginBottom: '5px', opacity: 0.9 }}>
+              {info}
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
 
-    const premiumEcosystems = data?.map(d => d.ecosystem) || []
-    const trinityEcosystems = ['por-mind', 'por-flow', 'por-blu']
-    
-    return trinityEcosystems.every(ecosystem => premiumEcosystems.includes(ecosystem))
+  return (
+    <div style={{ 
+      minHeight: '100vh', 
+      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      color: 'white',
+      fontFamily: 'system-ui',
+      padding: '20px'
+    }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+        <h1 style={{ marginBottom: '10px' }}>🚀 Welcome to PorVerse!</h1>
+        <p style={{ marginBottom: '30px', opacity: 0.8 }}>Hello {user?.email}!</p>
+        
+        <div style={{ 
+          background: 'rgba(255,255,255,0.1)', 
+          padding: '20px', 
+          borderRadius: '10px',
+          marginBottom: '30px'
+        }}>
+          <h2 style={{ marginBottom: '15px' }}>🎯 Your Ecosystems</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '15px' }}>
+            
+            <div style={{ background: 'rgba(255,255,255,0.1)', padding: '15px', borderRadius: '8px' }}>
+              <h3>🏥 PorHealth</h3>
+              <p>Nutrition & Fitness optimization</p>
+              <div style={{ marginTop: '10px' }}>
+                <span style={{ background: '#00ff88', color: 'black', padding: '4px 8px', borderRadius: '4px', fontSize: '12px' }}>
+                  FREE ACCESS
+                </span>
+              </div>
+            </div>
+
+            <div style={{ background: 'rgba(255,255,255,0.1)', padding: '15px', borderRadius: '8px' }}>
+              <h3>📚 PorKids</h3>
+              <p>AI homework help & education</p>
+              <div style={{ marginTop: '10px' }}>
+                <span style={{ background: '#00ff88', color: 'black', padding: '4px 8px', borderRadius: '4px', fontSize: '12px' }}>
+                  FREE ACCESS
+                </span>
+              </div>
+            </div>
+
+            <div style={{ background: 'rgba(255,255,255,0.1)', padding: '15px', borderRadius: '8px', opacity: 0.6 }}>
+              <h3>💰 PorMind</h3>
+              <p>Financial intelligence</p>
+              <div style={{ marginTop: '10px' }}>
+                <span style={{ background: '#ff6b35', color: 'white', padding: '4px 8px', borderRadius: '4px', fontSize: '12px' }}>
+                  PREMIUM REQUIRED
+                </span>
+              </div>
+            </div>
+
+            <div style={{ background: 'rgba(255,255,255,0.1)', padding: '15px', borderRadius: '8px', opacity: 0.6 }}>
+              <h3>🧠 PorWell</h3>
+              <p>Mental wellness & therapy</p>
+              <div style={{ marginTop: '10px' }}>
+                <span style={{ background: '#ff6b35', color: 'white', padding: '4px 8px', borderRadius: '4px', fontSize: '12px' }}>
+                  PREMIUM REQUIRED
+                </span>
+              </div>
+            </div>
+
+            <div style={{ background: 'rgba(255,255,255,0.1)', padding: '15px', borderRadius: '8px', opacity: 0.6 }}>
+              <h3>⚡ PorFlow</h3>
+              <p>Productivity optimization</p>
+              <div style={{ marginTop: '10px' }}>
+                <span style={{ background: '#ff6b35', color: 'white', padding: '4px 8px', borderRadius: '4px', fontSize: '12px' }}>
+                  PREMIUM REQUIRED
+                </span>
+              </div>
+            </div>
+
+            <div style={{ background: 'rgba(255,255,255,0.1)', padding: '15px', borderRadius: '8px', opacity: 0.6 }}>
+              <h3>🎯 PorBlu</h3>
+              <p>Strategic leadership</p>
+              <div style={{ marginTop: '10px' }}>
+                <span style={{ background: '#ff6b35', color: 'white', padding: '4px 8px', borderRadius: '4px', fontSize: '12px' }}>
+                  PREMIUM REQUIRED
+                </span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div style={{ 
+          background: 'rgba(255,255,255,0.1)', 
+          padding: '20px', 
+          borderRadius: '10px' 
+        }}>
+          <h2>🎉 Success!</h2>
+          <p>Your dashboard loaded successfully! Database connection is working.</p>
+          <p style={{ marginTop: '15px' }}>
+            <strong>Next steps:</strong> Test the admin dashboard at <code>/admin</code>
+          </p>
+        </div>
+      </div>
+    </div>
+  )
+}
