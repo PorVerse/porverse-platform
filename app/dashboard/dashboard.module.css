@@ -1,0 +1,778 @@
+/* app/dashboard/dashboard.module.css */
+/* Real Data Dashboard Styles - Professional & Engaging */
+
+.realDashboard {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* LOADING STATES */
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+  text-align: center;
+  color: white;
+}
+
+.loadingSpinner {
+  width: 60px;
+  height: 60px;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top: 4px solid #ffffff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.errorContainer {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 40px;
+  text-align: center;
+  color: white;
+  margin: 50px auto;
+  max-width: 500px;
+}
+
+.retryButton {
+  background: linear-gradient(135deg, #ff6b6b, #ee5a5a);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  margin-top: 20px;
+  transition: transform 0.2s;
+}
+
+.retryButton:hover {
+  transform: translateY(-2px);
+}
+
+/* HEADER */
+.dashboardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 30px;
+  margin-bottom: 30px;
+  color: white;
+}
+
+.welcomeSection h1 {
+  font-size: 2.5rem;
+  margin: 0 0 10px 0;
+  font-weight: 700;
+}
+
+.welcomeSection p {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  margin: 0;
+}
+
+.quantumVaultBadge {
+  background: linear-gradient(135deg, #ff9a9e, #fecfef);
+  padding: 20px;
+  border-radius: 15px;
+  text-align: center;
+  color: #333;
+  box-shadow: 0 10px 30px rgba(255, 154, 158, 0.3);
+}
+
+.quantumVaultBadge span {
+  font-weight: 700;
+  font-size: 1.1rem;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.quantumVaultBadge p {
+  margin: 0;
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+/* CROSS-ECOSYSTEM INSIGHTS */
+.crossEcosystemInsights {
+  margin-bottom: 40px;
+}
+
+.crossEcosystemInsights h2 {
+  color: white;
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 2rem;
+}
+
+.insightsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 20px;
+}
+
+.insightCard {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 25px;
+  color: white;
+  border-left: 5px solid;
+}
+
+.insightCard.high {
+  border-left-color: #ff6b6b;
+  background: rgba(255, 107, 107, 0.1);
+}
+
+.insightCard.medium {
+  border-left-color: #ffa726;
+  background: rgba(255, 167, 38, 0.1);
+}
+
+.insightCard.low {
+  border-left-color: #66bb6a;
+  background: rgba(102, 187, 106, 0.1);
+}
+
+.insightCard h3 {
+  margin: 0 0 15px 0;
+  font-size: 1.3rem;
+}
+
+.insightCard p {
+  margin: 0 0 20px 0;
+  line-height: 1.5;
+  opacity: 0.9;
+}
+
+.actionItems h4 {
+  margin: 0 0 10px 0;
+  font-size: 1rem;
+  color: #ffd54f;
+}
+
+.actionItems ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.actionItems li {
+  margin-bottom: 5px;
+  line-height: 1.4;
+}
+
+.insightMeta {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  font-size: 0.85rem;
+  opacity: 0.7;
+}
+
+/* ECOSYSTEM SECTIONS */
+.healthSection,
+.wellnessSection,
+.kidsSection {
+  margin-bottom: 40px;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.sectionHeader h2 {
+  color: white;
+  font-size: 1.8rem;
+  margin: 0;
+}
+
+.actionButton {
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: transform 0.2s;
+}
+
+.actionButton:hover {
+  transform: translateY(-2px);
+}
+
+/* HEALTH GRID */
+.healthGrid,
+.wellnessGrid,
+.kidsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 20px;
+}
+
+.nutritionCard,
+.fitnessCard,
+.healthScoreCard,
+.moodCard,
+.therapyCard,
+.mindfulnessCard,
+.childCard {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 25px;
+  color: white;
+}
+
+.nutritionCard h3,
+.fitnessCard h3,
+.healthScoreCard h3,
+.moodCard h3,
+.therapyCard h3,
+.mindfulnessCard h3,
+.childCard h3 {
+  margin: 0 0 20px 0;
+  font-size: 1.4rem;
+  color: #ffd54f;
+}
+
+.nutritionCard p,
+.fitnessCard p {
+  margin: 8px 0;
+  font-size: 1rem;
+}
+
+.nutritionCard strong,
+.fitnessCard strong {
+  color: #81c784;
+}
+
+.mealSuggestions,
+.nextWorkout {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.mealSuggestions h4,
+.nextWorkout h4 {
+  margin: 0 0 15px 0;
+  color: #ffb74d;
+  font-size: 1.1rem;
+}
+
+.mealItem {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+}
+
+.noData {
+  text-align: center;
+  padding: 40px 20px;
+  opacity: 0.8;
+}
+
+.generateButton {
+  background: linear-gradient(135deg, #66bb6a, #4caf50);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  margin-top: 15px;
+}
+
+/* HEALTH SCORE */
+.scoreDisplay {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.scoreCircle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.scoreCircle span {
+  font-size: 1.8rem;
+  color: white;
+}
+
+.scoreCircle small {
+  font-size: 0.8rem;
+  opacity: 0.8;
+  color: white;
+}
+
+.scoreInsights p {
+  margin: 5px 0;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+/* MOOD TRACKING */
+.moodDisplay {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.currentMood span {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #81c784;
+}
+
+.moodTrend {
+  font-size: 0.9rem;
+  margin-top: 5px;
+  opacity: 0.8;
+}
+
+.quickMoodButton {
+  background: linear-gradient(135deg, #ff9a9e, #fecfef);
+  color: #333;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+/* THERAPY PROGRESS */
+.therapyStats p {
+  margin: 10px 0;
+  font-size: 1rem;
+}
+
+.riskAssessment {
+  margin-top: 15px;
+}
+
+.riskLevel {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.riskLevel.none {
+  background: rgba(76, 175, 80, 0.2);
+  color: #4caf50;
+}
+
+.riskLevel.low {
+  background: rgba(255, 193, 7, 0.2);
+  color: #ffc107;
+}
+
+.riskLevel.medium {
+  background: rgba(255, 152, 0, 0.2);
+  color: #ff9800;
+}
+
+.riskLevel.high {
+  background: rgba(244, 67, 54, 0.2);
+  color: #f44336;
+}
+
+/* MINDFULNESS STATS */
+.mindfulnessStats p {
+  margin: 10px 0;
+  font-size: 1rem;
+}
+
+.favoriteTypes h4 {
+  margin: 15px 0 10px 0;
+  color: #ffb74d;
+  font-size: 1rem;
+}
+
+.meditationType {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 4px 10px;
+  border-radius: 15px;
+  font-size: 0.85rem;
+  margin-right: 8px;
+  margin-bottom: 5px;
+}
+
+/* KIDS SECTION */
+.kidsActions {
+  display: flex;
+  gap: 10px;
+}
+
+.childCard {
+  position: relative;
+}
+
+.childProgress {
+  margin: 20px 0;
+}
+
+.childProgress h4 {
+  margin: 0 0 15px 0;
+  color: #ffb74d;
+  font-size: 1.1rem;
+}
+
+.subjectProgress {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 12px;
+}
+
+.subjectProgress span:first-child {
+  min-width: 100px;
+  font-weight: 600;
+}
+
+.progressBar {
+  flex: 1;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #4facfe, #00f2fe);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.progressBar span {
+  position: absolute;
+  right: -45px;
+  top: -2px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #4facfe;
+}
+
+.recentHomework {
+  margin: 20px 0;
+}
+
+.recentHomework h4 {
+  margin: 0 0 15px 0;
+  color: #ffb74d;
+  font-size: 1.1rem;
+}
+
+.homeworkItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.status.approved {
+  color: #4caf50;
+}
+
+.status.pending {
+  color: #ff9800;
+}
+
+.childInsights {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.childInsights h4 {
+  margin: 0 0 10px 0;
+  color: #ffb74d;
+  font-size: 1.1rem;
+}
+
+.insight {
+  font-size: 0.95rem;
+  opacity: 0.9;
+  line-height: 1.4;
+  margin: 5px 0;
+}
+
+/* QUICK ACTIONS */
+.quickActions {
+  margin-top: 40px;
+  text-align: center;
+}
+
+.quickActions h2 {
+  color: white;
+  margin-bottom: 30px;
+  font-size: 1.8rem;
+}
+
+.actionsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.quickAction {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 20px;
+  border-radius: 15px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.quickAction:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-3px);
+}
+
+/* NOTIFICATIONS */
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 15px 20px;
+  border-radius: 10px;
+  color: white;
+  font-weight: 600;
+  z-index: 1000;
+  max-width: 350px;
+  animation: slideIn 0.3s ease;
+}
+
+.notification.success {
+  background: linear-gradient(135deg, #4caf50, #66bb6a);
+}
+
+.notification.error {
+  background: linear-gradient(135deg, #f44336, #ef5350);
+}
+
+.notification.warning {
+  background: linear-gradient(135deg, #ff9800, #ffb74d);
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 768px) {
+  .realDashboard {
+    padding: 15px;
+  }
+  
+  .dashboardHeader {
+    flex-direction: column;
+    text-align: center;
+    gap: 20px;
+  }
+  
+  .welcomeSection h1 {
+    font-size: 2rem;
+  }
+  
+  .sectionHeader {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+  
+  .healthGrid,
+  .wellnessGrid,
+  .kidsGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .insightsGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .insightCard {
+    padding: 20px;
+  }
+  
+  .scoreDisplay {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+  
+  .moodDisplay {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+  
+  .subjectProgress {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .progressBar span {
+    position: static;
+    margin-top: 5px;
+  }
+  
+  .actionsGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .notification {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    max-width: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .welcomeSection h1 {
+    font-size: 1.5rem;
+  }
+  
+  .nutritionCard,
+  .fitnessCard,
+  .healthScoreCard,
+  .moodCard,
+  .therapyCard,
+  .mindfulnessCard,
+  .childCard {
+    padding: 20px;
+  }
+  
+  .insightCard {
+    padding: 15px;
+  }
+  
+  .actionButton {
+    padding: 10px 16px;
+    font-size: 0.9rem;
+  }
+  
+  .quickAction {
+    padding: 15px;
+    font-size: 0.9rem;
+  }
+}
+
+/* DARK MODE SUPPORT */
+@media (prefers-color-scheme: dark) {
+  .realDashboard {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  }
+  
+  .nutritionCard,
+  .fitnessCard,
+  .healthScoreCard,
+  .moodCard,
+  .therapyCard,
+  .mindfulnessCard,
+  .childCard,
+  .insightCard {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* ACCESSIBILITY */
+.actionButton:focus,
+.quickAction:focus,
+.generateButton:focus,
+.quickMoodButton:focus {
+  outline: 2px solid #4facfe;
+  outline-offset: 2px;
+}
+
+.nutritionCard,
+.fitnessCard,
+.healthScoreCard,
+.moodCard,
+.therapyCard,
+.mindfulnessCard,
+.childCard,
+.insightCard {
+  transition: transform 0.2s ease;
+}
+
+.nutritionCard:hover,
+.fitnessCard:hover,
+.healthScoreCard:hover,
+.moodCard:hover,
+.therapyCard:hover,
+.mindfulnessCard:hover,
+.childCard:hover,
+.insightCard:hover {
+  transform: translateY(-2px);
+}
+
+/* PRINT STYLES */
+@media print {
+  .realDashboard {
+    background: white !important;
+    color: black !important;
+  }
+  
+  .actionButton,
+  .quickAction,
+  .generateButton,
+  .quickMoodButton {
+    display: none;
+  }
+  
+  .notification {
+    display: none;
+  }
+}
