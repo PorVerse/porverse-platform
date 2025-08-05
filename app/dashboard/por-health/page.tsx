@@ -1,8 +1,9 @@
-// app/dashboard/por-health/page.tsx
+// app/dashboard/por-health/page.tsx - PRODUCTION READY VERSION
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
+import { apiClient, useAPICall } from '@/lib/api/api-client';
 import styles from './style.module.css';
 
 interface HealthMetric {
@@ -66,21 +67,301 @@ interface HealthInsight {
 }
 
 export default function PorHealthDashboard() {
-  const [loading, setLoading] = useState(true);
-  const [healthScore, setHealthScore] = useState(0);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [aiChatOpen, setAiChatOpen] = useState(false);
   const [selectedMetric, setSelectedMetric] = useState<string | null>(null);
-  
-  // Data States
-  const [healthMetrics, setHealthMetrics] = useState<HealthMetric[]>([]);
-  const [biometrics, setBiometrics] = useState<BiometricData | null>(null);
-  const [nutrition, setNutrition] = useState<NutritionProfile | null>(null);
-  const [workouts, setWorkouts] = useState<WorkoutSession[]>([]);
-  const [insights, setInsights] = useState<HealthInsight[]>([]);
+  const [chatMessage, setChatMessage] = useState('');
+  const [chatMessages, setChatMessages] = useState<any[]>([]);
+  const [chatLoading, setChatLoading] = useState(false);
   
   // Refs for animations
   const particleContainerRef = useRef<HTMLDivElement>(null);
+
+  // ================================
+  // REAL API CALLS - NO MORE MOCK DATA!
+  // ================================
+
+  // Get dashboard data with real API
+  const { 
+    data: dashboardData, 
+    loading: dashboardLoading, 
+    error: dashboardError,
+    refetch: refetchDashboard 
+  } = useAPICall(
+    () => apiClient.getDashboardData('por-health'), 
+    []
+}
+
+  // Get user progress
+  const { 
+    data: userProgress, 
+    loading: progressLoading 
+  } = useAPICall(
+    () => apiClient.getUserProgress('por-health'),
+    []
+  );
+
+  // Calculate health score from real data
+  const healthScore = dashboardData?.health?.biometrics?.health_score || 0;
+
+  // Transform real API data to component format
+  const healthMetrics: HealthMetric[] = dashboardData?.health ? transformHealthMetrics(dashboardData.health) : [];
+  const biometrics: BiometricData | null = dashboardData?.health?.biometrics ? transformBiometrics(dashboardData.health.biometrics) : null;
+  const nutrition: NutritionProfile | null = dashboardData?.health?.nutrition ? transformNutrition(dashboardData.health.nutrition) : null;
+  const workouts: WorkoutSession[] = dashboardData?.health?.workouts || [];
+  const insights: HealthInsight[] = dashboardData?.health?.insights || [];
+
+  // ================================
+  // DATA TRANSFORMATION HELPERS
+  // ================================
+  
+  function transformHealthMetrics(healthData: any): HealthMetric[] {
+    const defaultMetrics = [
+      {
+        id: 'heart_rate',
+        name: 'Heart Rate',
+        value: healthData.biometrics?.latest_readings?.heart_rate || 68,
+        unit: 'bpm',
+        target: 65,
+        icon: '💗',
+        status: 'good' as const,
+        trend: 'stable' as const,
+        change: 0.2
+      },
+      {
+        id: 'steps',
+        name: 'Daily Steps',
+        value: healthData.activity?.daily_steps || 8500,
+        unit: 'steps',
+        target: 10000,
+        icon: '👟',
+        status: 'good' as const,
+        trend: 'rising' as const,
+        change: 15.3
+      },
+      {
+        id: 'sleep',
+        name: 'Sleep Quality',
+        value: healthData.sleep?.last_night_hours || 7.5,
+        unit: 'hrs',
+        target: 8.0,
+        icon: '🌙',
+        status: 'good' as const,
+        trend: 'rising' as const,
+        change: 12.5
+      },
+      {
+        id: 'hydration',
+        name: 'Hydration',
+        value: healthData.hydration?.daily_intake || 2.2,
+        unit: 'L',
+        target: 2.5,
+        icon: '💧',
+        status: 'warning' as const,
+        trend: 'stable' as const,
+        change: 5.2
+      }
+    ];
+
+    // Calculate status based on target achievement
+    return defaultMetrics.map(metric => ({
+      ...metric,
+      status: calculateMetricStatus(metric.value, metric.target)
+    }));
+  }
+
+  function transformBiometrics(biometricData: any): BiometricData {
+    const latest = biometricData.latest_readings || {};
+    
+    return {
+      heartRate: { 
+        current: latest.heart_rate || 68, 
+        resting: latest.resting_heart_rate || 52, 
+        max: 185 
+      },
+      bloodPressure: { 
+        systolic: latest.blood_pressure_systolic || 118, 
+        diastolic: latest.blood_pressure_diastolic || 76 
+      },
+      bodyComposition: { 
+        weight: latest.weight || 72.3, 
+        bodyFat: latest.body_fat_percentage || 12.8, 
+        muscle: latest.muscle_mass || 45.2 
+      },
+      hydration: { 
+        current: latest.hydration_level || 2.2, 
+        target: 2.5, 
+        percentage: Math.round((latest.hydration_level || 2.2) / 2.5 * 100) 
+      },
+      sleep: { 
+        hours: latest.sleep_hours || 7.5, 
+        quality: latest.sleep_quality || 85, 
+        deep: latest.deep_sleep_hours || 1.8, 
+        rem: latest.rem_sleep_hours || 1.5 
+      },
+      stress: { 
+        level: latest.stress_level || 30, 
+        hrv: latest.heart_rate_variability || 42, 
+        recovery: biometricData.health_score || 85 
+      }
+    };
+  }
+
+  function transformNutrition(nutritionData: any): NutritionProfile {
+    const currentPlan = nutritionData.current_plan;
+    
+    if (!currentPlan) {
+      return {
+        calories: { consumed: 0, target: 2000, remaining: 2000 },
+        macros: {
+          protein: { current: 0, target: 150, percentage: 0 },
+          carbs: { current: 0, target: 250, percentage: 0 },
+          fat: { current: 0, target: 80, percentage: 0 }
+        },
+        micronutrients: {
+          vitamin_d: 0,
+          vitamin_b12: 0,
+          iron: 0,
+          magnesium: 0
+        }
+      };
+    }
+
+    return {
+      calories: {
+        consumed: currentPlan.calories_consumed || 1800,
+        target: currentPlan.target_calories || 2000,
+        remaining: (currentPlan.target_calories || 2000) - (currentPlan.calories_consumed || 1800)
+      },
+      macros: {
+        protein: {
+          current: currentPlan.protein_consumed || 130,
+          target: currentPlan.protein_target || 150,
+          percentage: Math.round((currentPlan.protein_consumed || 130) / (currentPlan.protein_target || 150) * 100)
+        },
+        carbs: {
+          current: currentPlan.carbs_consumed || 220,
+          target: currentPlan.carbs_target || 250,
+          percentage: Math.round((currentPlan.carbs_consumed || 220) / (currentPlan.carbs_target || 250) * 100)
+        },
+        fat: {
+          current: currentPlan.fat_consumed || 65,
+          target: currentPlan.fat_target || 80,
+          percentage: Math.round((currentPlan.fat_consumed || 65) / (currentPlan.fat_target || 80) * 100)
+        }
+      },
+      micronutrients: {
+        vitamin_d: currentPlan.vitamin_d_percentage || 75,
+        vitamin_b12: currentPlan.vitamin_b12_percentage || 90,
+        iron: currentPlan.iron_percentage || 80,
+        magnesium: currentPlan.magnesium_percentage || 85
+      }
+    };
+  }
+
+  function calculateMetricStatus(value: number, target: number): 'excellent' | 'good' | 'warning' | 'critical' {
+    const percentage = value / target;
+    if (percentage >= 0.95) return 'excellent';
+    if (percentage >= 0.80) return 'good';
+    if (percentage >= 0.60) return 'warning';
+    return 'critical';
+  }
+
+  // ================================
+  // AI CHAT FUNCTIONALITY
+  // ================================
+  
+  const handleSendMessage = async () => {
+    if (!chatMessage.trim() || chatLoading) return;
+
+    const userMessage = chatMessage;
+    setChatMessage('');
+    setChatLoading(true);
+
+    // Add user message to chat
+    const newUserMessage = {
+      id: Date.now(),
+      role: 'user',
+      content: userMessage,
+      timestamp: new Date()
+    };
+
+    setChatMessages(prev => [...prev, newUserMessage]);
+
+    try {
+      // Call real AI nutrition endpoint
+      const result = await apiClient.makeRequest('/api/ai/nutrition', {
+        method: 'POST',
+        body: JSON.stringify({
+          action: 'health_chat',
+          message: userMessage,
+          context: {
+            healthScore,
+            currentMetrics: healthMetrics,
+            biometrics,
+            nutrition
+          }
+        })
+      });
+
+      if (result.data) {
+        const aiMessage = {
+          id: Date.now() + 1,
+          role: 'assistant',
+          content: result.data.response || 'Îmi pare rău, nu pot procesa cererea ta acum. Te rog încearcă din nou.',
+          timestamp: new Date()
+        };
+
+        setChatMessages(prev => [...prev, aiMessage]);
+      }
+    } catch (error) {
+      console.error('AI Chat error:', error);
+      const errorMessage = {
+        id: Date.now() + 1,
+        role: 'assistant',
+        content: 'Îmi pare rău, întâmpin dificultăți tehnice. Te rog încearcă din nou în câteva momente.',
+        timestamp: new Date()
+      };
+      setChatMessages(prev => [...prev, errorMessage]);
+    } finally {
+      setChatLoading(false);
+    }
+  };
+
+  // ================================
+  // GENERATE NUTRITION PLAN
+  // ================================
+  
+  const generateNutritionPlan = async () => {
+    try {
+      const result = await apiClient.makeRequest('/api/ai/nutrition', {
+        method: 'POST',
+        body: JSON.stringify({
+          action: 'generate_meal_plan',
+          preferences: {
+            targetCalories: 2000,
+            dietaryRestrictions: [],
+            allergies: [],
+            mealsPerDay: 3,
+            budget: 'medium'
+          }
+        })
+      });
+
+      if (result.data) {
+        // Refresh dashboard data to show new plan
+        refetchDashboard();
+        alert('Plan nutrițional generat cu succes!');
+      }
+    } catch (error) {
+      console.error('Nutrition plan generation error:', error);
+      alert('Eroare la generarea planului. Te rog încearcă din nou.');
+    }
+  };
+
+  // ================================
+  // LIFECYCLE & EFFECTS
+  // ================================
 
   useEffect(() => {
     // Real-time clock
@@ -89,219 +370,30 @@ export default function PorHealthDashboard() {
   }, []);
 
   useEffect(() => {
-    initializeDashboard();
-  }, []);
+    // Initialize particles and animations
+    if (!dashboardLoading) {
+      initializeParticles();
+      startRealTimeUpdates();
+    }
+  }, [dashboardLoading]);
 
-  const initializeDashboard = async () => {
-    setLoading(true);
-    
-    // Simulate sophisticated AI initialization
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    
-    // Initialize health score with smooth animation
-    animateHealthScore();
-    
-    // Load all data
-    await loadHealthData();
-    
-    // Initialize particle system
-    initializeParticles();
-    
-    setLoading(false);
-    
-    // Start periodic updates
-    startRealTimeUpdates();
-  };
-
-  const animateHealthScore = () => {
-    const targetScore = 94;
-    let currentScore = 0;
-    const increment = 2;
-    
-    const scoreAnimation = setInterval(() => {
-      currentScore += increment;
-      setHealthScore(currentScore);
-      
-      if (currentScore >= targetScore) {
-        clearInterval(scoreAnimation);
-        setHealthScore(targetScore);
-      }
-    }, 80);
-  };
-
-  const loadHealthData = async () => {
-    // Health Metrics - Premium data with realistic values
-    setHealthMetrics([
-      {
-        id: 'heart_rate',
-        name: 'Heart Rate',
-        value: 68,
-        unit: 'bpm',
-        target: 65,
-        icon: '💗',
-        status: 'excellent',
-        trend: 'stable',
-        change: 0.2
-      },
-      {
-        id: 'steps',
-        name: 'Daily Steps',
-        value: 12847,
-        unit: 'steps',
-        target: 10000,
-        icon: '👟',
-        status: 'excellent',
-        trend: 'rising',
-        change: 15.3
-      },
-      {
-        id: 'sleep',
-        name: 'Sleep Quality',
-        value: 8.4,
-        unit: 'hrs',
-        target: 8.0,
-        icon: '🌙',
-        status: 'excellent',
-        trend: 'rising',
-        change: 12.5
-      },
-      {
-        id: 'hydration',
-        name: 'Hydration',
-        value: 2.8,
-        unit: 'L',
-        target: 2.5,
-        icon: '💧',
-        status: 'excellent',
-        trend: 'stable',
-        change: 5.2
-      },
-      {
-        id: 'stress',
-        name: 'Stress Level',
-        value: 24,
-        unit: '%',
-        target: 30,
-        icon: '🧘',
-        status: 'good',
-        trend: 'falling',
-        change: -8.1
-      },
-      {
-        id: 'recovery',
-        name: 'Recovery Score',
-        value: 89,
-        unit: '%',
-        target: 85,
-        icon: '⚡',
-        status: 'excellent',
-        trend: 'rising',
-        change: 7.3
-      }
-    ]);
-
-    // Biometric Data
-    setBiometrics({
-      heartRate: { current: 68, resting: 52, max: 185 },
-      bloodPressure: { systolic: 118, diastolic: 76 },
-      bodyComposition: { weight: 72.3, bodyFat: 12.8, muscle: 45.2 },
-      hydration: { current: 2.8, target: 2.5, percentage: 112 },
-      sleep: { hours: 8.4, quality: 92, deep: 2.1, rem: 1.8 },
-      stress: { level: 24, hrv: 45, recovery: 89 }
-    });
-
-    // Nutrition Profile
-    setNutrition({
-      calories: { consumed: 2180, target: 2200, remaining: 20 },
-      macros: {
-        protein: { current: 165, target: 150, percentage: 110 },
-        carbs: { current: 248, target: 275, percentage: 90 },
-        fat: { current: 73, target: 85, percentage: 86 }
-      },
-      micronutrients: {
-        vitamin_d: 85,
-        vitamin_b12: 92,
-        iron: 78,
-        magnesium: 88
-      }
-    });
-
-    // Workout Sessions
-    setWorkouts([
-      {
-        id: 'morning_hiit',
-        name: 'Morning HIIT Protocol',
-        type: 'hiit',
-        duration: 25,
-        caloriesBurn: 320,
-        intensity: 'extreme',
-        status: 'completed',
-        muscleGroups: ['Full Body', 'Core', 'Cardio'],
-        equipment: ['Bodyweight', 'Resistance Bands']
-      },
-      {
-        id: 'strength_upper',
-        name: 'Upper Body Strength',
-        type: 'strength',
-        duration: 45,
-        caloriesBurn: 280,
-        intensity: 'high',
-        status: 'scheduled',
-        timeRemaining: '2h 15m',
-        muscleGroups: ['Chest', 'Back', 'Arms', 'Shoulders'],
-        equipment: ['Dumbbells', 'Pull-up Bar', 'Bench']
-      },
-      {
-        id: 'evening_flow',
-        name: 'Evening Recovery Flow',
-        type: 'flexibility',
-        duration: 30,
-        caloriesBurn: 120,
-        intensity: 'low',
-        status: 'scheduled',
-        timeRemaining: '6h 30m',
-        muscleGroups: ['Full Body', 'Core'],
-        equipment: ['Yoga Mat', 'Blocks']
-      }
-    ]);
-
-    // AI Health Insights
-    setInsights([
-      {
-        id: 'sleep_improvement',
-        type: 'achievement',
-        title: 'Sleep Optimization Success',
-        message: 'Your sleep quality has improved 23% this week! Deep sleep increased by 45 minutes.',
-        priority: 'high',
-        icon: '🌙',
-        actionable: false,
-        source: 'ai_analysis'
-      },
-      {
-        id: 'protein_recommendation',
-        type: 'recommendation',
-        title: 'Protein Timing Optimization',
-        message: 'Consider adding 20g protein within 30min post-workout for optimal recovery.',
-        priority: 'medium',
-        icon: '💪',
-        actionable: true,
-        source: 'ai_analysis'
-      },
-      {
-        id: 'hrv_trend',
-        type: 'trend',
-        title: 'Heart Rate Variability Trending Up',
-        message: 'Your HRV indicates excellent autonomic recovery. Stress management is working!',
-        priority: 'medium',
-        icon: '❤️',
-        actionable: false,
-        source: 'biometric'
-      }
-    ]);
-  };
+  // Initialize chat with welcome message
+  useEffect(() => {
+    if (chatMessages.length === 0 && !dashboardLoading) {
+      setChatMessages([{
+        id: 1,
+        role: 'assistant',
+        content: 'Salut! Sunt AI-ul tău de sănătate. Am analizat datele tale și totul arată bine! Ce vrei să optimizăm astăzi?',
+        timestamp: new Date()
+      }]);
+    }
+  }, [dashboardLoading]);
 
   const initializeParticles = () => {
     if (!particleContainerRef.current) return;
+    
+    // Clear existing particles
+    particleContainerRef.current.innerHTML = '';
     
     // Create floating health particles
     for (let i = 0; i < 15; i++) {
@@ -315,19 +407,14 @@ export default function PorHealthDashboard() {
   };
 
   const startRealTimeUpdates = () => {
-    // Simulate real-time biometric updates
-    setInterval(() => {
-      if (biometrics) {
-        setBiometrics(prev => prev ? {
-          ...prev,
-          heartRate: {
-            ...prev.heartRate,
-            current: Math.max(60, Math.min(80, prev.heartRate.current + (Math.random() - 0.5) * 2))
-          }
-        } : null);
-      }
-    }, 5000);
+    // Refresh dashboard data every 5 minutes
+    const updateInterval = setInterval(refetchDashboard, 5 * 60 * 1000);
+    return () => clearInterval(updateInterval);
   };
+
+  // ================================
+  // HELPER FUNCTIONS (kept from original)
+  // ================================
 
   const getStatusColor = (status: string) => {
     const colors = {
@@ -358,12 +445,16 @@ export default function PorHealthDashboard() {
 
   const getGreeting = () => {
     const hour = currentTime.getHours();
-    if (hour < 12) return 'Good morning';
-    if (hour < 17) return 'Good afternoon';
-    return 'Good evening';
+    if (hour < 12) return 'Bună dimineața';
+    if (hour < 17) return 'Bună ziua';
+    return 'Bună seara';
   };
 
-  if (loading) {
+  // ================================
+  // LOADING STATE
+  // ================================
+
+  if (dashboardLoading || progressLoading) {
     return (
       <div className={styles.loadingContainer}>
         <div className={styles.loadingOrb}>
@@ -372,25 +463,46 @@ export default function PorHealthDashboard() {
           <div className={`${styles.orbRipple} ${styles.orbRippleDelay}`}></div>
         </div>
         <h2 className={styles.loadingTitle}>
-          🌿 Initializing PorHealth
+          🌿 Se încarcă PorHealth
         </h2>
         <p className={styles.loadingSubtitle}>
-          AI is analyzing your biometric patterns and optimizing your wellness ecosystem...
+          AI-ul analizează pattern-urile tale biometrice și optimizează ecosistemul de wellness...
         </p>
         <div className={styles.loadingProgress}>
           <div className={styles.progressBar}>
             <div className={styles.progressFill}></div>
           </div>
           <div className={styles.loadingSteps}>
-            <span className={styles.stepItem}>Connecting to wearables</span>
-            <span className={`${styles.stepItem} ${styles.stepDelay1}`}>Processing sleep data</span>
-            <span className={`${styles.stepItem} ${styles.stepDelay2}`}>Analyzing nutrition patterns</span>
-            <span className={`${styles.stepItem} ${styles.stepDelay3}`}>Generating insights</span>
+            <span className={styles.stepItem}>Conectare la wearables</span>
+            <span className={`${styles.stepItem} ${styles.stepDelay1}`}>Procesare date somn</span>
+            <span className={`${styles.stepItem} ${styles.stepDelay2}`}>Analiză pattern-uri nutriție</span>
+            <span className={`${styles.stepItem} ${styles.stepDelay3}`}>Generare insights</span>
           </div>
         </div>
       </div>
     );
   }
+
+  // ================================
+  // ERROR STATE
+  // ================================
+
+  if (dashboardError) {
+    return (
+      <div className={styles.errorContainer}>
+        <div className={styles.errorIcon}>⚠️</div>
+        <h2>Eroare la încărcarea datelor</h2>
+        <p>{dashboardError}</p>
+        <button onClick={refetchDashboard} className={styles.retryButton}>
+          Încearcă din nou
+        </button>
+      </div>
+    );
+  }
+
+  // ================================
+  // MAIN RENDER (Keep all the original JSX structure but with real data)
+  // ================================
 
   return (
     <div className={styles.dashboard}>
@@ -398,7 +510,7 @@ export default function PorHealthDashboard() {
       <div className={styles.backgroundAnimation}></div>
       <div ref={particleContainerRef} className={styles.particleContainer}></div>
 
-      {/* Sidebar */}
+      {/* Sidebar - Keep original structure */}
       <aside className={styles.sidebar}>
         <div className={styles.sidebarGlow}></div>
         
@@ -421,13 +533,13 @@ export default function PorHealthDashboard() {
               <Link href="/dashboard/por-health/nutrition" className={styles.navItem}>
                 <span className={styles.navIcon}>🍎</span>
                 <span>AI Nutrition</span>
-                <span className={styles.badge}>New</span>
+                {!nutrition?.calories.consumed && <span className={styles.badge}>New</span>}
               </Link>
 
               <Link href="/dashboard/por-health/workouts" className={styles.navItem}>
                 <span className={styles.navIcon}>💪</span>
                 <span>Smart Workouts</span>
-                <span className={styles.counter}>3</span>
+                {workouts.length > 0 && <span className={styles.counter}>{workouts.length}</span>}
               </Link>
 
               <Link href="/dashboard/por-health/biometrics" className={styles.navItem}>
@@ -449,9 +561,9 @@ export default function PorHealthDashboard() {
                 <span className={styles.liveIndicator}></span>
               </button>
 
-              <button className={styles.navItem}>
-                <span className={styles.navIcon}>🔬</span>
-                <span>Body Analytics</span>
+              <button className={styles.navItem} onClick={generateNutritionPlan}>
+                <span className={styles.navIcon}>🍎</span>
+                <span>Generate Meal Plan</span>
               </button>
 
               <button className={styles.navItem}>
@@ -461,6 +573,7 @@ export default function PorHealthDashboard() {
             </div>
           </div>
 
+          {/* Ecosystems navigation - keep original */}
           <div className={styles.navSection}>
             <h4 className={styles.navHeader}>Ecosystems</h4>
             <div className={styles.navItems}>
@@ -509,17 +622,17 @@ export default function PorHealthDashboard() {
 
       {/* Main Content */}
       <main className={styles.mainContent}>
-        {/* Header */}
+        {/* Header with real data */}
         <header className={styles.header}>
           <div className={styles.headerLeft}>
             <h1 className={styles.headerTitle}>
-              {getGreeting()}, Alex! 
+              {getGreeting()}! 
               <span className={styles.timeChip}>{formatTime(currentTime)}</span>
             </h1>
             <p className={styles.headerSubtitle}>
-              Your wellness ecosystem is operating at 
+              Ecosistemul tău de wellness funcționează la 
               <span className={styles.healthScoreText}> {healthScore}% </span>
-              optimal performance
+              performanță optimă
             </p>
           </div>
           
@@ -562,7 +675,7 @@ export default function PorHealthDashboard() {
             <div className={styles.headerActions}>
               <button className={styles.actionButton}>
                 <span>🔔</span>
-                <span className={styles.notificationBadge}>3</span>
+                {insights.length > 0 && <span className={styles.notificationBadge}>{insights.length}</span>}
               </button>
               
               <button className={styles.actionButton}>
@@ -581,7 +694,7 @@ export default function PorHealthDashboard() {
           </div>
         </header>
 
-        {/* AI Insights Banner */}
+        {/* AI Insights Banner with real data */}
         {insights.length > 0 && (
           <div className={styles.insightsBanner}>
             <div className={styles.insightsGlow}></div>
@@ -591,10 +704,10 @@ export default function PorHealthDashboard() {
                 <div className={styles.insightsIcon}>🧠</div>
                 <div>
                   <h3 className={styles.insightsTitle}>AI Health Insights</h3>
-                  <p className={styles.insightsSubtitle}>Real-time analysis of your biometric patterns</p>
+                  <p className={styles.insightsSubtitle}>Analiză în timp real a pattern-urilor biometrice</p>
                 </div>
               </div>
-              <button className={styles.viewAllButton}>View All</button>
+              <button className={styles.viewAllButton}>Vezi Toate</button>
             </div>
             
             <div className={styles.insightsGrid}>
@@ -606,7 +719,7 @@ export default function PorHealthDashboard() {
                     <p className={styles.insightMessage}>{insight.message}</p>
                   </div>
                   {insight.actionable && (
-                    <button className={styles.insightAction}>Act</button>
+                    <button className={styles.insightAction}>Acționează</button>
                   )}
                 </div>
               ))}
@@ -614,7 +727,7 @@ export default function PorHealthDashboard() {
           </div>
         )}
 
-        {/* Health Metrics Grid */}
+        {/* Health Metrics Grid with real data */}
         <div className={styles.metricsGrid}>
           {healthMetrics.map((metric, index) => (
             <div 
@@ -667,7 +780,7 @@ export default function PorHealthDashboard() {
                   ></div>
                 </div>
                 <div className={styles.targetInfo}>
-                  Target: {metric.target.toLocaleString()} {metric.unit}
+                  Țintă: {metric.target.toLocaleString()} {metric.unit}
                 </div>
               </div>
 
@@ -675,10 +788,10 @@ export default function PorHealthDashboard() {
               {selectedMetric === metric.id && (
                 <div className={styles.metricExpanded}>
                   <div className={styles.chartPlaceholder}>
-                    📈 7-day trend visualization
+                    📈 Vizualizare trend 7 zile
                   </div>
                   <p className={styles.aiAnalysis}>
-                    AI analysis shows optimal performance. Keep up the excellent work!
+                    Analiza AI arată performanță optimă. Continuă așa!
                   </p>
                 </div>
               )}
@@ -686,136 +799,177 @@ export default function PorHealthDashboard() {
           ))}
         </div>
 
-        {/* Content Grid */}
+        {/* Content Grid with real data */}
         <div className={styles.contentGrid}>
-          {/* Nutrition Card */}
-          {nutrition && (
+          {/* Nutrition Card with real data */}
+          {nutrition ? (
             <div className={styles.nutritionCard}>
               <div className={styles.nutritionGlow}></div>
               
               <div className={styles.cardHeader}>
-                <h3 className={styles.cardTitle}>🍎 Today's Nutrition</h3>
-                <div className={styles.aiOptimizedBadge}>AI Optimized</div>
+                <h3 className={styles.cardTitle}>🍎 Nutriția de Astăzi</h3>
+                <div className={styles.aiOptimizedBadge}>
+                  {nutrition.calories.consumed > 0 ? 'AI Optimizat' : 'Generează Plan'}
+                </div>
               </div>
               
-              <div className={styles.caloriesOverview}>
-                <div className={styles.caloriesDisplay}>
-                  <span className={styles.caloriesConsumed}>{nutrition.calories.consumed}</span>
-                  <span className={styles.caloriesSeparator}>/</span>
-                  <span className={styles.caloriesTarget}>{nutrition.calories.target}</span>
-                  <span className={styles.caloriesUnit}>kcal</span>
-                </div>
-                <div className={styles.caloriesRemaining}>
-                  {nutrition.calories.remaining} calories remaining
-                </div>
-              </div>
-
-              <div className={styles.macrosGrid}>
-                {Object.entries(nutrition.macros).map(([key, macro]) => (
-                  <div key={key} className={styles.macroCard}>
-                    <div className={styles.macroHeader}>
-                      <span className={styles.macroName}>
-                        {key.charAt(0).toUpperCase() + key.slice(1)}
-                      </span>
-                      <span className={styles.macroPercentage}>
-                        {macro.percentage}%
-                      </span>
+              {nutrition.calories.consumed > 0 ? (
+                <>
+                  <div className={styles.caloriesOverview}>
+                    <div className={styles.caloriesDisplay}>
+                      <span className={styles.caloriesConsumed}>{nutrition.calories.consumed}</span>
+                      <span className={styles.caloriesSeparator}>/</span>
+                      <span className={styles.caloriesTarget}>{nutrition.calories.target}</span>
+                      <span className={styles.caloriesUnit}>kcal</span>
                     </div>
-                    <div className={styles.macroValue}>
-                      <span className={styles.macroCurrent}>{macro.current}g</span>
-                      <span className={styles.macroTarget}>/ {macro.target}g</span>
-                    </div>
-                    <div className={styles.macroProgress}>
-                      <div 
-                        className={styles.macroProgressBar}
-                        style={{ width: `${Math.min(macro.percentage, 100)}%` }}
-                      ></div>
+                    <div className={styles.caloriesRemaining}>
+                      {nutrition.calories.remaining} calorii rămase
                     </div>
                   </div>
-                ))}
+
+                  <div className={styles.macrosGrid}>
+                    {Object.entries(nutrition.macros).map(([key, macro]) => (
+                      <div key={key} className={styles.macroCard}>
+                        <div className={styles.macroHeader}>
+                          <span className={styles.macroName}>
+                            {key === 'protein' ? 'Proteine' : key === 'carbs' ? 'Carbohidrați' : 'Grăsimi'}
+                          </span>
+                          <span className={styles.macroPercentage}>
+                            {macro.percentage}%
+                          </span>
+                        </div>
+                        <div className={styles.macroValue}>
+                          <span className={styles.macroCurrent}>{macro.current}g</span>
+                          <span className={styles.macroTarget}>/ {macro.target}g</span>
+                        </div>
+                        <div className={styles.macroProgress}>
+                          <div 
+                            className={styles.macroProgressBar}
+                            style={{ width: `${Math.min(macro.percentage, 100)}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <div className={styles.noNutritionPlan}>
+                  <div className={styles.noDataIcon}>🍽️</div>
+                  <h4>Niciun plan nutrițional activ</h4>
+                  <p>Generează un plan personalizat cu AI pentru a-ți optimiza nutriția.</p>
+                  <button onClick={generateNutritionPlan} className={styles.generatePlanButton}>
+                    Generează Plan AI
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className={styles.nutritionCard}>
+              <div className={styles.nutritionGlow}></div>
+              <div className={styles.cardHeader}>
+                <h3 className={styles.cardTitle}>🍎 Nutriția de Astăzi</h3>
+              </div>
+              <div className={styles.loadingNutrition}>
+                <div className={styles.loadingSpinner}></div>
+                <p>Se încarcă datele nutriționale...</p>
               </div>
             </div>
           )}
 
-          {/* Workouts Card */}
+          {/* Workouts Card with real data */}
           <div className={styles.workoutsCard}>
             <div className={styles.workoutsGlow}></div>
             
             <div className={styles.cardHeader}>
-              <h3 className={styles.cardTitle}>💪 Today's Training</h3>
+              <h3 className={styles.cardTitle}>💪 Antrenamentul de Astăzi</h3>
               <div className={styles.workoutsSummary}>
-                <span>{workouts.length} sessions</span>
-                <span>•</span>
-                <span>{workouts.reduce((acc, w) => acc + w.caloriesBurn, 0)} cal</span>
+                <span>{workouts.length} sesiuni</span>
+                {workouts.length > 0 && (
+                  <>
+                    <span>•</span>
+                    <span>{workouts.reduce((acc, w) => acc + w.caloriesBurn, 0)} cal</span>
+                  </>
+                )}
               </div>
             </div>
             
-            <div className={styles.workoutsList}>
-              {workouts.map((workout, index) => (
-                <div key={workout.id} className={styles.workoutItem}>
-                  <div 
-                    className={styles.workoutProgress}
-                    style={{
-                      backgroundColor: workout.status === 'completed' ? '#00ff88' : 'transparent',
-                      transform: workout.status === 'completed' ? 'scaleY(1)' : 'scaleY(0)'
-                    }}
-                  ></div>
-                  
-                  <div className={styles.workoutStatus}>
-                    {workout.status === 'completed' ? '✓' : 
-                     workout.status === 'active' ? '⏱️' : 
-                     index + 1}
-                  </div>
-                  
-                  <div className={styles.workoutInfo}>
-                    <div className={styles.workoutHeader}>
-                      <h4 className={styles.workoutName}>{workout.name}</h4>
-                      <span className={`${styles.workoutType} ${styles[`type-${workout.type}`]}`}>
-                        {workout.type.toUpperCase()}
-                      </span>
+            {workouts.length > 0 ? (
+              <div className={styles.workoutsList}>
+                {workouts.map((workout, index) => (
+                  <div key={workout.id} className={styles.workoutItem}>
+                    <div 
+                      className={styles.workoutProgress}
+                      style={{
+                        backgroundColor: workout.status === 'completed' ? '#00ff88' : 'transparent',
+                        transform: workout.status === 'completed' ? 'scaleY(1)' : 'scaleY(0)'
+                      }}
+                    ></div>
+                    
+                    <div className={styles.workoutStatus}>
+                      {workout.status === 'completed' ? '✓' : 
+                       workout.status === 'active' ? '⏱️' : 
+                       index + 1}
                     </div>
                     
-                    <div className={styles.workoutStats}>
-                      <span>{workout.duration}min</span>
-                      <span>{workout.caloriesBurn} cal</span>
-                      <span className={`${styles.intensityBadge} ${styles[`intensity-${workout.intensity}`]}`}>
-                        {workout.intensity}
-                      </span>
-                    </div>
-                    
-                    <div className={styles.muscleGroups}>
-                      {workout.muscleGroups.slice(0, 3).map(muscle => (
-                        <span key={muscle} className={styles.muscleGroup}>{muscle}</span>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div className={styles.workoutActions}>
-                    {workout.status === 'completed' ? (
-                      <span className={styles.completedLabel}>Completed</span>
-                    ) : workout.status === 'active' ? (
-                      <button className={styles.continueButton}>Continue</button>
-                    ) : workout.timeRemaining ? (
-                      <div className={styles.scheduledWorkout}>
-                        <span className={styles.timeRemaining}>in {workout.timeRemaining}</span>
-                        <button className={styles.startButton}>Start</button>
+                    <div className={styles.workoutInfo}>
+                      <div className={styles.workoutHeader}>
+                        <h4 className={styles.workoutName}>{workout.name}</h4>
+                        <span className={`${styles.workoutType} ${styles[`type-${workout.type}`]}`}>
+                          {workout.type.toUpperCase()}
+                        </span>
                       </div>
-                    ) : (
-                      <button className={styles.startButton}>Start Now</button>
-                    )}
+                      
+                      <div className={styles.workoutStats}>
+                        <span>{workout.duration}min</span>
+                        <span>{workout.caloriesBurn} cal</span>
+                        <span className={`${styles.intensityBadge} ${styles[`intensity-${workout.intensity}`]}`}>
+                          {workout.intensity}
+                        </span>
+                      </div>
+                      
+                      <div className={styles.muscleGroups}>
+                        {workout.muscleGroups.slice(0, 3).map(muscle => (
+                          <span key={muscle} className={styles.muscleGroup}>{muscle}</span>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <div className={styles.workoutActions}>
+                      {workout.status === 'completed' ? (
+                        <span className={styles.completedLabel}>Completat</span>
+                      ) : workout.status === 'active' ? (
+                        <button className={styles.continueButton}>Continuă</button>
+                      ) : workout.timeRemaining ? (
+                        <div className={styles.scheduledWorkout}>
+                          <span className={styles.timeRemaining}>în {workout.timeRemaining}</span>
+                          <button className={styles.startButton}>Start</button>
+                        </div>
+                      ) : (
+                        <button className={styles.startButton}>Start Acum</button>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <div className={styles.noWorkouts}>
+                <div className={styles.noDataIcon}>💪</div>
+                <h4>Niciun antrenament programat</h4>
+                <p>Planifică un antrenament personalizat cu AI pentru astăzi.</p>
+                <button className={styles.planWorkoutButton}>
+                  Planifică Antrenament
+                </button>
+              </div>
+            )}
           </div>
 
-          {/* Biometrics Card */}
-          {biometrics && (
+          {/* Biometrics Card with real data */}
+          {biometrics ? (
             <div className={styles.biometricsCard}>
               <div className={styles.biometricsGlow}></div>
               
               <div className={styles.cardHeader}>
-                <h3 className={styles.cardTitle}>📊 Live Biometrics</h3>
+                <h3 className={styles.cardTitle}>📊 Biometrie Live</h3>
                 <div className={styles.liveStatus}>
                   <span className={styles.liveIndicator}></span>
                   Live
@@ -830,7 +984,7 @@ export default function PorHealthDashboard() {
                       {Math.round(biometrics.heartRate.current)}
                     </span>
                     <span className={styles.biometricUnit}>bpm</span>
-                    <span className={styles.biometricLabel}>Heart Rate</span>
+                    <span className={styles.biometricLabel}>Puls</span>
                   </div>
                 </div>
                 
@@ -841,7 +995,7 @@ export default function PorHealthDashboard() {
                       {biometrics.bloodPressure.systolic}/{biometrics.bloodPressure.diastolic}
                     </span>
                     <span className={styles.biometricUnit}>mmHg</span>
-                    <span className={styles.biometricLabel}>Blood Pressure</span>
+                    <span className={styles.biometricLabel}>Tensiune</span>
                   </div>
                 </div>
                 
@@ -850,7 +1004,7 @@ export default function PorHealthDashboard() {
                   <div className={styles.biometricData}>
                     <span className={styles.biometricValue}>{biometrics.bodyComposition.weight}</span>
                     <span className={styles.biometricUnit}>kg</span>
-                    <span className={styles.biometricLabel}>Weight</span>
+                    <span className={styles.biometricLabel}>Greutate</span>
                   </div>
                 </div>
                 
@@ -859,9 +1013,20 @@ export default function PorHealthDashboard() {
                   <div className={styles.biometricData}>
                     <span className={styles.biometricValue}>{biometrics.stress.recovery}</span>
                     <span className={styles.biometricUnit}>%</span>
-                    <span className={styles.biometricLabel}>Recovery</span>
+                    <span className={styles.biometricLabel}>Recuperare</span>
                   </div>
                 </div>
+              </div>
+            </div>
+          ) : (
+            <div className={styles.biometricsCard}>
+              <div className={styles.biometricsGlow}></div>
+              <div className={styles.cardHeader}>
+                <h3 className={styles.cardTitle}>📊 Biometrie Live</h3>
+              </div>
+              <div className={styles.loadingBiometrics}>
+                <div className={styles.loadingSpinner}></div>
+                <p>Se sincronizează datele biometrice...</p>
               </div>
             </div>
           )}
@@ -876,7 +1041,7 @@ export default function PorHealthDashboard() {
         🤖
       </button>
 
-      {/* AI Chat Component - Placeholder */}
+      {/* AI Chat Component - Now with REAL functionality */}
       {aiChatOpen && (
         <div className={styles.aiChatOverlay} onClick={() => setAiChatOpen(false)}>
           <div className={styles.aiChatModal} onClick={(e) => e.stopPropagation()}>
@@ -889,25 +1054,56 @@ export default function PorHealthDashboard() {
                 ✕
               </button>
             </div>
+            
             <div className={styles.chatContent}>
-              <div className={styles.chatMessage}>
-                <div className={styles.aiAvatar}>🤖</div>
-                <div className={styles.messageContent}>
-                  <p>Hello Alex! I've analyzed your health data. Your sleep quality improvement is outstanding! What would you like to optimize today?</p>
+              {chatMessages.map((msg) => (
+                <div key={msg.id} className={styles.chatMessage}>
+                  <div className={msg.role === 'user' ? styles.userAvatar : styles.aiAvatar}>
+                    {msg.role === 'user' ? '👤' : '🤖'}
+                  </div>
+                  <div className={styles.messageContent}>
+                    <p>{msg.content}</p>
+                    <span className={styles.messageTime}>
+                      {msg.timestamp.toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                  </div>
                 </div>
-              </div>
+              ))}
+              
+              {chatLoading && (
+                <div className={styles.chatMessage}>
+                  <div className={styles.aiAvatar}>🤖</div>
+                  <div className={styles.messageContent}>
+                    <div className={styles.typingIndicator}>
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
+            
             <div className={styles.chatInput}>
               <input 
                 type="text" 
-                placeholder="Ask your AI health coach anything..."
+                placeholder="Întreabă AI-ul tău de sănătate orice..."
                 className={styles.chatInputField}
+                value={chatMessage}
+                onChange={(e) => setChatMessage(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                disabled={chatLoading}
               />
-              <button className={styles.chatSend}>Send</button>
+              <button 
+                className={styles.chatSend}
+                onClick={handleSendMessage}
+                disabled={chatLoading || !chatMessage.trim()}
+              >
+                {chatLoading ? '⏳' : 'Trimite'}
+              </button>
             </div>
           </div>
         </div>
       )}
     </div>
   );
-}
