@@ -3,7 +3,7 @@
 /* ================================
    CSS VARIABLES (global, incl. loading)
    ================================ */
-:root {
+:global(:root) {
   /* palette & surfaces */
   --bg-primary: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 35%, #16213e 70%, #0f2027 100%);
   --glass: rgba(255, 255, 255, 0.08);

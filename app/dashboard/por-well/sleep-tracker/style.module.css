@@ -501,104 +501,35 @@
 }
 
 /* Responsive Design */
-  
-  .sleep-breakdown {
-    grid-template-columns: 1fr;
-  }
-  
-  .quality-selector {
-    grid-template-columns: repeat(3, 1fr);
-  }
+
+/* <= 1024px */
+@media (max-width: 1024px) {
+  .sleep-overview { grid-template-columns: 1fr; }
+  .sleep-breakdown { grid-template-columns: 1fr; }
 }
 
-  
+/* <= 768px */
+@media (max-width: 768px) {
   .sleep-main,
   .sleep-stats,
-  .input-card {
-    padding: 1.5rem;
-  }
-  
-  .sleep-input {
-    grid-template-columns: 1fr;
-  }
-  
-  .time-input-group {
-    grid-template-columns: 1fr;
-  }
-  
-  .factors-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  .quality-selector {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  .header h1 {
-    font-size: 2rem;
-  }
+  .input-card { padding: 1.5rem; }
+
+  .sleep-input { grid-template-columns: 1fr; }
+  .time-input-group { grid-template-columns: 1fr; }
+  .factors-grid { grid-template-columns: repeat(2, 1fr); }
+  .quality-selector { grid-template-columns: repeat(3, 1fr); }
+
+  .header h1 { font-size: 2rem; }
+  .score-circle { width: 120px; height: 120px; }
+  .score-value { font-size: 2rem; }
 }
 
-  
-  .factors-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-  
-  .quality-selector {
-    grid-template-columns: 1fr 1fr;
-  }
-  
+/* <= 480px */
+@media (max-width: 480px) {
+  .quality-selector { grid-template-columns: repeat(2, 1fr); }
+  .factors-grid { grid-template-columns: 1fr 1fr; }
   .factor-item,
-  .quality-option {
-    padding: 0.8rem;
-  }
-  
-  .factor-icon,
-  .quality-emoji {
-    font-size: 1.3rem;
-  }
-  
-  .score-circle {
-    width: 120px;
-    height: 120px;
-  }
-  
-  .score-value {
-    font-size: 2rem;
-  }
-}
-
-/* Scrollbar Styling */
-
-
-
-
-/* Animation pentru loading/transitions */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.sleep-main,
-.sleep-stats,
-.input-card {
-  animation: fadeInUp 0.6s ease-out;
-}
-
-.breakdown-item,
-.stat-item,
-.quality-option,
-.factor-item {
-  animation: fadeInUp 0.4s ease-out;
-}
-
-/* Accessibility improvements */
+  .quality-option { padding: 0.8rem; }
 }
 
 /* Focus styles pentru accessibility */
@@ -610,13 +541,12 @@
   outline-offset: 2px;
 }
 
-/* High contrast mode support */
-  
+/* High contrast mode support (opțional) */
+@media (prefers-contrast: more) {
   .quality-option.selected,
-  .factor-item.selected {
-    border-width: 3px;
-  }
+  .factor-item.selected { border-width: 3px; }
 }
+
 
 /* Sleep phases visualization - bonus feature */
 .sleep-phases {

@@ -528,83 +528,78 @@
 }
 
 /* Responsive Design */
-  
+
+/* <= 1024px */
+@media (max-width: 1024px) {
   .journal-sidebar {
     order: -1;
   }
-  
   .emotion-grid {
     grid-template-columns: repeat(3, 1fr);
   }
 }
 
-  
+/* <= 768px */
+@media (max-width: 768px) {
   .entry-card {
     padding: 1.5rem;
   }
-  
+
   .stats-card,
   .emotions-chart {
     padding: 1.5rem;
   }
-  
+
   .emotion-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .slider-container {
     flex-direction: column;
     gap: 1rem;
     align-items: stretch;
   }
-  
+
   .intensity-value {
     text-align: center;
   }
-  
+
   .writing-textarea {
     min-height: 150px;
     padding: 1rem;
   }
-  
+
   .header h1 {
     font-size: 2rem;
   }
 }
 
-  
+/* <= 480px */
+@media (max-width: 480px) {
   .emotion-grid {
     grid-template-columns: 1fr 1fr;
   }
-  
+
   .emotion-item {
     padding: 0.8rem;
   }
-  
+
   .emotion-emoji {
     font-size: 1.5rem;
   }
-  
+
   .emotion-name {
     font-size: 0.8rem;
   }
 }
 
 /* Scrollbar Styling */
-
-
-
+/* (opțional – adaugă aici dacă vrei stiluri custom pentru scrollbar) */
 
 /* Animation pentru loading/transitions */
 @keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .entry-card,
@@ -615,9 +610,6 @@
 
 .emotion-item {
   animation: fadeInUp 0.4s ease-out;
-}
-
-/* Accessibility improvements */
 }
 
 /* Focus styles pentru accessibility */
@@ -631,8 +623,6 @@
 }
 
 /* High contrast mode support */
-  
-  .emotion-item.selected {
-    border-width: 3px;
-  }
+.emotion-item.selected {
+  border-width: 3px;
 }

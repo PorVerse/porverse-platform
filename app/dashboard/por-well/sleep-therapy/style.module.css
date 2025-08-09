@@ -820,48 +820,21 @@
 }
 
 /* Responsive Design */
-  
-  .techniques-grid {
-    grid-template-columns: 1fr;
-  }
+
+/* <= 1024px */
+@media (max-width: 1024px) {
+  .techniques-grid { grid-template-columns: 1fr; }
 }
 
-  
-  .header-stats {
-    gap: 1rem;
-  }
-  
-  .sleep-content {
-    padding: 1rem;
-  }
-  
-  .profile-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .session-modal {
-    margin: 1rem;
-    max-height: calc(100vh - 2rem);
-  }
-  
-  .technique-header {
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
-  .technique-meta {
-    align-items: flex-start;
-    flex-direction: row;
-    gap: 1rem;
-  }
-  
-  .technique-details {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
+/* <= 768px */
+@media (max-width: 768px) {
+  .header-stats { gap: 1rem; }
+  .sleep-content { padding: 1rem; }
+  .profile-grid { grid-template-columns: 1fr; }
+  .session-modal { margin: 1rem; max-height: calc(100vh - 2rem); }
+  .technique-header { flex-direction: column; gap: 1rem; }
+  .technique-meta { align-items: flex-start; flex-direction: row; gap: 1rem; }
+  .technique-details { flex-direction: column; gap: 0.5rem; }
 }
 
-/* Scrollbar Styling */
-
-
-
+/* (opțional) Scrollbar Styling – dacă vrei */

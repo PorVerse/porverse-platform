@@ -1,7 +1,7 @@
 /* app/ecosisteme/por-health/style.module.css - ENHANCED PREMIUM */
 
 .healthContainer {
-  /* CSS Variables */
+  /* CSS Variables (scoped la container, intenționat) */
   --health-primary: #00ff88;
   --health-secondary: #00d4aa;
   --health-accent: #10b981;
@@ -781,74 +781,69 @@
   font-size: 0.9rem;
 }
 
-/* Responsive Design */
-  
+/* ===================== Responsive Design ===================== */
+
+/* >= tablet landscape */
+@media (max-width: 1024px) {
   .navLinks {
     display: none;
   }
 }
 
-  
+/* tablet & down */
+@media (max-width: 768px) {
   .hero {
     padding: 6rem 0 4rem;
   }
-  
+  .heroContent {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
   .heroTitle {
     font-size: 2.5rem;
   }
-  
   .heroSubtitle {
     font-size: 1.1rem;
   }
-  
   .heroActions {
     flex-direction: column;
     align-items: center;
   }
-  
   .stats {
     flex-direction: column;
     gap: 1rem;
   }
-  
   .featuresGrid {
     grid-template-columns: 1fr;
   }
-  
   .pricingCards {
     grid-template-columns: 1fr;
   }
-  
   .testimonialsGrid {
     grid-template-columns: 1fr;
   }
-  
   .sectionHeader h2 {
     font-size: 2rem;
   }
-  
   .inputDemo {
     flex-direction: column;
   }
-  
   .demoInput {
     width: 100%;
   }
 }
 
-  
+/* phones */
+@media (max-width: 480px) {
   .ctaContent {
     padding: 2rem 1rem;
   }
-  
   .demoContainer {
     padding: 1rem;
   }
-  
   .chatInterface {
     padding: 1rem;
   }
-  
   .planPrice {
     font-size: 2.5rem;
   }

@@ -1068,70 +1068,59 @@
 }
 
 /* Responsive Design */
-  
-  .techniques-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .insights-grid {
-    grid-template-columns: 1fr;
-  }
-}
+@media (max-width: 1024px) {
+  .techniques-grid { grid-template-columns: 1fr; }
+  .insights-grid { grid-template-columns: 1fr; }
 
-  
   .anxiety-header {
     flex-direction: column;
     gap: 1rem;
     padding: 1rem;
   }
-  
+
   .emergency-controls {
     width: 100%;
     justify-content: space-between;
   }
-  
+
   .anxiety-status,
   .ai-insights-section,
   .technique-filters,
   .techniques-grid {
     padding: 1rem;
   }
-  
+
   .status-main,
   .status-sidebar,
   .technique-card {
     padding: 1.5rem;
   }
-  
-  .level-indicators {
-    gap: 0.8rem;
-  }
-  
+
+  .level-indicators { gap: 0.8rem; }
+
   .indicator {
     flex-direction: column;
     gap: 0.5rem;
   }
-  
+
   .indicator-label {
     min-width: auto;
     text-align: center;
   }
-  
-  .filter-buttons {
-    gap: 0.5rem;
-  }
-  
+
+  .filter-buttons { gap: 0.5rem; }
+
   .filter-btn {
     padding: 0.5rem 1rem;
     font-size: 0.8rem;
   }
-  
+
   .technique-modal,
   .safe-space-modal {
     margin: 1rem;
     max-height: calc(100vh - 2rem);
   }
-  
+
   .panic-content {
     flex-direction: column;
     gap: 1rem;
@@ -1139,15 +1128,24 @@
   }
 }
 
-/* Scrollbar Styling */
-
-
-
-
-/* Accessibility improvements */
+/* Scrollbar (opțional, webkit only) */
+/*
+.techniques-grid::-webkit-scrollbar,
+.ai-insights-section::-webkit-scrollbar {
+  width: 8px;
 }
+.techniques-grid::-webkit-scrollbar-track,
+.ai-insights-section::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.08);
+}
+.techniques-grid::-webkit-scrollbar-thumb,
+.ai-insights-section::-webkit-scrollbar-thumb {
+  background: var(--anxiety-primary);
+  border-radius: 4px;
+}
+*/
 
-/* Focus styles pentru accessibility */
+/* Accessibility */
 .filter-btn:focus,
 .start-technique-btn:focus,
 .panic-btn:focus,
@@ -1156,5 +1154,18 @@
   outline-offset: 2px;
 }
 
-/* High contrast mode support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .filter-btn,
+  .start-technique-btn,
+  .panic-btn,
+  .safe-space-btn {
+    border-color: currentColor;
+  }
 }
