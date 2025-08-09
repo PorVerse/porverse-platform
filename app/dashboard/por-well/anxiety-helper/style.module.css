@@ -1068,7 +1068,7 @@
 }
 
 /* Responsive Design */
-@media (max-width: 1024px) {
+@media (max-width: 768px) {
   .techniques-grid { grid-template-columns: 1fr; }
   .insights-grid { grid-template-columns: 1fr; }
 
@@ -1128,24 +1128,7 @@
   }
 }
 
-/* Scrollbar (opțional, webkit only) */
-/*
-.techniques-grid::-webkit-scrollbar,
-.ai-insights-section::-webkit-scrollbar {
-  width: 8px;
-}
-.techniques-grid::-webkit-scrollbar-track,
-.ai-insights-section::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.08);
-}
-.techniques-grid::-webkit-scrollbar-thumb,
-.ai-insights-section::-webkit-scrollbar-thumb {
-  background: var(--anxiety-primary);
-  border-radius: 4px;
-}
-*/
-
-/* Accessibility */
+/* Focus styles – accesibility */
 .filter-btn:focus,
 .start-technique-btn:focus,
 .panic-btn:focus,
@@ -1154,18 +1137,12 @@
   outline-offset: 2px;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation: none !important;
-    transition: none !important;
-  }
-}
-
+/* High contrast support (opțional) */
 @media (prefers-contrast: more) {
-  .filter-btn,
-  .start-technique-btn,
-  .panic-btn,
-  .safe-space-btn {
-    border-color: currentColor;
+  .filter-btn:focus,
+  .start-technique-btn:focus,
+  .panic-btn:focus,
+  .safe-space-btn:focus {
+    outline-width: 3px;
   }
 }

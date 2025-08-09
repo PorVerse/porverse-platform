@@ -1166,88 +1166,46 @@
 }
 
 /* Responsive Design */
-  
-  .techniques-grid {
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  }
-}
+@media (max-width: 1024px) {
+  .techniques-grid { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
 
-  
-  .header-stats {
-    gap: 1rem;
-    padding: 0.8rem 1.5rem;
-  }
-  
-  .stress-content {
-    padding: 1rem;
-  }
-  
+  .header-stats { gap: 1rem; padding: 0.8rem 1.5rem; }
+  .stress-content { padding: 1rem; }
+
   .emergency-content {
     flex-direction: column;
     gap: 1rem;
     padding: 1rem;
     text-align: center;
   }
-  
-  .integration-grid {
-    gap: 1rem;
-  }
-  
-  .integration-item {
-    flex-direction: column;
-    text-align: center;
-    gap: 1rem;
-  }
-  
-  .insights-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .techniques-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .quick-tools {
-    flex-direction: column;
-  }
-  
-  .technique-meta {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  
-  .technique-actions {
-    flex-direction: column;
-  }
-  
-  .session-biometrics {
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
-  .modal-content {
-    margin: 1rem;
-  }
-  
-  .session-in-progress {
-    padding: 2rem;
-  }
-  
-  .time-remaining {
-    font-size: 2rem;
-  }
+
+  .integration-grid { gap: 1rem; }
+  .integration-item { flex-direction: column; text-align: center; gap: 1rem; }
+}
+
+/* <= 768px: o singură coloană pe grile */
+@media (max-width: 768px) {
+  .insights-grid { grid-template-columns: 1fr; }
+  .techniques-grid { grid-template-columns: 1fr; }
+
+  .quick-tools { flex-direction: column; }
+
+  .technique-meta { flex-direction: column; gap: 0.5rem; }
+  .technique-actions { flex-direction: column; }
+
+  .session-biometrics { flex-direction: column; gap: 1rem; }
+
+  .modal-content { margin: 1rem; }
+  .session-in-progress { padding: 2rem; }
+  .time-remaining { font-size: 2rem; }
 }
 
 /* Scrollbar Styling */
 .stress-content::-webkit-scrollbar,
-.technique-modal::-webkit-scrollbar {
-  width: 8px;
-}
+.technique-modal::-webkit-scrollbar { width: 8px; }
 
 .stress-content::-webkit-scrollbar-track,
-.technique-modal::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.1);
-}
+.technique-modal::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.1); }
 
 .stress-content::-webkit-scrollbar-thumb,
 .technique-modal::-webkit-scrollbar-thumb {
@@ -1256,13 +1214,13 @@
 }
 
 .stress-content::-webkit-scrollbar-thumb:hover,
-.technique-modal::-webkit-scrollbar-thumb:hover {
-  background: var(--stress-critical);
-}
+.technique-modal::-webkit-scrollbar-thumb:hover { background: var(--stress-critical); }
 
-/* Accessibility */
-  
-  .stress-management::before {
-    animation: none;
+/* Reduce motion – compatibil cu CSS Modules */
+@media (prefers-reduced-motion: reduce) {
+  :global(*) {
+    animation: none !important;
+    transition: none !important;
   }
+  .stress-management::before { animation: none; }
 }
