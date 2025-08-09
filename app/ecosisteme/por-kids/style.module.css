@@ -509,6 +509,6 @@ html { font-size: var(--fs-base); scroll-behavior: smooth; }
   .features, .pricing, .testimonials, .final-cta, .ai-demo { padding: 35px 0 24px; }
   .cta-card { padding: 1.2rem 0.7rem; }
   .footer { padding: 35px 0 15px; }
-}
+  
 
 /* Scrollbar */

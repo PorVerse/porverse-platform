@@ -1216,11 +1216,10 @@
 .stress-content::-webkit-scrollbar-thumb:hover,
 .technique-modal::-webkit-scrollbar-thumb:hover { background: var(--stress-critical); }
 
-/* Reduce motion – compatibil cu CSS Modules */
+/* Reduce motion – compat CSS Modules */
 @media (prefers-reduced-motion: reduce) {
-  .stress-management :global(*) {
+  .stress-management * {
     animation: none !important;
     transition: none !important;
   }
-  .stress-management::before { animation: none !important; }
 }
