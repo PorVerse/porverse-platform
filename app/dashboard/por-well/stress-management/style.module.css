@@ -1218,9 +1218,9 @@
 
 /* Reduce motion – compatibil cu CSS Modules */
 @media (prefers-reduced-motion: reduce) {
-  :global(*) {
+  .stress-management :global(*) {
     animation: none !important;
     transition: none !important;
   }
-  .stress-management::before { animation: none; }
+  .stress-management::before { animation: none !important; }
 }

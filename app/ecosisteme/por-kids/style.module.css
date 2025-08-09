@@ -504,7 +504,6 @@ html { font-size: var(--fs-base); scroll-behavior: smooth; }
   .features-grid, .pricing-cards, .testimonials-grid, .footer-content {
     grid-template-columns: 1fr;
     gap: 1.1rem;
-  }
 }
   .hero-text h1 { font-size: 2.1rem; }
   .features, .pricing, .testimonials, .final-cta, .ai-demo { padding: 35px 0 24px; }

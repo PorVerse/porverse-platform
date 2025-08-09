@@ -1,0 +1,26 @@
+:root {
+  /* palette & surfaces */
+  --bg-primary: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 35%, #16213e 70%, #0f2027 100%);
+  --glass: rgba(255, 255, 255, 0.08);
+  --glass-strong: rgba(255, 255, 255, 0.12);
+  --glass-border: rgba(255, 255, 255, 0.18);
+
+  /* brand */
+  --workout-primary: #00ff88;
+  --workout-gradient: linear-gradient(135deg, #00ff88, #22c55e);
+
+  /* text */
+  --text-primary: #ffffff;
+  --text-secondary: #e5e7eb;
+  --text-muted: #9ca3af;
+
+  /* radius/shadows/transition */
+  --radius-small: 12px;
+  --radius-medium: 16px;
+  --radius: 20px;
+  --shadow-light: 0 6px 24px rgba(0, 0, 0, 0.2);
+  --shadow-medium: 0 10px 40px rgba(0, 0, 0, 0.25);
+  --shadow-heavy: 0 14px 60px rgba(0, 0, 0, 0.3);
+  --shadow-glow: 0 0 30px rgba(0, 255, 136, 0.35);
+  --transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
