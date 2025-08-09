@@ -1,44 +1,5 @@
 /* AI Therapist - Premium Styling pentru PorWell */
 
-:root {
-  /* PorWell Colors - consistent cu dashboard */
-  --pw-primary: #22c55e;
-  --pw-secondary: #8b5cf6;
-  --pw-accent: #06b6d4;
-  --pw-stress: #ef4444;
-  --pw-warning: #f59e0b;
-  
-  /* AI Therapist specific colors */
-  --therapist-primary: #8b5cf6;
-  --therapist-secondary: #22c55e;
-  --therapist-accent: #06b6d4;
-  --therapist-ai: linear-gradient(135deg, #8b5cf6, #06b6d4);
-  --therapist-user: linear-gradient(135deg, #22c55e, #10b981);
-  
-  /* Backgrounds */
-  --bg-main: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
-  --bg-chat: rgba(255, 255, 255, 0.03);
-  
-  /* Glass effects - same as dashboard */
-  --glass: rgba(255, 255, 255, 0.25);
-  --glass-strong: rgba(255, 255, 255, 0.35);
-  --glass-border: rgba(255, 255, 255, 0.3);
-  
-  /* Text - ultra clear */
-  --text-primary: #ffffff;
-  --text-secondary: #e2e8f0;
-  --text-muted: #cbd5e1;
-  
-  /* Shadows */
-  --shadow-light: 0 4px 20px rgba(139, 92, 246, 0.15);
-  --shadow-heavy: 0 8px 40px rgba(139, 92, 246, 0.25);
-  --shadow-glow: 0 0 30px rgba(139, 92, 246, 0.3);
-  
-  /* Layout */
-  --radius: 16px;
-  --radius-small: 12px;
-  --transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
 
 /* Base Styles */
 * {

@@ -3,26 +3,6 @@
 /* 1. DESIGN SYSTEM PREMIUM KIDS */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap');
 
-:root {
-  --pk-primary: #ffcb05;
-  --pk-secondary: #52b6ff;
-  --pk-accent: #ff6ba1;
-  --pk-success: #7dff87;
-  --pk-gradient: linear-gradient(135deg, #ffe480 0%, #52b6ff 55%, #ff6ba1 100%);
-  --pk-text-primary: #222;
-  --pk-text-secondary: rgba(80,80,80,0.87);
-  --pk-glass: rgba(255,255,255,0.16);
-  --pk-glass-strong: rgba(255,255,255,0.22);
-  --pk-glass-border: rgba(255,255,255,0.22);
-  --pk-shadow-light: 0 8px 32px rgba(31, 38, 135, 0.12);
-  --pk-shadow-heavy: 0 16px 64px rgba(52,168,244, 0.18);
-  --pk-radius: 22px;
-  --pk-radius-sm: 12px;
-  --pk-transition: all 0.36s cubic-bezier(.33,.85,.44,1);
-  --container-max: 1200px;
-  --fs-base: 16px;
-  --z-nav: 1000;
-}
 
 html { font-size: var(--fs-base); scroll-behavior: smooth; }
 body {

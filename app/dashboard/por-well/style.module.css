@@ -1,37 +1,5 @@
 /* PorWell Dashboard - CSS Optimizat pentru Vizibilitate Maximă */
 
-:root {
-  /* Culori PorWell - mai saturate și mai clare */
-  --pw-primary: #22c55e;
-  --pw-secondary: #8b5cf6;
-  --pw-accent: #06b6d4;
-  --pw-stress: #ef4444;
-  --pw-success: #10b981;
-  
-  /* Background mai simplu și mai clar */
-  --pw-bg: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
-  
-  /* Text mult mai vizibil */
-  --pw-text-primary: #ffffff;
-  --pw-text-secondary: #e2e8f0;
-  --pw-text-muted: #cbd5e1;
-  
-  /* Glass effects mai puternice pentru vizibilitate */
-  --pw-glass: rgba(255, 255, 255, 0.25);
-  --pw-glass-strong: rgba(255, 255, 255, 0.35);
-  --pw-glass-border: rgba(255, 255, 255, 0.3);
-  
-  /* Shadows mai puternice */
-  --pw-shadow-light: 0 4px 20px rgba(34, 197, 94, 0.15);
-  --pw-shadow-heavy: 0 8px 40px rgba(34, 197, 94, 0.25);
-  --pw-shadow-glow: 0 0 30px rgba(34, 197, 94, 0.3);
-  
-  /* Layout */
-  --pw-radius: 16px;
-  --pw-radius-small: 12px;
-  --pw-transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  --pw-sidebar-width: 280px;
-}
 
 /* Reset & Base */
 * {

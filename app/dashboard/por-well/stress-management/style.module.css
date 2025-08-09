@@ -1,50 +1,5 @@
 /* Stress Management Ultimate - Ecosystem Integration Finale Styling */
 
-:root {
-  /* PorWell Colors - consistent cu dashboard */
-  --pw-primary: #22c55e;
-  --pw-secondary: #8b5cf6;
-  --pw-accent: #06b6d4;
-  --pw-stress: #ef4444;
-  --pw-warning: #f59e0b;
-  --pw-success: #10b981;
-  
-  /* Stress-specific colors */
-  --stress-critical: #dc2626;
-  --stress-high: #ef4444;
-  --stress-medium: #f59e0b;
-  --stress-low: #22c55e;
-  --stress-emergency: #7f1d1d;
-  
-  /* Integration colors */
-  --integration-connected: #22c55e;
-  --integration-warning: #f59e0b;
-  --integration-error: #ef4444;
-  
-  /* Background & Glass */
-  --bg-main: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
-  --glass: rgba(255, 255, 255, 0.25);
-  --glass-strong: rgba(255, 255, 255, 0.35);
-  --glass-border: rgba(255, 255, 255, 0.3);
-  --glass-emergency: rgba(220, 38, 38, 0.15);
-  
-  /* Text - ultra clear */
-  --text-primary: #ffffff;
-  --text-secondary: #e2e8f0;
-  --text-muted: #cbd5e1;
-  
-  /* Shadows & Effects */
-  --shadow-light: 0 4px 20px rgba(239, 68, 68, 0.15);
-  --shadow-heavy: 0 8px 40px rgba(239, 68, 68, 0.25);
-  --shadow-glow: 0 0 30px rgba(239, 68, 68, 0.3);
-  --shadow-emergency: 0 0 50px rgba(220, 38, 38, 0.4);
-  
-  /* Layout */
-  --radius: 16px;
-  --radius-small: 12px;
-  --radius-large: 24px;
-  --transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
 
 /* Base Styles */
 * {

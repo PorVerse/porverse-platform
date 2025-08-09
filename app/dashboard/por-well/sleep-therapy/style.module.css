@@ -1,42 +1,6 @@
 /* Sleep Therapy - CBT-I Professional Styling pentru PorWell */
 
 /* CSS Variables - consistent cu PorWell design system */
-:root {
-  /* PorWell Colors - identice cu celelalte tools */
-  --pw-primary: #22c55e;
-  --pw-secondary: #8b5cf6;
-  --pw-accent: #06b6d4;
-  --pw-stress: #ef4444;
-  --pw-warning: #f59e0b;
-  --pw-success: #10b981;
-  
-  /* Sleep-specific colors */
-  --sleep-primary: #6366f1;
-  --sleep-secondary: #8b5cf6;
-  --sleep-accent: #06b6d4;
-  --sleep-calm: #10b981;
-  
-  /* Background & Glass - identice cu PorWell */
-  --bg-main: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
-  --glass: rgba(255, 255, 255, 0.25);
-  --glass-strong: rgba(255, 255, 255, 0.35);
-  --glass-border: rgba(255, 255, 255, 0.3);
-  
-  /* Text - ultra clear */
-  --text-primary: #ffffff;
-  --text-secondary: #e2e8f0;
-  --text-muted: #cbd5e1;
-  
-  /* Shadows & Effects */
-  --shadow-light: 0 4px 20px rgba(34, 197, 94, 0.15);
-  --shadow-heavy: 0 8px 40px rgba(34, 197, 94, 0.25);
-  --shadow-glow: 0 0 30px rgba(34, 197, 94, 0.3);
-  
-  /* Layout */
-  --radius: 16px;
-  --radius-small: 12px;
-  --transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
 
 /* Base Styles */
 * {

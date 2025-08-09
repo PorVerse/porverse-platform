@@ -1,26 +1,6 @@
 /* components/AIHealthCoach.module.css */
 
 /* ===== CSS VARIABLES ===== */
-:root {
-  --ai-primary: #00ff88;
-  --ai-secondary: #22c55e;
-  --ai-gradient: linear-gradient(135deg, #00ff88, #22c55e);
-  --ai-glow: 0 0 30px rgba(0, 255, 136, 0.3);
-  
-  --glass: rgba(255, 255, 255, 0.12);
-  --glass-strong: rgba(255, 255, 255, 0.18);
-  --glass-border: rgba(255, 255, 255, 0.15);
-  
-  --text-primary: #ffffff;
-  --text-secondary: #e5e7eb;
-  --text-muted: #9ca3af;
-  
-  --bg-primary: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 35%, #16213e 70%, #0f2027 100%);
-  --shadow-heavy: 0 20px 60px rgba(0, 0, 0, 0.4);
-  --radius: 24px;
-  --radius-small: 12px;
-  --transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
 
 /* ===== KEYFRAMES ===== */
 @keyframes slideInUp {

@@ -2,24 +2,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap');
 
 /* 1️⃣ DESIGN SYSTEM */
-:root {
-  --pw-primary: #8be9c9;
-  --pw-secondary: #4fc3f7;
-  --pw-accent: #c084fc;
-  --pw-bg: #eafcf7;
-  --pw-glass: rgba(255,255,255,0.18);
-  --pw-glass-strong: rgba(255,255,255,0.30);
-  --pw-border-glass: rgba(79,195,247,0.12);
-  --pw-dark: #293140;
-  --pw-text: #223;
-  --pw-text-soft: #466;
-  --pw-gradient: linear-gradient(135deg, #8be9c9 0%, #4fc3f7 40%, #c084fc 100%);
-  --pw-radius: 22px;
-  --pw-radius-sm: 12px;
-  --pw-shadow: 0 10px 40px rgba(79,195,247,0.14);
-  --pw-shadow-heavy: 0 16px 48px 0 rgba(76,201,240,0.14);
-  --pw-transition: all 0.33s cubic-bezier(.29,.76,.43,.95);
-}
 
 /* 2️⃣ RESET & GLOBALS */
 *, *::before, *::after { box-sizing: border-box; }

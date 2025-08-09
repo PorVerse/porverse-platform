@@ -1,40 +1,5 @@
 /* app/ecosisteme/por-blu/style.css */
 
-:root {
-  /* PorBlu Theme Colors */
-  --blu-primary: #ffaa00;
-  --blu-secondary: #ff9500;
-  --blu-accent: #ffcc33;
-  --blu-dark: #cc7700;
-  --blu-gradient: linear-gradient(135deg, #ffaa00, #ff9500);
-  --blu-premium: linear-gradient(135deg, #ffaa00, #ffcc33, #ff9500);
-  
-  /* Glassmorphism */
-  --glass: rgba(255, 170, 0, 0.1);
-  --glass-strong: rgba(255, 170, 0, 0.15);
-  --glass-border: rgba(255, 170, 0, 0.3);
-  
-  /* Background */
-  --bg-primary: #0a0a0f;
-  --bg-secondary: #1a1a2e;
-  --bg-gradient: linear-gradient(135deg, #0a0a0f 0%, #1a1509 30%, #1a1a2e 100%);
-  
-  /* Text */
-  --text-primary: #ffffff;
-  --text-secondary: #e2e8f0;
-  --text-muted: #94a3b8;
-  
-  /* Effects */
-  --shadow-light: 0 4px 20px rgba(255, 170, 0, 0.1);
-  --shadow-medium: 0 8px 30px rgba(255, 170, 0, 0.2);
-  --shadow-heavy: 0 16px 40px rgba(255, 170, 0, 0.3);
-  --shadow-glow: 0 0 30px rgba(255, 170, 0, 0.4);
-  --shadow-premium: 0 0 50px rgba(255, 170, 0, 0.6);
-  
-  /* Transitions */
-  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
 
 * {
   margin: 0;

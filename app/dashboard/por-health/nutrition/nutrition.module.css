@@ -1,42 +1,6 @@
 /* app/dashboard/por-health/nutrition/nutrition.module.css */
 
 /* ===== CSS VARIABLES ===== */
-:root {
-  /* Nutrition Theme Colors */
-  --nutrition-primary: #00ff88;
-  --nutrition-secondary: #22c55e;
-  --nutrition-accent: #10b981;
-  --nutrition-gradient: linear-gradient(135deg, #00ff88, #22c55e);
-  
-  /* Macro Colors */
-  --protein-color: #ef4444;
-  --carbs-color: #3b82f6;
-  --fat-color: #f59e0b;
-  --fiber-color: #8b5cf6;
-  
-  /* Glass & Background */
-  --bg-primary: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 35%, #16213e 70%, #0f2027 100%);
-  --glass: rgba(255, 255, 255, 0.12);
-  --glass-strong: rgba(255, 255, 255, 0.18);
-  --glass-border: rgba(255, 255, 255, 0.15);
-  
-  /* Text */
-  --text-primary: #ffffff;
-  --text-secondary: #e5e7eb;
-  --text-muted: #9ca3af;
-  
-  /* Effects */
-  --shadow-light: 0 4px 20px rgba(0, 255, 136, 0.15);
-  --shadow-medium: 0 8px 32px rgba(0, 0, 0, 0.25);
-  --shadow-heavy: 0 8px 40px rgba(0, 255, 136, 0.25);
-  --shadow-glow: 0 0 30px rgba(0, 255, 136, 0.3);
-  
-  /* Layout */
-  --radius: 24px;
-  --radius-medium: 16px;
-  --radius-small: 12px;
-  --transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
 
 /* ===== KEYFRAMES ===== */
 @keyframes fadeIn {
