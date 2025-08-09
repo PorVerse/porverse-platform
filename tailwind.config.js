@@ -1,5 +1,5 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+const config = {
   content: [
     './pages/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
@@ -8,7 +8,6 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // PorVerse Brand Colors
         primary: {
           50: '#f0f4ff',
           100: '#e0e9ff',
@@ -45,7 +44,6 @@ module.exports = {
           800: '#9d174d',
           900: '#831843',
         },
-        // Ecosystem Colors
         health: {
           50: '#f0fdf4',
           100: '#dcfce7',
@@ -106,7 +104,6 @@ module.exports = {
           800: '#1e40af',
           900: '#1e3a8a',
         },
-        // UI Colors
         glass: 'rgba(255, 255, 255, 0.1)',
         glassBorder: 'rgba(255, 255, 255, 0.2)',
         glassStrong: 'rgba(255, 255, 255, 0.15)',
@@ -125,19 +122,19 @@ module.exports = {
         sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'Noto Sans', 'sans-serif'],
       },
       borderRadius: {
-        'xl': '1rem',
+        xl: '1rem',
         '2xl': '1.25rem',
         '3xl': '1.5rem',
       },
       spacing: {
-        '18': '4.5rem',
-        '88': '22rem',
-        '128': '32rem',
+        18: '4.5rem',
+        88: '22rem',
+        128: '32rem',
       },
       boxShadow: {
-        'glass': '0 8px 32px rgba(31, 38, 135, 0.37)',
-        'heavy': '0 20px 60px rgba(0, 0, 0, 0.3)',
-        'glow': '0 0 20px rgba(102, 126, 234, 0.5)',
+        glass: '0 8px 32px rgba(31, 38, 135, 0.37)',
+        heavy: '0 20px 60px rgba(0, 0, 0, 0.3)',
+        glow: '0 0 20px rgba(102, 126, 234, 0.5)',
         'glow-health': '0 0 20px rgba(0, 255, 136, 0.5)',
         'glow-mind': '0 0 20px rgba(255, 215, 0, 0.5)',
         'glow-well': '0 0 20px rgba(255, 105, 180, 0.5)',
@@ -145,22 +142,16 @@ module.exports = {
         'glow-blu': '0 0 20px rgba(0, 119, 255, 0.5)',
       },
       animation: {
-        'gradient': 'gradient 15s ease infinite',
-        'float': 'float 6s ease-in-out infinite',
+        gradient: 'gradient 15s ease infinite',
+        float: 'float 6s ease-in-out infinite',
         'pulse-glow': 'pulseGlow 2s ease-in-out infinite alternate',
         'slide-up': 'slideUp 0.5s ease-out',
         'fade-in': 'fadeIn 0.3s ease-out',
       },
       keyframes: {
         gradient: {
-          '0%, 100%': {
-            'background-size': '200% 200%',
-            'background-position': 'left center'
-          },
-          '50%': {
-            'background-size': '200% 200%',
-            'background-position': 'right center'
-          },
+          '0%, 100%': { 'background-size': '200% 200%', 'background-position': 'left center' },
+          '50%': { 'background-size': '200% 200%', 'background-position': 'right center' },
         },
         float: {
           '0%, 100%': { transform: 'translateY(0px)' },
@@ -180,13 +171,15 @@ module.exports = {
         },
       },
       backdropBlur: {
-        'xs': '2px',
+        xs: '2px',
         '4xl': '72px',
       },
     },
   },
   plugins: [
-    require('@tailwindcss/forms'),
-    require('@tailwindcss/typography'),
+    import('@tailwindcss/forms').then(mod => mod.default()),
+    import('@tailwindcss/typography').then(mod => mod.default()),
   ],
-}
+};
+
+export default config;

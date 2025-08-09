@@ -1,43 +1,47 @@
-import { Inter } from 'next/font/google'
-import './globals.css'
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import Script from 'next/script';
+import './globals.css';
 
-const inter = Inter({ 
+const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
-  display: 'swap'
-})
+  display: 'swap',
+});
 
-export const metadata = {
+export const metadata: Metadata = {
   title: {
     default: 'PorVerse - Sistemul Tău de Operare Spirituală',
-    template: '%s | PorVerse'
+    template: '%s | PorVerse',
   },
-  description: 'Prima platformă de transformare personală prin AI avancată. Optimizează-ți sănătatea, finanțele, productivitatea și wellness-ul mental.',
-  keywords: ['AI', 'wellness', 'health', 'productivity', 'personal development', 'transformare personală'],
+  description:
+    'Prima platformă de transformare personală prin AI avansată. Optimizează-ți sănătatea, finanțele, productivitatea și wellness-ul mental.',
+  keywords: [
+    'AI',
+    'wellness',
+    'health',
+    'productivity',
+    'personal development',
+    'transformare personală',
+  ],
   authors: [{ name: 'PorVerse Team' }],
   creator: 'PorVerse',
   publisher: 'PorVerse',
-  formatDetection: {
-    email: false,
-    address: false,
-    telephone: false,
-  },
+  formatDetection: { email: false, address: false, telephone: false },
   metadataBase: new URL('https://porverse.ro'),
-  alternates: {
-    canonical: '/',
-  },
+  alternates: { canonical: '/' },
   openGraph: {
     type: 'website',
     locale: 'ro_RO',
     url: 'https://porverse.ro',
     title: 'PorVerse - Sistemul Tău de Operare Spirituală',
-    description: 'Prima platformă de transformare personală prin AI avancată.',
+    description: 'Prima platformă de transformare personală prin AI avansată.',
     siteName: 'PorVerse',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'PorVerse - Sistemul Tău de Operare Spirituală',
-    description: 'Prima platformă de transformare personală prin AI avancată.',
+    description: 'Prima platformă de transformare personală prin AI avansată.',
     creator: '@porverse',
   },
   robots: {
@@ -51,62 +55,39 @@ export const metadata = {
       'max-snippet': -1,
     },
   },
-}
+  // Dacă ai faviconuri, Next le servește automat din /public
+  // (nu e nevoie să le pui manual aici)
+};
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html lang="ro" className={inter.variable}>
-      <head>
-        {/* Preconnect pentru performanță */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        
-        {/* SF Pro Display pentru headers premium */}
-        <link 
-          href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" 
-          rel="stylesheet" 
-        />
-        
-        {/* Favicon și icons */}
-        <link rel="icon" href="/favicon.ico" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-        
-        {/* Meta tags pentru viewport și theme */}
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-        <meta name="theme-color" content="#00ff88" />
-        <meta name="color-scheme" content="dark" />
-        
-        {/* Preload critical resources */}
-        <link rel="preload" href="/fonts/sf-pro-display.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
-      </head>
       <body className={`${inter.className} antialiased`}>
-        {/* Background gradients pentru consistență */}
-        <div id="__next">
-          {children}
-        </div>
-        
-        {/* Scripts pentru analytics (când e gata) */}
+        {children}
+
+        {/* Analytics (prod only). Înlocuiește GA_TRACKING_ID cu realul tău ID. */}
         {process.env.NODE_ENV === 'production' && (
           <>
-            {/* Google Analytics */}
-            <script async src="https://www.googletagmanager.com/gtag/js?id=GA_TRACKING_ID" />
-            <script
-              dangerouslySetInnerHTML={{
-                __html: `
-                  window.dataLayer = window.dataLayer || [];
-                  function gtag(){dataLayer.push(arguments);}
-                  gtag('js', new Date());
-                  gtag('config', 'GA_TRACKING_ID');
-                `,
-              }}
+            <Script
+              src="https://www.googletagmanager.com/gtag/js?id=GA_TRACKING_ID"
+              async
+              strategy="afterInteractive"
             />
+            <Script id="ga-init" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', 'GA_TRACKING_ID', { anonymize_ip: true });
+              `}
+            </Script>
           </>
         )}
       </body>
     </html>
-  )
+  );
 }
