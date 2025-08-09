@@ -980,15 +980,9 @@
 }
 
 @keyframes bounce {
-  0%, 20%, 50%, 80%, 100% {
-    transform: translateY(0);
-  }
-  40% {
-    transform: translateY(-10px);
-  }
-  60% {
-    transform: translateY(-5px);
-  }
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-10px); }
+  60% { transform: translateY(-5px); }
 }
 
 .chatToggle:hover {
@@ -1038,14 +1032,13 @@
   background: var(--pk-secondary);
 }
 
-/* RESPONSIVE DESIGN - Simplified and Fixed */
-  
+/* ============ RESPONSIVE ============ */
+@media (max-width: 1024px) {
   .modeToggle {
     grid-column: 1;
     grid-row: 1;
     padding: 1rem;
   }
-  
   .sidebar {
     grid-column: 1;
     grid-row: 2;
@@ -1056,102 +1049,83 @@
     overflow-y: visible;
     max-height: 200px;
   }
-  
   .navigation {
     flex-direction: row;
     gap: 1rem;
     overflow-x: auto;
     padding-bottom: 0.5rem;
   }
-  
   .navSection {
     margin-bottom: 0;
     white-space: nowrap;
   }
-  
   .header {
     display: none; /* Hide header on mobile to save space */
   }
-  
   .mainContent {
     grid-column: 1;
     grid-row: 3;
     padding: 1rem;
   }
-  
   .dashboardFooter {
     grid-column: 1;
     grid-row: 4;
   }
-  
   .headerStats {
     display: none;
   }
-  
   .statsGrid {
     grid-template-columns: 1fr;
   }
-  
   .subjectsGrid {
     grid-template-columns: 1fr;
   }
-  
   .quickActions {
     grid-template-columns: repeat(2, 1fr);
   }
-  
   .heroStats {
     justify-content: center;
   }
 }
 
-  
+@media (max-width: 640px) {
   .modeBtn {
     padding: 0.7rem 1.5rem;
     font-size: 1rem;
   }
-  
   .sidebar {
     max-height: 150px;
     padding: 0.8rem;
   }
-  
   .navigation {
     gap: 0.5rem;
   }
-  
   .navItem {
     padding: 0.8rem 1rem;
     font-size: 0.9rem;
     white-space: nowrap;
   }
-  
   .mainContent {
     padding: 0.8rem;
   }
-  
   .quickActions {
     grid-template-columns: 1fr;
     gap: 1rem;
   }
-  
   .heroStats {
     flex-direction: column;
     gap: 1rem;
   }
-  
   .messageForm {
     flex-direction: column;
     gap: 0.8rem;
   }
-  
   .aiChat {
     bottom: 1rem;
     right: 1rem;
     left: 1rem;
     width: auto;
   }
-  
   .chatToggle {
     bottom: 1rem;
     right: 1rem;
@@ -1159,11 +1133,9 @@
     height: 50px;
     font-size: 1.3rem;
   }
-  
   .actionBtn {
     padding: 1.5rem 1rem;
   }
-  
   .actionBtnIcon {
     font-size: 2rem;
     margin-bottom: 0.8rem;
@@ -1172,14 +1144,8 @@
 
 /* Loading animations for cards */
 @keyframes cardLoad {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .dashboardCard,
@@ -1188,28 +1154,13 @@
   animation: cardLoad 0.6s ease-out;
 }
 
-.statCard:nth-child(2) {
-  animation-delay: 0.1s;
-}
-
-.statCard:nth-child(3) {
-  animation-delay: 0.2s;
-}
-
-.statCard:nth-child(4) {
-  animation-delay: 0.3s;
-}
+.statCard:nth-child(2) { animation-delay: 0.1s; }
+.statCard:nth-child(3) { animation-delay: 0.2s; }
+.statCard:nth-child(4) { animation-delay: 0.3s; }
 
 /* Ensure proper stacking context */
-.dashboard > * {
-  position: relative;
-}
+.dashboard > * { position: relative; }
 
 /* Fix potential overflow issues */
-.mainContent {
-  min-height: 0; /* Allows grid item to shrink */
-}
-
-.sidebar {
-  min-height: 0; /* Allows grid item to shrink */
-}
+.mainContent { min-height: 0; } /* Allows grid item to shrink */
+.sidebar { min-height: 0; }     /* Allows grid item to shrink */
