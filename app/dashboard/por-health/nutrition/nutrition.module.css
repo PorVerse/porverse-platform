@@ -1279,19 +1279,6 @@
 }
 
 /* ===== SCROLLBAR STYLING ===== */
-::-webkit-scrollbar {
-  width: 8px;
-}
 
-::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
-}
 
-::-webkit-scrollbar-thumb {
-  background: var(--nutrition-primary);
-  border-radius: 4px;
-}
 
-::-webkit-scrollbar-thumb:hover {
-  background: var(--nutrition-secondary);
-}

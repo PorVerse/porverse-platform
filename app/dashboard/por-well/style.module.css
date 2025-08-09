@@ -2,11 +2,6 @@
 
 
 /* Reset & Base */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -977,19 +972,6 @@ body {
 }
 
 /* Scrollbar Styling */
-::-webkit-scrollbar {
-  width: 8px;
-}
 
-::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.1);
-}
 
-::-webkit-scrollbar-thumb {
-  background: var(--pw-primary);
-  border-radius: 4px;
-}
 
-::-webkit-scrollbar-thumb:hover {
-  background: var(--pw-secondary);
-}

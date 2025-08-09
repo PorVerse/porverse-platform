@@ -4,15 +4,6 @@
 /* 1️⃣ DESIGN SYSTEM */
 
 /* 2️⃣ RESET & GLOBALS */
-*, *::before, *::after { box-sizing: border-box; }
-html { font-size: 16px; scroll-behavior: smooth; }
-body {
-  font-family: 'Manrope', Arial, sans-serif;
-  color: var(--pw-text);
-  background: var(--pw-bg);
-  min-height: 100vh;
-  margin: 0;
-}
 a { text-decoration: none; color: inherit; }
 
 .container {

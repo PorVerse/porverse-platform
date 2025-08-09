@@ -2,11 +2,6 @@
 
 
 /* Base Styles */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
 
 .ai-therapist {
   min-height: 100vh;
