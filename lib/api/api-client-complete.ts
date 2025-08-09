@@ -1,6 +1,8 @@
-// lib/api/api-client-complete.ts - COMPLETE FRONTEND API INTEGRATION
+// lib/api/api-client-production.ts - REAL API IMPLEMENTATION
+'use client'
+
 import { createClientSupabase } from '../supabase'
-import { SecurityService } from '../security/security-service'
+import { toast } from 'react-hot-toast'
 
 interface APIResponse<T = any> {
   success: boolean
@@ -9,912 +11,613 @@ interface APIResponse<T = any> {
   loading?: boolean
 }
 
-interface UseAPICallOptions {
-  immediate?: boolean
-  dependencies?: any[]
-  onSuccess?: (data: any) => void
-  onError?: (error: string) => void
+interface UserProfile {
+  id: string
+  email: string
+  first_name: string | null
+  last_name: string | null
+  subscription_tier: 'free' | 'starter' | 'pro' | 'complete'
+  subscription_status: 'active' | 'canceled' | 'past_due'
+  country_code: string | null
+  onboarding_completed: boolean
+  created_at: string
 }
 
-interface ConversationMessage {
-  role: 'user' | 'assistant'
-  content: string
-  timestamp: Date
+interface EcosystemAccess {
+  ecosystem: string
+  access_level: 'free' | 'premium' | 'locked'
+  activated_at: string
+  expires_at: string | null
 }
 
-export class APIClient {
+interface AIConversation {
+  id: string
+  ecosystem: string
+  title: string | null
+  messages: Array<{
+    role: 'user' | 'assistant'
+    content: string
+    timestamp: string
+  }>
+  created_at: string
+  updated_at: string
+}
+
+export class ProductionAPIClient {
   private supabase: any
-  private security: SecurityService
   private baseUrl: string
 
   constructor() {
     this.supabase = createClientSupabase()
-    this.security = SecurityService.getInstance()
     this.baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
   }
 
   // ================================
-  // CORE API METHODS - COMPLETE
+  // AUTHENTICATION & USER MANAGEMENT
   // ================================
 
-  private async makeRequest<T>(
-    endpoint: string,
-    options: RequestInit = {}
-  ): Promise<APIResponse<T>> {
+  async getCurrentUser(): Promise<APIResponse<UserProfile>> {
     try {
-      // Get authentication token
-      const { data: { session } } = await this.supabase.auth.getSession()
+      const { data: { user }, error: authError } = await this.supabase.auth.getUser()
       
-      const headers = {
-        'Content-Type': 'application/json',
-        'Authorization': session ? `Bearer ${session.access_token}` : '',
-        'X-CSRF-Token': await this.getCSRFToken(),
-        ...options.headers
+      if (authError || !user) {
+        return { success: false, error: 'Not authenticated' }
       }
 
-      const response = await fetch(`${this.baseUrl}${endpoint}`, {
-        ...options,
-        headers,
-        credentials: 'include'
-      })
+      const { data: profile, error: profileError } = await this.supabase
+        .from('user_profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single()
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}))
-        throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`)
+      if (profileError) {
+        return { success: false, error: profileError.message }
       }
 
-      const data = await response.json()
-      return { success: true, data: data.data || data }
-
+      return { success: true, data: profile }
     } catch (error: any) {
-      console.error(`API Error [${endpoint}]:`, error)
       return { success: false, error: error.message }
     }
   }
 
-  private async getCSRFToken(): Promise<string> {
-    // Implementation would get CSRF token from cookie or generate one
-    return 'csrf-token-placeholder'
+  async updateUserProfile(updates: Partial<UserProfile>): Promise<APIResponse<UserProfile>> {
+    try {
+      const { data: { user } } = await this.supabase.auth.getUser()
+      if (!user) throw new Error('Not authenticated')
+
+      const { data, error } = await this.supabase
+        .from('user_profiles')
+        .update({
+          ...updates,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', user.id)
+        .select()
+        .single()
+
+      if (error) throw error
+
+      toast.success('Profile updated successfully!')
+      return { success: true, data }
+    } catch (error: any) {
+      toast.error('Failed to update profile')
+      return { success: false, error: error.message }
+    }
   }
 
   // ================================
-  // AUTHENTICATION API - COMPLETE
+  // ECOSYSTEM ACCESS MANAGEMENT
   // ================================
 
-  async login(email: string, password: string, rememberMe: boolean = false): Promise<APIResponse> {
-    return this.makeRequest('/api/auth/login', {
-      method: 'POST',
-      body: JSON.stringify({
-        email: this.security.sanitizeInput(email),
-        password,
-        rememberMe
+  async getUserEcosystems(): Promise<APIResponse<EcosystemAccess[]>> {
+    try {
+      const { data: { user } } = await this.supabase.auth.getUser()
+      if (!user) throw new Error('Not authenticated')
+
+      const { data, error } = await this.supabase
+        .from('user_ecosystems')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('activated_at', { ascending: false })
+
+      if (error) throw error
+
+      return { success: true, data: data || [] }
+    } catch (error: any) {
+      return { success: false, error: error.message }
+    }
+  }
+
+  async checkEcosystemAccess(ecosystem: string): Promise<APIResponse<{ hasAccess: boolean; level: string }>> {
+    try {
+      const { data: { user } } = await this.supabase.auth.getUser()
+      if (!user) throw new Error('Not authenticated')
+
+      const { data, error } = await this.supabase
+        .from('user_ecosystems')
+        .select('access_level')
+        .eq('user_id', user.id)
+        .eq('ecosystem', ecosystem)
+        .single()
+
+      if (error && error.code !== 'PGRST116') throw error
+
+      const hasAccess = data && data.access_level !== 'locked'
+      const level = data?.access_level || 'locked'
+
+      return { 
+        success: true, 
+        data: { hasAccess, level }
+      }
+    } catch (error: any) {
+      return { success: false, error: error.message }
+    }
+  }
+
+  async checkQuantumVaultAccess(): Promise<APIResponse<{ hasAccess: boolean; unlockMethod: string }>> {
+    try {
+      const { data: { user } } = await this.supabase.auth.getUser()
+      if (!user) throw new Error('Not authenticated')
+
+      // Check Trinity combo (por-mind + por-flow + por-blu all premium)
+      const { data: ecosystems } = await this.supabase
+        .from('user_ecosystems')
+        .select('ecosystem, access_level')
+        .eq('user_id', user.id)
+        .in('ecosystem', ['por-mind', 'por-flow', 'por-blu'])
+
+      const trinityEcosystems = ecosystems?.filter(e => e.access_level === 'premium') || []
+      const hasTrinity = trinityEcosystems.length === 3
+
+      // Check direct Quantum Vault access
+      const { data: quantumAccess } = await this.supabase
+        .from('quantum_vault_access')
+        .select('access_level')
+        .eq('user_id', user.id)
+        .single()
+
+      const hasDirectAccess = quantumAccess?.access_level === 'full'
+
+      return {
+        success: true,
+        data: {
+          hasAccess: hasTrinity || hasDirectAccess,
+          unlockMethod: hasDirectAccess ? 'direct' : hasTrinity ? 'trinity' : 'none'
+        }
+      }
+    } catch (error: any) {
+      return { success: false, error: error.message }
+    }
+  }
+
+  // ================================
+  // AI CONVERSATIONS
+  // ================================
+
+  async startAIConversation(ecosystem: string, initialMessage?: string): Promise<APIResponse<AIConversation>> {
+    try {
+      const { data: { user } } = await this.supabase.auth.getUser()
+      if (!user) throw new Error('Not authenticated')
+
+      // Check ecosystem access first
+      const accessCheck = await this.checkEcosystemAccess(ecosystem)
+      if (!accessCheck.success || !accessCheck.data?.hasAccess) {
+        throw new Error('No access to this ecosystem')
+      }
+
+      const messages = initialMessage ? [
+        {
+          role: 'user' as const,
+          content: initialMessage,
+          timestamp: new Date().toISOString()
+        }
+      ] : []
+
+      const { data, error } = await this.supabase
+        .from('ai_conversations')
+        .insert({
+          user_id: user.id,
+          ecosystem,
+          title: `${ecosystem} - ${new Date().toLocaleDateString()}`,
+          messages,
+          is_active: true
+        })
+        .select()
+        .single()
+
+      if (error) throw error
+
+      return { success: true, data }
+    } catch (error: any) {
+      return { success: false, error: error.message }
+    }
+  }
+
+  async sendAIMessage(
+    conversationId: string, 
+    message: string, 
+    ecosystem: string
+  ): Promise<APIResponse<{ userMessage: any; aiResponse: any }>> {
+    try {
+      const { data: { user } } = await this.supabase.auth.getUser()
+      if (!user) throw new Error('Not authenticated')
+
+      // Get existing conversation
+      const { data: conversation, error: convError } = await this.supabase
+        .from('ai_conversations')
+        .select('*')
+        .eq('id', conversationId)
+        .eq('user_id', user.id)
+        .single()
+
+      if (convError) throw convError
+
+      // Create user message
+      const userMessage = {
+        role: 'user' as const,
+        content: message,
+        timestamp: new Date().toISOString()
+      }
+
+      // Call AI API endpoint
+      const response = await fetch(`${this.baseUrl}/api/ai/chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message,
+          ecosystem,
+          conversationId,
+          userId: user.id
+        })
       })
-    })
+
+      if (!response.ok) {
+        throw new Error('AI service unavailable')
+      }
+
+      const aiData = await response.json()
+      
+      const aiMessage = {
+        role: 'assistant' as const,
+        content: aiData.message,
+        timestamp: new Date().toISOString()
+      }
+
+      // Update conversation with both messages
+      const updatedMessages = [...conversation.messages, userMessage, aiMessage]
+
+      const { error: updateError } = await this.supabase
+        .from('ai_conversations')
+        .update({
+          messages: updatedMessages,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', conversationId)
+
+      if (updateError) throw updateError
+
+      return { 
+        success: true, 
+        data: { 
+          userMessage, 
+          aiResponse: aiMessage 
+        } 
+      }
+    } catch (error: any) {
+      toast.error('Failed to send message')
+      return { success: false, error: error.message }
+    }
   }
 
-  async signup(userData: {
-    email: string
-    password: string
-    firstName?: string
-    lastName?: string
-    country?: string
-    goals?: string[]
-    challenges?: string[]
-  }): Promise<APIResponse> {
-    return this.makeRequest('/api/auth/signup', {
-      method: 'POST',
-      body: JSON.stringify({
-        ...userData,
-        email: this.security.sanitizeInput(userData.email),
-        firstName: userData.firstName ? this.security.sanitizeInput(userData.firstName) : undefined,
-        lastName: userData.lastName ? this.security.sanitizeInput(userData.lastName) : undefined
+  async getConversationHistory(ecosystem: string): Promise<APIResponse<AIConversation[]>> {
+    try {
+      const { data: { user } } = await this.supabase.auth.getUser()
+      if (!user) throw new Error('Not authenticated')
+
+      const { data, error } = await this.supabase
+        .from('ai_conversations')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('ecosystem', ecosystem)
+        .eq('is_active', true)
+        .order('updated_at', { ascending: false })
+        .limit(10)
+
+      if (error) throw error
+
+      return { success: true, data: data || [] }
+    } catch (error: any) {
+      return { success: false, error: error.message }
+    }
+  }
+
+  // ================================
+  // ECOSYSTEM-SPECIFIC DATA
+  // ================================
+
+  // PORHEALTH
+  async getHealthProfile(): Promise<APIResponse<any>> {
+    try {
+      const { data: { user } } = await this.supabase.auth.getUser()
+      if (!user) throw new Error('Not authenticated')
+
+      const { data, error } = await this.supabase
+        .from('user_health_profiles')
+        .select('*')
+        .eq('user_id', user.id)
+        .single()
+
+      if (error && error.code !== 'PGRST116') throw error
+
+      return { success: true, data: data || null }
+    } catch (error: any) {
+      return { success: false, error: error.message }
+    }
+  }
+
+  async updateHealthProfile(healthData: any): Promise<APIResponse<any>> {
+    try {
+      const { data: { user } } = await this.supabase.auth.getUser()
+      if (!user) throw new Error('Not authenticated')
+
+      const { data, error } = await this.supabase
+        .from('user_health_profiles')
+        .upsert({
+          user_id: user.id,
+          ...healthData,
+          updated_at: new Date().toISOString()
+        })
+        .select()
+        .single()
+
+      if (error) throw error
+
+      toast.success('Health profile updated!')
+      return { success: true, data }
+    } catch (error: any) {
+      toast.error('Failed to update health profile')
+      return { success: false, error: error.message }
+    }
+  }
+
+  // PORKIDS
+  async getChildProfiles(): Promise<APIResponse<any[]>> {
+    try {
+      const { data: { user } } = await this.supabase.auth.getUser()
+      if (!user) throw new Error('Not authenticated')
+
+      const { data, error } = await this.supabase
+        .from('child_profiles')
+        .select('*')
+        .eq('parent_id', user.id)
+        .order('created_at', { ascending: false })
+
+      if (error) throw error
+
+      return { success: true, data: data || [] }
+    } catch (error: any) {
+      return { success: false, error: error.message }
+    }
+  }
+
+  async createChildProfile(childData: any): Promise<APIResponse<any>> {
+    try {
+      const { data: { user } } = await this.supabase.auth.getUser()
+      if (!user) throw new Error('Not authenticated')
+
+      const { data, error } = await this.supabase
+        .from('child_profiles')
+        .insert({
+          parent_id: user.id,
+          ...childData
+        })
+        .select()
+        .single()
+
+      if (error) throw error
+
+      toast.success('Child profile created!')
+      return { success: true, data }
+    } catch (error: any) {
+      toast.error('Failed to create child profile')
+      return { success: false, error: error.message }
+    }
+  }
+
+  // PORWELL
+  async saveMoodEntry(moodData: any): Promise<APIResponse<any>> {
+    try {
+      const { data: { user } } = await this.supabase.auth.getUser()
+      if (!user) throw new Error('Not authenticated')
+
+      const { data, error } = await this.supabase
+        .from('mood_entries')
+        .insert({
+          user_id: user.id,
+          ...moodData
+        })
+        .select()
+        .single()
+
+      if (error) throw error
+
+      return { success: true, data }
+    } catch (error: any) {
+      return { success: false, error: error.message }
+    }
+  }
+
+  async getMoodHistory(days: number = 30): Promise<APIResponse<any[]>> {
+    try {
+      const { data: { user } } = await this.supabase.auth.getUser()
+      if (!user) throw new Error('Not authenticated')
+
+      const startDate = new Date()
+      startDate.setDate(startDate.getDate() - days)
+
+      const { data, error } = await this.supabase
+        .from('mood_entries')
+        .select('*')
+        .eq('user_id', user.id)
+        .gte('created_at', startDate.toISOString())
+        .order('created_at', { ascending: true })
+
+      if (error) throw error
+
+      return { success: true, data: data || [] }
+    } catch (error: any) {
+      return { success: false, error: error.message }
+    }
+  }
+
+  // ================================
+  // PAYMENT & SUBSCRIPTION
+  // ================================
+
+  async createCheckoutSession(planId: string): Promise<APIResponse<{ url: string }>> {
+    try {
+      const response = await fetch(`${this.baseUrl}/api/payments/create-checkout`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ planId })
       })
-    })
+
+      if (!response.ok) {
+        throw new Error('Failed to create checkout session')
+      }
+
+      const data = await response.json()
+      return { success: true, data }
+    } catch (error: any) {
+      return { success: false, error: error.message }
+    }
   }
 
-  async logout(): Promise<APIResponse> {
-    return this.makeRequest('/api/auth/logout', {
-      method: 'POST'
-    })
-  }
+  async getSubscriptionStatus(): Promise<APIResponse<any>> {
+    try {
+      const { data: { user } } = await this.supabase.auth.getUser()
+      if (!user) throw new Error('Not authenticated')
 
-  async resetPassword(email: string): Promise<APIResponse> {
-    return this.makeRequest('/api/auth/reset-password', {
-      method: 'POST',
-      body: JSON.stringify({
-        email: this.security.sanitizeInput(email)
-      })
-    })
-  }
+      const { data, error } = await this.supabase
+        .from('user_subscriptions')
+        .select(`
+          *,
+          subscription_plans (
+            name,
+            ecosystems,
+            features
+          )
+        `)
+        .eq('user_id', user.id)
+        .eq('status', 'active')
+        .order('created_at', { ascending: false })
+        .limit(1)
 
-  async verifyEmail(token: string): Promise<APIResponse> {
-    return this.makeRequest('/api/auth/verify-email', {
-      method: 'POST',
-      body: JSON.stringify({ token })
-    })
-  }
+      if (error) throw error
 
-  // ================================
-  // USER PROFILE API - COMPLETE
-  // ================================
-
-  async getUserProfile(): Promise<APIResponse> {
-    return this.makeRequest('/api/user/profile')
-  }
-
-  async updateUserProfile(updates: any): Promise<APIResponse> {
-    return this.makeRequest('/api/user/profile', {
-      method: 'PUT',
-      body: JSON.stringify(this.security.sanitizeJSON(updates))
-    })
-  }
-
-  async getUserEcosystems(): Promise<APIResponse> {
-    return this.makeRequest('/api/user/ecosystems')
-  }
-
-  async getDashboardData(ecosystem?: string): Promise<APIResponse> {
-    const endpoint = ecosystem ? `/api/dashboard?ecosystem=${ecosystem}` : '/api/dashboard'
-    return this.makeRequest(endpoint)
+      return { success: true, data: data?.[0] || null }
+    } catch (error: any) {
+      return { success: false, error: error.message }
+    }
   }
 
   // ================================
-  // AI INTEGRATION API - COMPLETE
+  // PROGRESS TRACKING
   // ================================
 
-  async chatWithAI(
-    ecosystem: string,
-    message: string,
-    conversationHistory: ConversationMessage[] = [],
-    context: any = {}
-  ): Promise<APIResponse> {
-    return this.makeRequest('/api/ai/chat', {
-      method: 'POST',
-      body: JSON.stringify({
-        ecosystem,
-        message: this.security.sanitizeInput(message),
-        conversationHistory,
-        context: this.security.sanitizeJSON(context)
-      })
-    })
+  async saveProgress(ecosystem: string, progressData: any): Promise<APIResponse<any>> {
+    try {
+      const { data: { user } } = await this.supabase.auth.getUser()
+      if (!user) throw new Error('Not authenticated')
+
+      const { data, error } = await this.supabase
+        .from('user_progress')
+        .insert({
+          user_id: user.id,
+          ecosystem,
+          ...progressData
+        })
+        .select()
+        .single()
+
+      if (error) throw error
+
+      return { success: true, data }
+    } catch (error: any) {
+      return { success: false, error: error.message }
+    }
   }
 
-  async getAIConversations(ecosystem: string, limit: number = 10): Promise<APIResponse> {
-    return this.makeRequest(`/api/ai/conversations?ecosystem=${ecosystem}&limit=${limit}`)
-  }
+  async getProgress(ecosystem: string): Promise<APIResponse<any[]>> {
+    try {
+      const { data: { user } } = await this.supabase.auth.getUser()
+      if (!user) throw new Error('Not authenticated')
 
-  // ================================
-  // PORHEALTH API - COMPLETE
-  // ================================
+      const { data, error } = await this.supabase
+        .from('user_progress')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('ecosystem', ecosystem)
+        .order('date_recorded', { ascending: false })
+        .limit(50)
 
-  async generateNutritionPlan(preferences: {
-    targetCalories: number
-    dietaryRestrictions: string[]
-    allergies: string[]
-    mealsPerDay: number
-    budget: string
-    cuisinePreferences: string[]
-  }): Promise<APIResponse> {
-    return this.makeRequest('/api/por-health/nutrition/generate-plan', {
-      method: 'POST',
-      body: JSON.stringify(this.security.sanitizeJSON(preferences))
-    })
-  }
+      if (error) throw error
 
-  async saveNutritionLog(logData: {
-    mealType: string
-    foods: any[]
-    calories: number
-    protein: number
-    carbs: number
-    fat: number
-  }): Promise<APIResponse> {
-    return this.makeRequest('/api/por-health/nutrition/log', {
-      method: 'POST',
-      body: JSON.stringify(this.security.sanitizeJSON(logData))
-    })
-  }
-
-  async generateWorkoutPlan(preferences: {
-    fitnessLevel: string
-    goals: string[]
-    daysPerWeek: number
-    minutesPerSession: number
-    equipment: string[]
-    injuries: string[]
-  }): Promise<APIResponse> {
-    return this.makeRequest('/api/por-health/fitness/generate-plan', {
-      method: 'POST',
-      body: JSON.stringify(this.security.sanitizeJSON(preferences))
-    })
-  }
-
-  async logWorkoutSession(sessionData: {
-    workoutType: string
-    duration: number
-    exercises: any[]
-    caloriesBurned: number
-    notes?: string
-  }): Promise<APIResponse> {
-    return this.makeRequest('/api/por-health/fitness/log-session', {
-      method: 'POST',
-      body: JSON.stringify(this.security.sanitizeJSON(sessionData))
-    })
-  }
-
-  async getHealthMetrics(): Promise<APIResponse> {
-    return this.makeRequest('/api/por-health/metrics')
-  }
-
-  async saveHealthMetrics(metrics: {
-    weight?: number
-    bloodPressure?: { systolic: number; diastolic: number }
-    heartRate?: number
-    sleepHours?: number
-    stressLevel?: number
-  }): Promise<APIResponse> {
-    return this.makeRequest('/api/por-health/metrics', {
-      method: 'POST',
-      body: JSON.stringify(this.security.sanitizeJSON(metrics))
-    })
-  }
-
-  // ================================
-  // PORKIDS API - COMPLETE
-  // ================================
-
-  async analyzeHomework(
-    imageFile: File,
-    subject: string,
-    gradeLevel: number,
-    childId: string
-  ): Promise<APIResponse> {
-    const formData = new FormData()
-    formData.append('image', imageFile)
-    formData.append('subject', subject)
-    formData.append('gradeLevel', gradeLevel.toString())
-    formData.append('childId', childId)
-
-    return this.makeRequest('/api/por-kids/homework/analyze', {
-      method: 'POST',
-      body: formData,
-      headers: {} // Let browser set Content-Type for FormData
-    })
-  }
-
-  async generateLearningPath(
-    childId: string,
-    subject: string,
-    currentLevel: string,
-    targetLevel: string,
-    weakAreas: string[]
-  ): Promise<APIResponse> {
-    return this.makeRequest('/api/por-kids/learning/generate-path', {
-      method: 'POST',
-      body: JSON.stringify({
-        childId,
-        subject,
-        currentLevel,
-        targetLevel,
-        weakAreas: weakAreas.map(area => this.security.sanitizeInput(area))
-      })
-    })
-  }
-
-  async getLearningProgress(childId: string): Promise<APIResponse> {
-    return this.makeRequest(`/api/por-kids/progress?childId=${childId}`)
-  }
-
-  async saveLearningSession(sessionData: {
-    childId: string
-    subject: string
-    topic: string
-    duration: number
-    accuracy: number
-    exercisesCompleted: number
-  }): Promise<APIResponse> {
-    return this.makeRequest('/api/por-kids/progress/session', {
-      method: 'POST',
-      body: JSON.stringify(this.security.sanitizeJSON(sessionData))
-    })
-  }
-
-  async getChildProfiles(): Promise<APIResponse> {
-    return this.makeRequest('/api/por-kids/children')
-  }
-
-  async createChildProfile(childData: {
-    name: string
-    age: number
-    gradeLevel: string
-    interests: string[]
-    learningStyle: string
-  }): Promise<APIResponse> {
-    return this.makeRequest('/api/por-kids/children', {
-      method: 'POST',
-      body: JSON.stringify({
-        ...childData,
-        name: this.security.sanitizeInput(childData.name)
-      })
-    })
-  }
-
-  // ================================
-  // PORWELL API - COMPLETE
-  // ================================
-
-  async startTherapySession(
-    sessionType: string = 'general',
-    initialMood?: number,
-    anxietyLevel?: number
-  ): Promise<APIResponse> {
-    return this.makeRequest('/api/por-well/therapy/start-session', {
-      method: 'POST',
-      body: JSON.stringify({
-        sessionType,
-        initialMood,
-        anxietyLevel
-      })
-    })
-  }
-
-  async sendTherapyMessage(
-    message: string,
-    sessionId: string,
-    context: any = {}
-  ): Promise<APIResponse> {
-    return this.makeRequest('/api/por-well/therapy/message', {
-      method: 'POST',
-      body: JSON.stringify({
-        message: this.security.sanitizeInput(message),
-        sessionId,
-        context: this.security.sanitizeJSON(context)
-      })
-    })
-  }
-
-  async logMoodEntry(moodData: {
-    moodScore: number
-    emotions: string[]
-    triggers?: string[]
-    activities?: string[]
-    thoughts?: string
-    physicalSymptoms?: string[]
-    sleepQuality?: number
-    anxietyLevel?: number
-    stressLevel?: number
-  }): Promise<APIResponse> {
-    return this.makeRequest('/api/por-well/mood/log', {
-      method: 'POST',
-      body: JSON.stringify(this.security.sanitizeJSON(moodData))
-    })
-  }
-
-  async getMoodHistory(days: number = 30): Promise<APIResponse> {
-    return this.makeRequest(`/api/por-well/mood/history?days=${days}`)
-  }
-
-  async getMoodAnalytics(): Promise<APIResponse> {
-    return this.makeRequest('/api/por-well/mood/analytics')
-  }
-
-  async startMeditationSession(
-    type: string,
-    duration: number
-  ): Promise<APIResponse> {
-    return this.makeRequest('/api/por-well/meditation/start', {
-      method: 'POST',
-      body: JSON.stringify({ type, duration })
-    })
-  }
-
-  async completeMeditationSession(
-    sessionId: string,
-    actualDuration: number,
-    rating: number
-  ): Promise<APIResponse> {
-    return this.makeRequest('/api/por-well/meditation/complete', {
-      method: 'POST',
-      body: JSON.stringify({
-        sessionId,
-        actualDuration,
-        rating
-      })
-    })
-  }
-
-  // ================================
-  // PORMIND API - COMPLETE
-  // ================================
-
-  async getFinancialOverview(): Promise<APIResponse> {
-    return this.makeRequest('/api/por-mind/financial/overview')
-  }
-
-  async createBudget(budgetData: {
-    name: string
-    categories: { [key: string]: number }
-    period: 'monthly' | 'weekly'
-    totalAmount: number
-  }): Promise<APIResponse> {
-    return this.makeRequest('/api/por-mind/budgeting/create', {
-      method: 'POST',
-      body: JSON.stringify({
-        ...budgetData,
-        name: this.security.sanitizeInput(budgetData.name)
-      })
-    })
-  }
-
-  async logTransaction(transactionData: {
-    amount: number
-    category: string
-    description: string
-    date: string
-    isIncome: boolean
-  }): Promise<APIResponse> {
-    return this.makeRequest('/api/por-mind/transactions/log', {
-      method: 'POST',
-      body: JSON.stringify({
-        ...transactionData,
-        description: this.security.sanitizeInput(transactionData.description)
-      })
-    })
-  }
-
-  async getFinancialAdvice(query: string): Promise<APIResponse> {
-    return this.makeRequest('/api/por-mind/advice', {
-      method: 'POST',
-      body: JSON.stringify({
-        query: this.security.sanitizeInput(query)
-      })
-    })
-  }
-
-  async generateInvestmentPlan(preferences: {
-    riskTolerance: string
-    investmentGoals: string[]
-    timeHorizon: number
-    monthlyAmount: number
-  }): Promise<APIResponse> {
-    return this.makeRequest('/api/por-mind/investment/generate-plan', {
-      method: 'POST',
-      body: JSON.stringify(this.security.sanitizeJSON(preferences))
-    })
-  }
-
-  // ================================
-  // PORFLOW API - COMPLETE
-  // ================================
-
-  async getTasks(): Promise<APIResponse> {
-    return this.makeRequest('/api/por-flow/tasks')
-  }
-
-  async createTask(taskData: {
-    title: string
-    description?: string
-    priority: string
-    category: string
-    estimatedMinutes: number
-    dueDate?: string
-    tags?: string[]
-  }): Promise<APIResponse> {
-    return this.makeRequest('/api/por-flow/tasks', {
-      method: 'POST',
-      body: JSON.stringify({
-        ...taskData,
-        title: this.security.sanitizeInput(taskData.title),
-        description: taskData.description ? this.security.sanitizeInput(taskData.description) : undefined
-      })
-    })
-  }
-
-  async updateTask(taskId: string, updates: any): Promise<APIResponse> {
-    return this.makeRequest(`/api/por-flow/tasks/${taskId}`, {
-      method: 'PUT',
-      body: JSON.stringify(this.security.sanitizeJSON(updates))
-    })
-  }
-
-  async optimizeSchedule(
-    tasks: string[],
-    preferences: any
-  ): Promise<APIResponse> {
-    return this.makeRequest('/api/por-flow/productivity/optimize-schedule', {
-      method: 'POST',
-      body: JSON.stringify({
-        tasks,
-        preferences: this.security.sanitizeJSON(preferences)
-      })
-    })
-  }
-
-  async startFocusSession(
-    taskId: string,
-    sessionType: string,
-    plannedDuration: number
-  ): Promise<APIResponse> {
-    return this.makeRequest('/api/por-flow/focus/start-session', {
-      method: 'POST',
-      body: JSON.stringify({
-        taskId,
-        sessionType,
-        plannedDuration
-      })
-    })
-  }
-
-  async completeFocusSession(
-    sessionId: string,
-    actualDuration: number,
-    productivity: number,
-    distractions: number
-  ): Promise<APIResponse> {
-    return this.makeRequest('/api/por-flow/focus/complete-session', {
-      method: 'POST',
-      body: JSON.stringify({
-        sessionId,
-        actualDuration,
-        productivity,
-        distractions
-      })
-    })
-  }
-
-  // ================================
-  // PORBLU API - COMPLETE
-  // ================================
-
-  async createVisionBoard(visionData: {
-    timeHorizon: number
-    lifeAreas: string[]
-    goals: any[]
-    values: string[]
-  }): Promise<APIResponse> {
-    return this.makeRequest('/api/por-blu/vision/create-board', {
-      method: 'POST',
-      body: JSON.stringify(this.security.sanitizeJSON(visionData))
-    })
-  }
-
-  async getStrategicInsights(
-    goals: any[],
-    currentMetrics: any
-  ): Promise<APIResponse> {
-    return this.makeRequest('/api/por-blu/strategy/insights', {
-      method: 'POST',
-      body: JSON.stringify({
-        goals: this.security.sanitizeJSON(goals),
-        currentMetrics: this.security.sanitizeJSON(currentMetrics)
-      })
-    })
-  }
-
-  async createStrategicDecision(decisionData: {
-    title: string
-    options: string[]
-    criteria: string[]
-    weights: number[]
-    constraints: string[]
-  }): Promise<APIResponse> {
-    return this.makeRequest('/api/por-blu/decisions/create', {
-      method: 'POST',
-      body: JSON.stringify({
-        ...decisionData,
-        title: this.security.sanitizeInput(decisionData.title)
-      })
-    })
-  }
-
-  async getExecutiveCoaching(topic: string): Promise<APIResponse> {
-    return this.makeRequest('/api/por-blu/coaching', {
-      method: 'POST',
-      body: JSON.stringify({
-        topic: this.security.sanitizeInput(topic)
-      })
-    })
-  }
-
-  // ================================
-  // QUANTUM VAULT API - COMPLETE
-  // ================================
-
-  async checkQuantumAccess(): Promise<APIResponse> {
-    return this.makeRequest('/api/quantum-vault/access')
-  }
-
-  async generateFutureSelf(timelineYears: number = 10): Promise<APIResponse> {
-    return this.makeRequest('/api/quantum-vault/future-self', {
-      method: 'POST',
-      body: JSON.stringify({ timelineYears })
-    })
-  }
-
-  async runIdentitySimulator(
-    decisions: any[]
-  ): Promise<APIResponse> {
-    return this.makeRequest('/api/quantum-vault/identity-simulator', {
-      method: 'POST',
-      body: JSON.stringify({
-        decisions: this.security.sanitizeJSON(decisions)
-      })
-    })
-  }
-
-  async createReverseRoadmap(
-    desiredFuture: any
-  ): Promise<APIResponse> {
-    return this.makeRequest('/api/quantum-vault/reverse-roadmap', {
-      method: 'POST',
-      body: JSON.stringify({
-        desiredFuture: this.security.sanitizeJSON(desiredFuture)
-      })
-    })
-  }
-
-  async startMirrorConversation(topic: string): Promise<APIResponse> {
-    return this.makeRequest('/api/quantum-vault/mirror-conversation', {
-      method: 'POST',
-      body: JSON.stringify({
-        topic: this.security.sanitizeInput(topic)
-      })
-    })
-  }
-
-  async detectQuantumPatterns(): Promise<APIResponse> {
-    return this.makeRequest('/api/quantum-vault/pattern-detection', {
-      method: 'POST'
-    })
-  }
-
-  // ================================
-  // PAYMENT API - COMPLETE
-  // ================================
-
-  async getSubscriptionPlans(): Promise<APIResponse> {
-    return this.makeRequest('/api/payments/plans')
-  }
-
-  async createStripeCheckout(
-    planId: string,
-    billingCycle: 'monthly' | 'yearly'
-  ): Promise<APIResponse> {
-    return this.makeRequest('/api/payments/stripe/checkout', {
-      method: 'POST',
-      body: JSON.stringify({ planId, billingCycle })
-    })
-  }
-
-  async createPayPalOrder(
-    planId: string,
-    billingCycle: 'monthly' | 'yearly'
-  ): Promise<APIResponse> {
-    return this.makeRequest('/api/payments/paypal/create-order', {
-      method: 'POST',
-      body: JSON.stringify({ planId, billingCycle })
-    })
-  }
-
-  async getCustomerPortal(): Promise<APIResponse> {
-    return this.makeRequest('/api/payments/portal', {
-      method: 'POST'
-    })
-  }
-
-  async cancelSubscription(reason?: string): Promise<APIResponse> {
-    return this.makeRequest('/api/payments/cancel', {
-      method: 'POST',
-      body: JSON.stringify({ reason })
-    })
-  }
-
-  async applyDiscountCode(code: string, planId: string): Promise<APIResponse> {
-    return this.makeRequest('/api/payments/discount', {
-      method: 'POST',
-      body: JSON.stringify({
-        code: this.security.sanitizeInput(code),
-        planId
-      })
-    })
-  }
-
-  // ================================
-  // ANALYTICS & REPORTING API - COMPLETE
-  // ================================
-
-  async getUserAnalytics(days: number = 30): Promise<APIResponse> {
-    return this.makeRequest(`/api/analytics/user?days=${days}`)
-  }
-
-  async getEcosystemUsage(): Promise<APIResponse> {
-    return this.makeRequest('/api/analytics/ecosystem-usage')
-  }
-
-  async getProgressReport(type: 'weekly' | 'monthly' = 'weekly'): Promise<APIResponse> {
-    return this.makeRequest(`/api/analytics/progress-report?type=${type}`)
-  }
-
-  // ================================
-  // FILE UPLOAD API - COMPLETE
-  // ================================
-
-  async uploadFile(
-    file: File,
-    category: 'avatar' | 'homework' | 'document' | 'image'
-  ): Promise<APIResponse> {
-    const formData = new FormData()
-    formData.append('file', file)
-    formData.append('category', category)
-
-    return this.makeRequest('/api/upload', {
-      method: 'POST',
-      body: formData,
-      headers: {} // Let browser set Content-Type for FormData
-    })
-  }
-
-  async deleteFile(fileId: string): Promise<APIResponse> {
-    return this.makeRequest(`/api/upload/${fileId}`, {
-      method: 'DELETE'
-    })
+      return { success: true, data: data || [] }
+    } catch (error: any) {
+      return { success: false, error: error.message }
+    }
   }
 }
 
-// ================================
-// REACT HOOKS FOR API CALLS - COMPLETE
-// ================================
+// Singleton instance
+export const apiClient = new ProductionAPIClient()
 
-import { useState, useEffect, useCallback } from 'react'
-
+// React hooks for common operations
 export function useAPICall<T>(
   apiCall: () => Promise<APIResponse<T>>,
-  options: UseAPICallOptions = {}
+  dependencies: any[] = []
 ) {
-  const [data, setData] = useState<T | null>(null)
-  const [loading, setLoading] = useState(options.immediate !== false)
-  const [error, setError] = useState<string | null>(null)
+  const [state, setState] = React.useState<APIResponse<T>>({ 
+    success: false, 
+    loading: true 
+  })
 
-  const execute = useCallback(async () => {
-    try {
-      setLoading(true)
-      setError(null)
+  React.useEffect(() => {
+    let mounted = true
+
+    const execute = async () => {
+      setState(prev => ({ ...prev, loading: true }))
       
-      const response = await apiCall()
+      const result = await apiCall()
       
-      if (response.success) {
-        setData(response.data || null)
-        options.onSuccess?.(response.data)
-      } else {
-        setError(response.error || 'Unknown error')
-        options.onError?.(response.error || 'Unknown error')
+      if (mounted) {
+        setState({ ...result, loading: false })
       }
-    } catch (err: any) {
-      setError(err.message)
-      options.onError?.(err.message)
-    } finally {
-      setLoading(false)
-    }
-  }, [apiCall, options])
-
-  useEffect(() => {
-    if (options.immediate !== false) {
-      execute()
-    }
-  }, options.dependencies || [])
-
-  return { data, loading, error, refetch: execute }
-}
-
-export function useConversation(ecosystem: string) {
-  const [messages, setMessages] = useState<ConversationMessage[]>([])
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-
-  const sendMessage = useCallback(async (message: string, context: any = {}) => {
-    try {
-      setLoading(true)
-      setError(null)
-
-      // Add user message immediately
-      const userMessage: ConversationMessage = {
-        role: 'user',
-        content: message,
-        timestamp: new Date()
-      }
-      setMessages(prev => [...prev, userMessage])
-
-      // Send to API
-      const response = await apiClient.chatWithAI(ecosystem, message, messages, context)
-      
-      if (response.success) {
-        const aiMessage: ConversationMessage = {
-          role: 'assistant',
-          content: response.data.message,
-          timestamp: new Date()
-        }
-        setMessages(prev => [...prev, aiMessage])
-      } else {
-        setError(response.error || 'Failed to send message')
-      }
-    } catch (err: any) {
-      setError(err.message)
-    } finally {
-      setLoading(false)
-    }
-  }, [ecosystem, messages])
-
-  const clearConversation = useCallback(() => {
-    setMessages([])
-    setError(null)
-  }, [])
-
-  return { messages, loading, error, sendMessage, clearConversation }
-}
-
-export function useAuth() {
-  const [user, setUser] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
-  const supabase = createClientSupabase()
-
-  useEffect(() => {
-    // Get initial session
-    const getSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      setUser(session?.user || null)
-      setLoading(false)
     }
 
-    getSession()
+    execute()
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        setUser(session?.user || null)
-        setLoading(false)
-      }
-    )
+    return () => { mounted = false }
+  }, dependencies)
 
-    return () => subscription.unsubscribe()
-  }, [supabase.auth])
-
-  return { user, loading, isAuthenticated: !!user }
+  return state
 }
 
-export function useSubscription() {
-  const { user } = useAuth()
-  const [subscription, setSubscription] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    if (user) {
-      const fetchSubscription = async () => {
-        try {
-          const response = await apiClient.getUserProfile()
-          if (response.success) {
-            setSubscription(response.data.user_subscriptions?.[0] || null)
-          }
-        } finally {
-          setLoading(false)
-        }
-      }
-      fetchSubscription()
-    } else {
-      setSubscription(null)
-      setLoading(false)
-    }
-  }, [user])
-
-  return { subscription, loading, isPremium: subscription?.status === 'active' }
+export function useUserProfile() {
+  return useAPICall(() => apiClient.getCurrentUser())
 }
 
-// Create global instance
-export const apiClient = new APIClient()
-
-// Export commonly used hooks and utilities
-export {
-  useAPICall,
-  useConversation,
-  useAuth,
-  useSubscription
+export function useEcosystemAccess(ecosystem: string) {
+  return useAPICall(() => apiClient.checkEcosystemAccess(ecosystem), [ecosystem])
 }
+
+export function useQuantumVaultAccess() {
+  return useAPICall(() => apiClient.checkQuantumVaultAccess())
+}
+
+export default apiClient
