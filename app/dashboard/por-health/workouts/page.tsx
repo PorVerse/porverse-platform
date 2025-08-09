@@ -73,14 +73,15 @@ interface BiometricReading {
 
 export default function WorkoutsPage() {
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'today' | 'library' | 'create' | 'analytics'>('today');
-  
+  const [activeTab, setActiveTab] =
+    useState<'today' | 'library' | 'create' | 'analytics'>('today');
+
   // Workout states
   const [todayWorkouts, setTodayWorkouts] = useState<Workout[]>([]);
   const [workoutLibrary, setWorkoutLibrary] = useState<Workout[]>([]);
   const [currentWorkout, setCurrentWorkout] = useState<Workout | null>(null);
   const [workoutStats, setWorkoutStats] = useState<WorkoutStats | null>(null);
-  
+
   // Active workout states
   const [isWorkoutActive, setIsWorkoutActive] = useState(false);
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
@@ -88,7 +89,10 @@ export default function WorkoutsPage() {
   const [restTimer, setRestTimer] = useState(0);
   const [workoutTimer, setWorkoutTimer] = useState(0);
   const [biometricReadings, setBiometricReadings] = useState<BiometricReading[]>([]);
-  
+
+  // Preview modal
+  const [previewWorkout, setPreviewWorkout] = useState<Workout | null>(null);
+
   // Timer refs
   const restTimerRef = useRef<NodeJS.Timeout | null>(null);
   const workoutTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -108,7 +112,6 @@ export default function WorkoutsPage() {
   useEffect(() => {
     loadWorkoutData();
     return () => {
-      // Cleanup timers
       if (restTimerRef.current) clearInterval(restTimerRef.current);
       if (workoutTimerRef.current) clearInterval(workoutTimerRef.current);
       if (biometricIntervalRef.current) clearInterval(biometricIntervalRef.current);
@@ -117,11 +120,8 @@ export default function WorkoutsPage() {
 
   const loadWorkoutData = async () => {
     setLoading(true);
-    
-    // Simulate data loading
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    // Mock workout stats
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+
     setWorkoutStats({
       totalWorkouts: 127,
       weeklyStreak: 4,
@@ -129,15 +129,14 @@ export default function WorkoutsPage() {
       favoriteType: 'Strength',
       strengthPR: {
         'Bench Press': 85,
-        'Squat': 120,
-        'Deadlift': 140,
+        Squat: 120,
+        Deadlift: 140,
         'Pull-ups': 12
       },
       weeklyGoal: 4,
       completedThisWeek: 3
     });
 
-    // Mock today's workouts
     setTodayWorkouts([
       {
         id: 'morning-strength',
@@ -169,11 +168,10 @@ export default function WorkoutsPage() {
         personalizedFor: ['Fat Loss', 'Cardiovascular Health'],
         caloriesBurn: 280,
         status: 'not_started',
-        scheduledFor: new Date(Date.now() + 8 * 60 * 60 * 1000) // 8 hours from now
+        scheduledFor: new Date(Date.now() + 8 * 60 * 60 * 1000)
       }
     ]);
 
-    // Mock workout library
     setWorkoutLibrary([
       {
         id: 'full-body-beginner',
@@ -226,11 +224,7 @@ export default function WorkoutsPage() {
           'Push back up to starting position',
           'Keep core engaged throughout movement'
         ],
-        tips: [
-          'Keep your body in a straight line',
-          'Control the descent for better muscle activation',
-          'Breathe out as you push up'
-        ]
+        tips: ['Keep your body in a straight line', 'Control the descent', 'Breathe out as you push up']
       },
       {
         id: 'squats',
@@ -246,11 +240,7 @@ export default function WorkoutsPage() {
           'Go down until thighs are parallel to floor',
           'Push through heels to return to standing'
         ],
-        tips: [
-          'Keep chest up and back straight',
-          'Ensure knees track over toes',
-          'Full range of motion for best results'
-        ]
+        tips: ['Keep chest up and back straight', 'Knees track over toes', 'Full ROM']
       }
     ];
 
@@ -264,17 +254,13 @@ export default function WorkoutsPage() {
         equipment: ['Bodyweight'],
         difficulty: 'advanced',
         instructions: [
-          'Start in standing position',
-          'Drop into squat and place hands on floor',
-          'Jump feet back into plank position',
-          'Do a push-up, then jump feet back to squat',
-          'Explosively jump up with arms overhead'
+          'Start standing',
+          'Drop into squat, hands on floor',
+          'Jump feet back to plank',
+          'Push-up, feet back to squat',
+          'Explosive jump with arms overhead'
         ],
-        tips: [
-          'Land softly to protect joints',
-          'Maintain proper form even when tired',
-          'Modify by stepping instead of jumping'
-        ]
+        tips: ['Land softly', 'Menține forma corectă', 'Poți modifica prin step-back']
       }
     ];
 
@@ -288,24 +274,24 @@ export default function WorkoutsPage() {
         equipment: ['Yoga Mat'],
         difficulty: 'beginner',
         instructions: [
-          'Kneel on floor with big toes touching',
-          'Sit back on heels and separate knees',
-          'Fold forward and extend arms in front',
-          'Rest forehead on ground and breathe deeply'
+          'Kneel, big toes together, knees apart',
+          'Sit back on heels',
+          'Fold forward, arms întinse',
+          'Frunte pe sol, respiră adânc'
         ],
-        tips: [
-          'Hold for 30-60 seconds',
-          'Focus on deep breathing',
-          'Great for relaxation and stress relief'
-        ]
+        tips: ['Ține 30–60s', 'Focalizează respirația', 'Relaxare generală']
       }
     ];
 
     switch (type) {
-      case 'strength': return strengthExercises;
-      case 'hiit': return hiitExercises;
-      case 'flexibility': return flexibilityExercises;
-      default: return strengthExercises;
+      case 'strength':
+        return strengthExercises;
+      case 'hiit':
+        return hiitExercises;
+      case 'flexibility':
+        return flexibilityExercises;
+      default:
+        return strengthExercises;
     }
   };
 
@@ -315,22 +301,25 @@ export default function WorkoutsPage() {
     setCurrentExerciseIndex(0);
     setCurrentSetIndex(0);
     setWorkoutTimer(0);
-    
-    // Start workout timer
+
+    // timer total
     workoutTimerRef.current = setInterval(() => {
-      setWorkoutTimer(prev => prev + 1);
+      setWorkoutTimer((prev) => prev + 1);
     }, 1000);
 
-    // Start biometric monitoring (mock)
+    // mock biometrics
     biometricIntervalRef.current = setInterval(() => {
-      const reading: BiometricReading = {
-        timestamp: new Date(),
-        heartRate: 120 + Math.floor(Math.random() * 40), // 120-160 bpm
-        caloriesBurned: Math.floor(workoutTimer / 60 * 8), // ~8 cal/min
-        intensity: getWorkoutIntensity()
-      };
-      setBiometricReadings(prev => [...prev.slice(-10), reading]); // Keep last 10 readings
-    }, 10000); // Every 10 seconds
+      setBiometricReadings((prev) => {
+        const elapsedSec = prev.length ? Math.floor((Date.now() - prev[0].timestamp.getTime()) / 1000) : 0;
+        const reading: BiometricReading = {
+          timestamp: new Date(),
+          heartRate: 120 + Math.floor(Math.random() * 40),
+          caloriesBurned: Math.floor((elapsedSec / 60) * 8),
+          intensity: getWorkoutIntensity()
+        };
+        return [...prev.slice(-10), reading];
+      });
+    }, 10000);
   };
 
   const pauseWorkout = () => {
@@ -347,40 +336,37 @@ export default function WorkoutsPage() {
   const resumeWorkout = () => {
     if (!workoutTimerRef.current) {
       workoutTimerRef.current = setInterval(() => {
-        setWorkoutTimer(prev => prev + 1);
+        setWorkoutTimer((prev) => prev + 1);
       }, 1000);
     }
     if (!biometricIntervalRef.current) {
       biometricIntervalRef.current = setInterval(() => {
-        const reading: BiometricReading = {
-          timestamp: new Date(),
-          heartRate: 120 + Math.floor(Math.random() * 40),
-          caloriesBurned: Math.floor(workoutTimer / 60 * 8),
-          intensity: getWorkoutIntensity()
-        };
-        setBiometricReadings(prev => [...prev.slice(-10), reading]);
+        setBiometricReadings((prev) => {
+          const elapsedSec = prev.length ? Math.floor((Date.now() - prev[0].timestamp.getTime()) / 1000) : 0;
+          const reading: BiometricReading = {
+            timestamp: new Date(),
+            heartRate: 120 + Math.floor(Math.random() * 40),
+            caloriesBurned: Math.floor((elapsedSec / 60) * 8),
+            intensity: getWorkoutIntensity()
+          };
+          return [...prev.slice(-10), reading];
+        });
       }, 10000);
     }
   };
 
   const finishWorkout = () => {
     if (currentWorkout) {
-      // Update workout status
       const updatedWorkout = {
         ...currentWorkout,
         status: 'completed' as const,
         completedAt: new Date()
       };
-      
-      setTodayWorkouts(prev => 
-        prev.map(w => w.id === currentWorkout.id ? updatedWorkout : w)
-      );
+      setTodayWorkouts((prev) => prev.map((w) => (w.id === currentWorkout.id ? updatedWorkout : w)));
     }
-    
-    // Clean up
     if (workoutTimerRef.current) clearInterval(workoutTimerRef.current);
     if (biometricIntervalRef.current) clearInterval(biometricIntervalRef.current);
-    
+
     setIsWorkoutActive(false);
     setCurrentWorkout(null);
     setBiometricReadings([]);
@@ -388,9 +374,10 @@ export default function WorkoutsPage() {
   };
 
   const startRestTimer = (duration: number) => {
+    if (restTimerRef.current) clearInterval(restTimerRef.current);
     setRestTimer(duration);
     restTimerRef.current = setInterval(() => {
-      setRestTimer(prev => {
+      setRestTimer((prev) => {
         if (prev <= 1) {
           if (restTimerRef.current) clearInterval(restTimerRef.current);
           return 0;
@@ -402,10 +389,10 @@ export default function WorkoutsPage() {
 
   const getWorkoutIntensity = (): 'low' | 'moderate' | 'high' | 'extreme' => {
     const elapsed = workoutTimer;
-    if (elapsed < 300) return 'low'; // First 5 minutes
-    if (elapsed < 1200) return 'moderate'; // 5-20 minutes
-    if (elapsed < 2400) return 'high'; // 20-40 minutes
-    return 'extreme'; // 40+ minutes
+    if (elapsed < 300) return 'low';
+    if (elapsed < 1200) return 'moderate';
+    if (elapsed < 2400) return 'high';
+    return 'extreme';
   };
 
   const formatTime = (seconds: number): string => {
@@ -416,10 +403,8 @@ export default function WorkoutsPage() {
 
   const generateAIWorkout = async () => {
     setGeneratingWorkout(true);
-    
-    // Simulate AI generation
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+
     const aiWorkout: Workout = {
       id: 'ai-generated-' + Date.now(),
       name: 'AI Optimized Workout',
@@ -435,8 +420,8 @@ export default function WorkoutsPage() {
       caloriesBurn: Math.floor(workoutPreferences.duration * 6),
       status: 'not_started'
     };
-    
-    setWorkoutLibrary(prev => [aiWorkout, ...prev]);
+
+    setWorkoutLibrary((prev) => [aiWorkout, ...prev]);
     setGeneratingWorkout(false);
   };
 
@@ -469,7 +454,7 @@ export default function WorkoutsPage() {
             </p>
           </div>
         </div>
-        
+
         <div className={styles.headerStats}>
           {workoutStats && (
             <>
@@ -482,7 +467,9 @@ export default function WorkoutsPage() {
                 <span className={styles.statUnit}>day streak</span>
               </div>
               <div className={styles.quickStat}>
-                <span className={styles.statValue}>{(workoutStats.totalCaloriesBurned / 1000).toFixed(1)}k</span>
+                <span className={styles.statValue}>
+                  {(workoutStats.totalCaloriesBurned / 1000).toFixed(1)}k
+                </span>
                 <span className={styles.statUnit}>calories burned</span>
               </div>
             </>
@@ -500,7 +487,7 @@ export default function WorkoutsPage() {
                 Exercise {currentExerciseIndex + 1} of {currentWorkout.exercises.length}
               </div>
             </div>
-            
+
             <div className={styles.workoutTimers}>
               <div className={styles.timerDisplay}>
                 <span className={styles.timerLabel}>Workout</span>
@@ -513,15 +500,17 @@ export default function WorkoutsPage() {
                 </div>
               )}
             </div>
-            
+
             <div className={styles.workoutControls}>
-              <button 
+              <button
+                type="button"
                 className={styles.pauseButton}
                 onClick={workoutTimerRef.current ? pauseWorkout : resumeWorkout}
+                aria-label={workoutTimerRef.current ? 'Pause workout' : 'Resume workout'}
               >
                 {workoutTimerRef.current ? '⏸️' : '▶️'}
               </button>
-              <button className={styles.finishButton} onClick={finishWorkout}>
+              <button type="button" className={styles.finishButton} onClick={finishWorkout}>
                 ✅ Finish
               </button>
             </div>
@@ -537,7 +526,7 @@ export default function WorkoutsPage() {
                 </span>
                 <span className={styles.biometricUnit}>bpm</span>
               </div>
-              
+
               <div className={styles.biometricReading}>
                 <span className={styles.biometricIcon}>🔥</span>
                 <span className={styles.biometricValue}>
@@ -545,7 +534,7 @@ export default function WorkoutsPage() {
                 </span>
                 <span className={styles.biometricUnit}>cal</span>
               </div>
-              
+
               <div className={styles.biometricReading}>
                 <span className={styles.biometricIcon}>⚡</span>
                 <span className={styles.biometricValue}>
@@ -569,19 +558,21 @@ export default function WorkoutsPage() {
                 {currentWorkout.exercises[currentExerciseIndex]?.instructions[0]}
               </div>
             </div>
-            
+
             <div className={styles.setControls}>
-              <button 
+              <button
+                type="button"
                 className={styles.restButton}
                 onClick={() => startRestTimer(60)}
               >
                 Start Rest (60s)
               </button>
-              <button 
+              <button
+                type="button"
                 className={styles.nextSetButton}
                 onClick={() => {
                   if (currentExerciseIndex < currentWorkout.exercises.length - 1) {
-                    setCurrentExerciseIndex(prev => prev + 1);
+                    setCurrentExerciseIndex((prev) => prev + 1);
                   }
                 }}
               >
@@ -593,29 +584,33 @@ export default function WorkoutsPage() {
       )}
 
       {/* Navigation Tabs */}
-      <nav className={styles.tabNavigation}>
-        <button 
+      <nav className={styles.tabNavigation} aria-label="Workouts tabs">
+        <button
+          type="button"
           className={`${styles.tab} ${activeTab === 'today' ? styles.activeTab : ''}`}
           onClick={() => setActiveTab('today')}
         >
           <span className={styles.tabIcon}>📅</span>
-          Today's Workouts
+          Today&apos;s Workouts
         </button>
-        <button 
+        <button
+          type="button"
           className={`${styles.tab} ${activeTab === 'library' ? styles.activeTab : ''}`}
           onClick={() => setActiveTab('library')}
         >
           <span className={styles.tabIcon}>📚</span>
           Workout Library
         </button>
-        <button 
+        <button
+          type="button"
           className={`${styles.tab} ${activeTab === 'create' ? styles.activeTab : ''}`}
           onClick={() => setActiveTab('create')}
         >
           <span className={styles.tabIcon}>🤖</span>
           AI Creator
         </button>
-        <button 
+        <button
+          type="button"
           className={`${styles.tab} ${activeTab === 'analytics' ? styles.activeTab : ''}`}
           onClick={() => setActiveTab('analytics')}
         >
@@ -643,19 +638,21 @@ export default function WorkoutsPage() {
                         {workout.targetMuscles.slice(0, 3).join(', ')}
                       </div>
                     </div>
-                    
+
                     <div className={styles.workoutActions}>
                       {workout.status === 'completed' ? (
                         <div className={styles.completedBadge}>✅ Completed</div>
                       ) : workout.status === 'in_progress' ? (
-                        <button 
+                        <button
+                          type="button"
                           className={styles.resumeButton}
                           onClick={() => startWorkout(workout)}
                         >
                           Resume
                         </button>
                       ) : (
-                        <button 
+                        <button
+                          type="button"
                           className={styles.startButton}
                           onClick={() => startWorkout(workout)}
                         >
@@ -718,33 +715,38 @@ export default function WorkoutsPage() {
                 <div key={workout.id} className={styles.libraryCard}>
                   <div className={styles.libraryCardHeader}>
                     <h4 className={styles.libraryCardName}>{workout.name}</h4>
-                    <div className={styles.difficultyBadge}>
-                      {workout.difficulty}
-                    </div>
+                    <div className={styles.difficultyBadge}>{workout.difficulty}</div>
                   </div>
-                  
+
                   <div className={styles.libraryCardContent}>
                     <div className={styles.libraryCardStats}>
                       <span>{workout.duration} min</span>
                       <span>{workout.caloriesBurn} cal</span>
                       <span>{workout.exercises.length} exercises</span>
                     </div>
-                    
+
                     <div className={styles.libraryCardMuscles}>
                       {workout.targetMuscles.join(', ')}
                     </div>
-                    
+
                     <div className={styles.libraryCardEquipment}>
                       Equipment: {workout.equipment.join(', ')}
                     </div>
                   </div>
 
                   <div className={styles.libraryCardActions}>
-                    <button className={styles.previewButton}>Preview</button>
-                    <button 
+                    <button
+                      type="button"
+                      className={styles.previewButton}
+                      onClick={() => setPreviewWorkout(workout)}
+                    >
+                      Preview
+                    </button>
+                    <button
+                      type="button"
                       className={styles.addToTodayButton}
                       onClick={() => {
-                        setTodayWorkouts(prev => [...prev, { ...workout, status: 'scheduled' }]);
+                        setTodayWorkouts((prev) => [...prev, { ...workout, status: 'scheduled' }]);
                       }}
                     >
                       Add to Today
@@ -771,13 +773,12 @@ export default function WorkoutsPage() {
                 <div className={styles.formRow}>
                   <div className={styles.formGroup}>
                     <label className={styles.formLabel}>Workout Type</label>
-                    <select 
+                    <select
                       className={styles.formSelect}
                       value={workoutPreferences.type}
-                      onChange={(e) => setWorkoutPreferences(prev => ({ 
-                        ...prev, 
-                        type: e.target.value 
-                      }))}
+                      onChange={(e) =>
+                        setWorkoutPreferences((prev) => ({ ...prev, type: e.target.value }))
+                      }
                     >
                       <option value="strength">Strength Training</option>
                       <option value="cardio">Cardiovascular</option>
@@ -796,10 +797,12 @@ export default function WorkoutsPage() {
                         max="90"
                         step="5"
                         value={workoutPreferences.duration}
-                        onChange={(e) => setWorkoutPreferences(prev => ({ 
-                          ...prev, 
-                          duration: parseInt(e.target.value) 
-                        }))}
+                        onChange={(e) =>
+                          setWorkoutPreferences((prev) => ({
+                            ...prev,
+                            duration: parseInt(e.target.value, 10)
+                          }))
+                        }
                         className={styles.slider}
                       />
                       <span className={styles.sliderValue}>
@@ -812,16 +815,19 @@ export default function WorkoutsPage() {
                 <div className={styles.formGroup}>
                   <label className={styles.formLabel}>Difficulty Level</label>
                   <div className={styles.difficultySelector}>
-                    {['beginner', 'intermediate', 'advanced'].map((level) => (
+                    {(['beginner', 'intermediate', 'advanced'] as const).map((level) => (
                       <button
+                        type="button"
                         key={level}
                         className={`${styles.difficultyButton} ${
                           workoutPreferences.difficulty === level ? styles.active : ''
                         }`}
-                        onClick={() => setWorkoutPreferences(prev => ({ 
-                          ...prev, 
-                          difficulty: level 
-                        }))}
+                        onClick={() =>
+                          setWorkoutPreferences((prev) => ({
+                            ...prev,
+                            difficulty: level
+                          }))
+                        }
                       >
                         {level.charAt(0).toUpperCase() + level.slice(1)}
                       </button>
@@ -833,8 +839,12 @@ export default function WorkoutsPage() {
                   <label className={styles.formLabel}>Primary Goals</label>
                   <div className={styles.goalsGrid}>
                     {[
-                      'Strength Building', 'Muscle Definition', 'Fat Loss', 
-                      'Endurance', 'Flexibility', 'Power Development'
+                      'Strength Building',
+                      'Muscle Definition',
+                      'Fat Loss',
+                      'Endurance',
+                      'Flexibility',
+                      'Power Development'
                     ].map((goal) => (
                       <label key={goal} className={styles.goalLabel}>
                         <input
@@ -842,14 +852,14 @@ export default function WorkoutsPage() {
                           checked={workoutPreferences.goals.includes(goal)}
                           onChange={(e) => {
                             if (e.target.checked) {
-                              setWorkoutPreferences(prev => ({ 
-                                ...prev, 
-                                goals: [...prev.goals, goal] 
+                              setWorkoutPreferences((prev) => ({
+                                ...prev,
+                                goals: [...prev.goals, goal]
                               }));
                             } else {
-                              setWorkoutPreferences(prev => ({ 
-                                ...prev, 
-                                goals: prev.goals.filter(g => g !== goal) 
+                              setWorkoutPreferences((prev) => ({
+                                ...prev,
+                                goals: prev.goals.filter((g) => g !== goal)
                               }));
                             }
                           }}
@@ -862,7 +872,8 @@ export default function WorkoutsPage() {
                 </div>
               </div>
 
-              <button 
+              <button
+                type="button"
                 className={styles.generateWorkoutButton}
                 onClick={generateAIWorkout}
                 disabled={generatingWorkout}
@@ -894,20 +905,19 @@ export default function WorkoutsPage() {
               <div className={styles.analyticsCard}>
                 <h4 className={styles.analyticsTitle}>Strength Progress</h4>
                 <div className={styles.strengthPRs}>
-                  {workoutStats && Object.entries(workoutStats.strengthPR).map(([exercise, weight]) => (
-                    <div key={exercise} className={styles.prItem}>
-                      <span className={styles.prExercise}>{exercise}</span>
-                      <span className={styles.prWeight}>{weight}kg</span>
-                    </div>
-                  ))}
+                  {workoutStats &&
+                    Object.entries(workoutStats.strengthPR).map(([exercise, weight]) => (
+                      <div key={exercise} className={styles.prItem}>
+                        <span className={styles.prExercise}>{exercise}</span>
+                        <span className={styles.prWeight}>{weight}kg</span>
+                      </div>
+                    ))}
                 </div>
               </div>
 
               <div className={styles.analyticsCard}>
                 <h4 className={styles.analyticsTitle}>Workout Distribution</h4>
-                <div className={styles.chartPlaceholder}>
-                  🥧 Workout type distribution pie chart
-                </div>
+                <div className={styles.chartPlaceholder}>🥧 Workout type distribution pie chart</div>
               </div>
 
               <div className={styles.analyticsCard}>
@@ -937,6 +947,80 @@ export default function WorkoutsPage() {
           </div>
         )}
       </div>
+
+      {/* PREVIEW MODAL */}
+      {previewWorkout && (
+        <div className={styles.modalOverlay} role="dialog" aria-modal="true">
+          <div className={styles.modalContent}>
+            <div className={styles.modalHeader}>
+              <h4 className={styles.modalTitle}>{previewWorkout.name}</h4>
+              <button
+                type="button"
+                className={styles.modalClose}
+                aria-label="Close preview"
+                onClick={() => setPreviewWorkout(null)}
+              >
+                ✕
+              </button>
+            </div>
+            <div className={styles.modalBody}>
+              <div className={styles.modalRow}>
+                <span className={styles.badge}>{previewWorkout.type.toUpperCase()}</span>
+                <span className={styles.badge}>{previewWorkout.difficulty}</span>
+                <span className={styles.badge}>{previewWorkout.duration} min</span>
+                <span className={styles.badge}>{previewWorkout.caloriesBurn} cal</span>
+              </div>
+
+              <div className={styles.modalSection}>
+                <h5>Target Muscles</h5>
+                <p className={styles.muted}>{previewWorkout.targetMuscles.join(', ')}</p>
+              </div>
+
+              <div className={styles.modalSection}>
+                <h5>Equipment</h5>
+                <p className={styles.muted}>
+                  {previewWorkout.equipment.length ? previewWorkout.equipment.join(', ') : 'None'}
+                </p>
+              </div>
+
+              <div className={styles.modalSection}>
+                <h5>Exercises</h5>
+                <ul className={styles.exerciseUl}>
+                  {previewWorkout.exercises.map((ex) => (
+                    <li key={ex.id}>
+                      <strong>{ex.name}</strong>
+                      <div className={styles.mutedSmall}>
+                        {ex.primaryMuscles.join(', ')} • {ex.difficulty}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            <div className={styles.modalActions}>
+              <button
+                type="button"
+                className={styles.secondaryBtn}
+                onClick={() => setPreviewWorkout(null)}
+              >
+                Close
+              </button>
+              <button
+                type="button"
+                className={styles.primaryBtn}
+                onClick={() => {
+                  setTodayWorkouts((prev) => [...prev, { ...previewWorkout, status: 'scheduled' }]);
+                  setPreviewWorkout(null);
+                  setActiveTab('today');
+                }}
+              >
+                Add to Today
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
