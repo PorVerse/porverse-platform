@@ -1,7 +1,7 @@
 // scripts/test-ai-integration.ts
 // Test script to verify AI services are working
 
-import { TherapistService, NutritionService } from '../lib/ai/ai-service'
+import { TherapistService, NutritionService } from '../lib/ai/ai-service-complete.ts'
 
 async function testAIIntegration() {
   console.log('🧪 Testing PorVerse AI Integration...\n')
