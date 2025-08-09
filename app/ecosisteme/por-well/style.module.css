@@ -1,27 +1,10 @@
-/* =============================== 
-   FILE 3: app/ecosisteme/por-well/style.module.css 
-   =============================== */
+/* app/ecosisteme/por-well/style.module.css - COMPLETE */
 
 .container {
   min-height: 100vh;
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f2027 100%);
   position: relative;
   overflow-x: hidden;
-}
-
-.container::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: 
-    radial-gradient(circle at 25% 25%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 75% 75%, rgba(167, 139, 250, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 50% 50%, rgba(124, 58, 237, 0.05) 0%, transparent 50%);
-  pointer-events: none;
-  z-index: 0;
 }
 
 .header {
@@ -49,17 +32,6 @@
   max-width: 700px;
   margin-left: auto;
   margin-right: auto;
-  line-height: 1.6;
-}
-
-.description {
-  font-size: 1.1rem;
-  color: rgba(255, 255, 255, 0.6);
-  margin-bottom: 3rem;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
-  line-height: 1.7;
 }
 
 .featuresGrid {
@@ -79,39 +51,18 @@
   border-radius: 20px;
   padding: 2.5rem;
   text-align: center;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
+  transition: all 0.3s ease;
 }
 
 .featureCard:hover {
   transform: translateY(-10px);
   background: rgba(255, 255, 255, 0.15);
-  box-shadow: 0 0 30px rgba(139, 92, 246, 0.3);
-}
-
-.featureCard::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 3px;
-  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-  transform: scaleX(0);
-  transition: transform 0.3s ease;
-}
-
-.featureCard:hover::before {
-  transform: scaleX(1);
 }
 
 .featureIcon {
   font-size: 3rem;
   color: #8b5cf6;
   margin-bottom: 1.5rem;
-  display: block;
-  filter: drop-shadow(0 0 10px rgba(139, 92, 246, 0.5));
 }
 
 .featureTitle {
@@ -137,283 +88,10 @@
   cursor: pointer;
   transition: all 0.3s ease;
   text-decoration: none;
-  display: inline-block;
 }
 
 .featureButton:hover {
   transform: scale(1.05);
-  box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3);
-}
-
-.toolsSection {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(30px);
-  margin: 4rem 2rem;
-  border-radius: 30px;
-  padding: 4rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  position: relative;
-  z-index: 1;
-}
-
-.toolsTitle {
-  text-align: center;
-  font-size: 2.5rem;
-  font-weight: 800;
-  color: #ffffff;
-  margin-bottom: 2rem;
-}
-
-.toolsGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 2rem;
-  margin-top: 3rem;
-}
-
-.toolCard {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  padding: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  transition: all 0.3s ease;
-  text-align: center;
-}
-
-.toolCard:hover {
-  transform: translateY(-5px);
-  background: rgba(255, 255, 255, 0.15);
-  box-shadow: 0 10px 30px rgba(139, 92, 246, 0.2);
-}
-
-.toolIcon {
-  font-size: 2.5rem;
-  color: #8b5cf6;
-  margin-bottom: 1rem;
-  display: block;
-}
-
-.toolTitle {
-  font-size: 1.3rem;
-  font-weight: 600;
-  color: #ffffff;
-  margin-bottom: 1rem;
-}
-
-.toolDescription {
-  color: rgba(255, 255, 255, 0.7);
-  line-height: 1.5;
-  margin-bottom: 1.5rem;
-}
-
-.toolButton {
-  background: rgba(139, 92, 246, 0.2);
-  color: #8b5cf6;
-  border: 1px solid #8b5cf6;
-  padding: 0.75rem 1.5rem;
-  border-radius: 25px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-decoration: none;
-  display: inline-block;
-}
-
-.toolButton:hover {
-  background: #8b5cf6;
-  color: white;
-  transform: scale(1.05);
-}
-
-.moodSection {
-  padding: 4rem 2rem;
-  position: relative;
-  z-index: 1;
-}
-
-.moodContainer {
-  max-width: 800px;
-  margin: 0 auto;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(20px);
-  border-radius: 20px;
-  padding: 3rem;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-}
-
-.moodTitle {
-  text-align: center;
-  font-size: 2rem;
-  font-weight: 700;
-  color: #ffffff;
-  margin-bottom: 2rem;
-}
-
-.moodScale {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.moodButton {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
-  font-size: 1.5rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.moodButton:hover {
-  transform: scale(1.1);
-  border-color: #8b5cf6;
-  background: rgba(139, 92, 246, 0.2);
-}
-
-.moodButton.active {
-  background: #8b5cf6;
-  border-color: #8b5cf6;
-  transform: scale(1.2);
-}
-
-.meditationSection {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(30px);
-  margin: 4rem 2rem;
-  border-radius: 30px;
-  padding: 4rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  position: relative;
-  z-index: 1;
-}
-
-.meditationTitle {
-  text-align: center;
-  font-size: 2.5rem;
-  font-weight: 800;
-  color: #ffffff;
-  margin-bottom: 3rem;
-}
-
-.meditationGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-}
-
-.meditationCard {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  padding: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  transition: all 0.3s ease;
-}
-
-.meditationCard:hover {
-  transform: translateY(-5px);
-  background: rgba(255, 255, 255, 0.15);
-}
-
-.meditationImage {
-  width: 100%;
-  height: 150px;
-  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-  border-radius: 12px;
-  margin-bottom: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 3rem;
-  color: white;
-}
-
-.meditationName {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #ffffff;
-  margin-bottom: 0.5rem;
-}
-
-.meditationDuration {
-  color: rgba(255, 255, 255, 0.6);
-  margin-bottom: 1rem;
-}
-
-.meditationDescription {
-  color: rgba(255, 255, 255, 0.7);
-  line-height: 1.5;
-  margin-bottom: 1.5rem;
-}
-
-.playButton {
-  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 25px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin: 0 auto;
-}
-
-.playButton:hover {
-  transform: scale(1.05);
-  box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3);
-}
-
-.crisisSection {
-  background: linear-gradient(135deg, #dc2626, #b91c1c);
-  margin: 4rem 2rem;
-  border-radius: 20px;
-  padding: 3rem;
-  text-align: center;
-  position: relative;
-  z-index: 1;
-}
-
-.crisisTitle {
-  font-size: 2rem;
-  font-weight: 800;
-  color: #ffffff;
-  margin-bottom: 1rem;
-}
-
-.crisisDescription {
-  color: rgba(255, 255, 255, 0.9);
-  margin-bottom: 2rem;
-  line-height: 1.6;
-}
-
-.crisisButton {
-  background: #ffffff;
-  color: #dc2626;
-  border: none;
-  padding: 1rem 2rem;
-  border-radius: 50px;
-  font-size: 1.1rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-decoration: none;
-  display: inline-block;
-}
-
-.crisisButton:hover {
-  transform: scale(1.05);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
 
 @media (max-width: 768px) {
@@ -425,75 +103,9 @@
     font-size: 2.5rem;
   }
   
-  .subtitle {
-    font-size: 1.2rem;
-  }
-  
   .featuresGrid {
     grid-template-columns: 1fr;
     gap: 1.5rem;
     padding: 0 1rem;
   }
-  
-  .toolsSection,
-  .meditationSection {
-    margin: 2rem 1rem;
-    padding: 2rem;
-  }
-  
-  .toolsGrid,
-  .meditationGrid {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-  
-  .moodScale {
-    justify-content: center;
-    gap: 0.5rem;
-  }
-  
-  .moodButton {
-    width: 50px;
-    height: 50px;
-    font-size: 1.2rem;
-  }
-  
-  .crisisSection {
-    margin: 2rem 1rem;
-    padding: 2rem;
-  }
 }
-
-@media (max-width: 480px) {
-  .title {
-    font-size: 2rem;
-  }
-  
-  .subtitle {
-    font-size: 1rem;
-  }
-  
-  .featureCard,
-  .toolCard,
-  .meditationCard {
-    padding: 1.5rem;
-  }
-  
-  .toolsSection,
-  .meditationSection {
-    padding: 1.5rem;
-  }
-  
-  .moodContainer {
-    padding: 2rem;
-  }
-  
-  .moodScale {
-    gap: 0.25rem;
-  }
-  
-  .moodButton {
-    width: 40px;
-    height: 40px;
-    font-size: 1rem;
-  }
