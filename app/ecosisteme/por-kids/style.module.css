@@ -1,20 +1,6 @@
-/* app/ecosisteme/por-kids/style.module.css - FIXED */
+/* app/ecosisteme/por-kids/style.module.css 
+   =============================== */
 
-/* ===== GLOBAL HTML SELECTOR FIX ===== */
-:global(html) { 
-  font-size: 16px; 
-  scroll-behavior: smooth; 
-}
-
-:global(body) {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: linear-gradient(-45deg, #1a1a2e, #16213e, #0f2027, #2c1810);
-  color: #ffffff;
-  margin: 0;
-  padding: 0;
-}
-
-/* ===== ANIMATIONS ===== */
 @keyframes gradientShift {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
@@ -31,7 +17,6 @@
   50% { box-shadow: 0 0 30px rgba(236, 72, 153, 0.6), 0 0 40px rgba(236, 72, 153, 0.3); }
 }
 
-/* ===== MAIN CONTAINER ===== */
 .container {
   min-height: 100vh;
   background: linear-gradient(-45deg, #1a1a2e, #16213e, #0f2027, #2c1810);
@@ -56,7 +41,6 @@
   z-index: 0;
 }
 
-/* ===== HEADER SECTION ===== */
 .header {
   text-align: center;
   padding: 6rem 2rem 4rem;
@@ -93,7 +77,6 @@
   font-style: italic;
 }
 
-/* ===== FEATURES GRID ===== */
 .featuresGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
@@ -178,7 +161,6 @@
   box-shadow: 0 10px 20px rgba(236, 72, 153, 0.3);
 }
 
-/* ===== DEMO SECTION ===== */
 .demoSection {
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(30px);
@@ -233,7 +215,6 @@
   line-height: 1.5;
 }
 
-/* ===== TESTIMONIALS ===== */
 .testimonialsSection {
   padding: 4rem 2rem;
   text-align: center;
@@ -287,7 +268,6 @@
   font-size: 0.9rem;
 }
 
-/* ===== CTA SECTION ===== */
 .ctaSection {
   text-align: center;
   padding: 4rem 2rem;
@@ -332,7 +312,6 @@
   filter: brightness(1.1);
 }
 
-/* ===== RESPONSIVE DESIGN ===== */
 @media (max-width: 768px) {
   .container {
     overflow-x: hidden;
