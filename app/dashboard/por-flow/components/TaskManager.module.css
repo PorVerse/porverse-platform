@@ -500,16 +500,8 @@
 }
 
 /* Responsive Design */
-@media (max-width: 1200px) {
-  .kanbanBoard {
-    grid-template-columns: repeat(2, 1fr);
-  }
 }
 
-@media (max-width: 768px) {
-  .taskManager {
-    padding: 1rem;
-  }
 
   .header {
     flex-direction: column;
@@ -575,17 +567,7 @@
 }
 
 /* Dark mode optimizations */
-@media (prefers-color-scheme: dark) {
-  .modal {
-    background: linear-gradient(135deg, #0a0a0f 0%, #0a1f2e 100%);
-  }
 }
 
 /* Reduce motion for accessibility */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
 }

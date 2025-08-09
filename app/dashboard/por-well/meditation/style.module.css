@@ -1058,10 +1058,6 @@
 }
 
 /* Responsive Design */
-@media (max-width: 1200px) {
-  .progress-section {
-    grid-template-columns: 1fr;
-  }
   
   .progress-visual {
     justify-content: center;
@@ -1072,12 +1068,6 @@
   }
 }
 
-@media (max-width: 768px) {
-  .meditation-header {
-    flex-direction: column;
-    gap: 1rem;
-    padding: 1rem;
-  }
   
   .header-stats {
     gap: 1rem;
@@ -1175,12 +1165,6 @@
 }
 
 /* Accessibility */
-@media (prefers-reduced-motion: reduce) {
-  .loading-spinner,
-  .progress-fill,
-  .timer-progress {
-    animation: none;
-  }
   
   .meditation-center::before {
     animation: none;

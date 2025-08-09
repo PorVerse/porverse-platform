@@ -501,10 +501,6 @@
 }
 
 /* Responsive Design */
-@media (max-width: 1024px) {
-  .sleep-overview {
-    grid-template-columns: 1fr;
-  }
   
   .sleep-breakdown {
     grid-template-columns: 1fr;
@@ -515,10 +511,6 @@
   }
 }
 
-@media (max-width: 768px) {
-  .sleep-tracker-container {
-    padding: 1rem;
-  }
   
   .sleep-main,
   .sleep-stats,
@@ -547,10 +539,6 @@
   }
 }
 
-@media (max-width: 480px) {
-  .sleep-breakdown {
-    grid-template-columns: 1fr;
-  }
   
   .factors-grid {
     grid-template-columns: 1fr 1fr;
@@ -611,12 +599,6 @@
 }
 
 /* Accessibility improvements */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
 }
 
 /* Focus styles pentru accessibility */
@@ -629,12 +611,6 @@
 }
 
 /* High contrast mode support */
-@media (prefers-contrast: high) {
-  .sleep-main,
-  .sleep-stats,
-  .input-card {
-    border-width: 3px;
-  }
   
   .quality-option.selected,
   .factor-item.selected {

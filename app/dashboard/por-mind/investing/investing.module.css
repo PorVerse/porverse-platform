@@ -1231,10 +1231,6 @@
 /* =================================
    RESPONSIVE DESIGN
    ================================= */
-@media (max-width: 1400px) {
-  .investingContent {
-    padding: 0 var(--mind-spacing-md);
-  }
   
   .portfolioHeader {
     flex-direction: column;
@@ -1247,10 +1243,6 @@
   }
 }
 
-@media (max-width: 1024px) {
-  .investingContainer {
-    padding: var(--mind-spacing-md);
-  }
   
   .investingTitle {
     font-size: 2.5rem;
@@ -1278,10 +1270,6 @@
   }
 }
 
-@media (max-width: 768px) {
-  .investingHeader {
-    text-align: center;
-  }
   
   .investingTitle {
     font-size: 2rem;
@@ -1327,10 +1315,6 @@
   }
 }
 
-@media (max-width: 480px) {
-  .investingContainer {
-    padding: var(--mind-spacing-sm);
-  }
   
   .portfolioOverview,
   .holdingsSection,
@@ -1359,23 +1343,8 @@
 /* =================================
    ACCESSIBILITY IMPROVEMENTS
    ================================= */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
 }
 
-@media (prefers-contrast: high) {
-  .portfolioOverview,
-  .holdingsSection,
-  .recommendationsSection,
-  .stockCard,
-  .trendCard,
-  .insightCard {
-    border-width: 3px;
-  }
   
   .activeTab,
   .stockCard:hover,

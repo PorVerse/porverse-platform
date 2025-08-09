@@ -679,10 +679,6 @@
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
-  .timeBlocking {
-    padding: 1rem;
-  }
 
   .header {
     flex-direction: column;
@@ -796,10 +792,4 @@
 }
 
 /* Reduce motion for accessibility */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
 }

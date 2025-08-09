@@ -468,13 +468,6 @@
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
-  .chatToggle {
-    bottom: 1rem;
-    right: 1rem;
-    max-width: 200px;
-    padding: 0.75rem 1rem;
-  }
 
   .chatContainer {
     bottom: 1rem;
@@ -523,10 +516,6 @@
   }
 }
 
-@media (max-width: 480px) {
-  .chatContainer {
-    height: 450px;
-  }
 
   .aiAvatar,
   .userAvatar {
@@ -554,10 +543,6 @@
 }
 
 /* High Contrast Mode Support */
-@media (prefers-contrast: high) {
-  .chatContainer {
-    border-width: 3px;
-  }
 
   .messageText {
     border-width: 2px;
@@ -569,19 +554,6 @@
 }
 
 /* Reduced Motion Support */
-@media (prefers-reduced-motion: reduce) {
-  .chatToggle,
-  .chatContainer,
-  .message,
-  .messageAvatar,
-  .aiAvatar,
-  .typingDot,
-  .pulseDot,
-  .toggleIcon,
-  .statusPulse,
-  .avatarGlow {
-    animation: none;
-  }
 
   .chatToggle:hover,
   .sendButton:hover,
@@ -602,9 +574,4 @@
 }
 
 /* Print Styles */
-@media print {
-  .chatToggle,
-  .chatContainer {
-    display: none;
-  }
 }

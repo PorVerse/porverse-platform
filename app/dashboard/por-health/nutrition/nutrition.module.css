@@ -1145,22 +1145,12 @@
 }
 
 /* ===== RESPONSIVE DESIGN ===== */
-@media (max-width: 1200px) {
-  .macroOverview {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-    text-align: center;
-  }
   
   .macroGrid {
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   }
 }
 
-@media (max-width: 768px) {
-  .nutritionPage {
-    font-size: 0.9rem;
-  }
   
   .header {
     flex-direction: column;
@@ -1229,10 +1219,6 @@
   }
 }
 
-@media (max-width: 480px) {
-  .header {
-    padding: 1rem;
-  }
   
   .pageTitle {
     font-size: 1.5rem;

@@ -1039,11 +1039,6 @@
 }
 
 /* RESPONSIVE DESIGN - Simplified and Fixed */
-@media (max-width: 1024px) {
-  .dashboard {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto 1fr auto; /* mode-toggle, sidebar, main, footer */
-  }
   
   .modeToggle {
     grid-column: 1;
@@ -1110,12 +1105,6 @@
   }
 }
 
-@media (max-width: 640px) {
-  .modeToggle {
-    flex-direction: column;
-    gap: 0.5rem;
-    padding: 0.8rem;
-  }
   
   .modeBtn {
     padding: 0.7rem 1.5rem;

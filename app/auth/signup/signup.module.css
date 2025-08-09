@@ -1129,11 +1129,6 @@
 }
 
 /* ===== RESPONSIVE DESIGN ===== */
-@media (max-width: 768px) {
-  .signupPage {
-    --spacing-lg: 1rem;
-    --spacing-xl: 1.5rem;
-  }
   
   .logoContainer {
     top: var(--spacing-md);
@@ -1204,10 +1199,6 @@
   }
 }
 
-@media (max-width: 480px) {
-  .progressContainer {
-    padding: var(--spacing-sm);
-  }
   
   .stepTitle {
     font-size: 1.75rem;
@@ -1235,15 +1226,6 @@
 }
 
 /* ===== ACCESSIBILITY ===== */
-@media (prefers-reduced-motion: reduce) {
-  .signupPage,
-  .signupPage *,
-  .signupPage *::before,
-  .signupPage *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
   
   .quantumCanvas {
     display: none;
@@ -1266,21 +1248,9 @@
 }
 
 /* High contrast mode support */
-@media (prefers-contrast: high) {
-  .signupPage {
-    --glass-gentle: rgba(255, 255, 255, 0.2);
-    --glass-medium: rgba(255, 255, 255, 0.3);
-    --glass-border: rgba(255, 255, 255, 0.4);
-    --text-muted: #cbd5e1;
-  }
 }
 
 /* ===== PRINT STYLES ===== */
-@media print {
-  .signupPage {
-    background: white;
-    color: black;
-  }
   
   .quantumCanvas,
   .backgroundOverlay,

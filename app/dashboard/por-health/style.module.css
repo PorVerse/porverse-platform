@@ -961,10 +961,6 @@
 }
 
 /* ===== RESPONSIVE DESIGN ===== */
-@media (max-width: 1200px) {
-  .dashboard {
-    grid-template-columns: 1fr;
-  }
   
   .sidebar {
     position: fixed;
@@ -985,12 +981,6 @@
   }
 }
 
-@media (max-width: 768px) {
-  .header {
-    flex-direction: column;
-    gap: 1.5rem;
-    padding: 1.5rem;
-  }
   
   .headerTitle {
     font-size: 1.5rem;
@@ -1031,10 +1021,6 @@
   }
 }
 
-@media (max-width: 480px) {
-  .loadingTitle {
-    font-size: 2.25rem;
-  }
   
   .headerTitle {
     font-size: 1.25rem;
@@ -1104,34 +1090,12 @@
 }
 
 /* Reduce motion for users who prefer it */
-@media (prefers-reduced-motion: reduce) {
-  .dashboard *,
-  .dashboard *::before,
-  .dashboard *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
 }
 
 /* High contrast mode support */
-@media (prefers-contrast: high) {
-  .dashboard {
-    --health-primary: #00ff00;
-    --health-secondary: #00cc00;
-    --text-primary: #ffffff;
-    --text-secondary: #ffffff;
-    --glass-border: rgba(255, 255, 255, 0.5);
-  }
 }
 
 /* Print styles */
-@media print {
-  .dashboard {
-    grid-template-columns: 1fr;
-    background: white;
-    color: black;
-  }
   
   .sidebar,
   .chatFab,

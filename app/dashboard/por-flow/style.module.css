@@ -1209,11 +1209,6 @@
 }
 
 /* ===== RESPONSIVE DESIGN ===== */
-@media (max-width: 1024px) {
-  .dashboard {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr;
-  }
   
   .sidebar {
     grid-row: auto;
@@ -1288,12 +1283,6 @@
   }
 }
 
-@media (max-width: 768px) {
-  .tabHeader {
-    flex-direction: column;
-    gap: 1rem;
-    align-items: stretch;
-  }
 
   .tabHeader h1 {
     font-size: 1.8rem;
@@ -1358,11 +1347,6 @@
 }
 
 /* ===== ACCESSIBILITY ===== */
-@media (prefers-reduced-motion: reduce) {
-  .reduced-motion * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-  }
 }
 
 /* ===== FOCUS STATES ===== */

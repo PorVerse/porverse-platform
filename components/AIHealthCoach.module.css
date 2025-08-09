@@ -581,10 +581,6 @@
 }
 
 /* ===== RESPONSIVE DESIGN ===== */
-@media (max-width: 768px) {
-  .overlay {
-    padding: 1rem;
-  }
   
   .chatModal {
     height: 100vh;
@@ -644,10 +640,6 @@
   }
 }
 
-@media (max-width: 480px) {
-  .headerInfo {
-    gap: 0.5rem;
-  }
   
   .aiAvatar {
     width: 40px;
@@ -706,19 +698,7 @@
 }
 
 /* ===== ACCESSIBILITY ===== */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
 }
 
 /* ===== HIGH CONTRAST MODE ===== */
-@media (prefers-contrast: high) {
-  :root {
-    --glass-border: rgba(255, 255, 255, 0.8);
-    --text-muted: #ffffff;
-    --ai-primary: #00ff00;
-  }
 }

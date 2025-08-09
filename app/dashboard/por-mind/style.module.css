@@ -1198,11 +1198,6 @@
 }
 
 /* Responsive Design */
-@media (max-width: 1024px) {
-  .dashboard {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto 1fr;
-  }
   
   .sidebar {
     grid-row: auto;
@@ -1259,10 +1254,6 @@
   }
 }
 
-@media (max-width: 768px) {
-  .headerLeft h1 {
-    font-size: 1.4rem;
-  }
   
   .headerLeft p {
     font-size: 0.85rem;
@@ -1321,10 +1312,6 @@
   }
 }
 
-@media (max-width: 480px) {
-  .navigation {
-    gap: 1rem;
-  }
   
   .navSection {
     margin-bottom: 1rem;
@@ -1451,14 +1438,6 @@
 }
 
 /* Print styles */
-@media print {
-  .sidebar,
-  .addButton,
-  .chatButton,
-  .actionGrid,
-  .investmentActions {
-    display: none;
-  }
   
   .dashboard {
     grid-template-columns: 1fr;
@@ -1988,10 +1967,6 @@
 }
 
 /* Responsive for Goals */
-@media (max-width: 1024px) {
-  .goalsSummary {
-    grid-template-columns: repeat(2, 1fr);
-  }
   
   .goalsGrid {
     grid-template-columns: 1fr;
@@ -2006,10 +1981,6 @@
   }
 }
 
-@media (max-width: 768px) {
-  .goalsSummary {
-    grid-template-columns: 1fr;
-  }
   
   .filterButtons {
     flex-direction: column;

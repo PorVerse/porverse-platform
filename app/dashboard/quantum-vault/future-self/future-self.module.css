@@ -1055,20 +1055,12 @@
    RESPONSIVE DESIGN
    ================================ */
 
-@media (max-width: 1200px) {
-  .conversationArea {
-    margin: 0 200px;
-  }
   
   .insightsPanel, .achievementsPanel {
     width: 280px;
   }
 }
 
-@media (max-width: 768px) {
-  .conversationArea {
-    margin: 0;
-  }
   
   .header {
     flex-direction: column;
@@ -1133,10 +1125,6 @@
   }
 }
 
-@media (max-width: 480px) {
-  .generationTitle {
-    font-size: 2rem;
-  }
   
   .cosmicOrb {
     width: 150px;
@@ -1169,12 +1157,6 @@
    ACCESSIBILITY
    ================================ */
 
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
   
   .cosmicOrb,
   .energyCore,
@@ -1185,10 +1167,6 @@
 }
 
 /* High contrast mode */
-@media (prefers-contrast: high) {
-  .futureSelfContainer {
-    background: #000000;
-  }
   
   .messageContent {
     border: 2px solid #ffffff;
@@ -1203,14 +1181,6 @@
    PRINT STYLES
    ================================ */
 
-@media print {
-  .quantumBackground,
-  .quantumCanvas,
-  .floatingActions,
-  .cosmicStatusBar,
-  .inputArea {
-    display: none;
-  }
   
   .futureSelfContainer {
     background: white;

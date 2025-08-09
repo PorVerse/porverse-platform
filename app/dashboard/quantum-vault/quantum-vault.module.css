@@ -1861,10 +1861,6 @@
 }
 
 /* ===== RESPONSIVE DESIGN ===== */
-@media (max-width: 1200px) {
-  .quantumTitle {
-    font-size: 3rem;
-  }
   
   .mysticBox {
     width: 350px;
@@ -1882,10 +1878,6 @@
   }
 }
 
-@media (max-width: 768px) {
-  .vaultContainer {
-    padding: 1rem;
-  }
   
   .quantumTitle {
     font-size: 2.5rem;
@@ -1935,10 +1927,6 @@
   }
 }
 
-@media (max-width: 480px) {
-  .quantumTitle {
-    font-size: 2rem;
-  }
   
   .mysticBox {
     width: 240px;

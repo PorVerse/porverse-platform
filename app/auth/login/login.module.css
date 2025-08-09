@@ -801,10 +801,6 @@
    RESPONSIVE DESIGN
    ================================ */
 
-@media (max-width: 1024px) {
-  .previewSection {
-    display: none;
-  }
   
   .loginSection {
     flex: none;
@@ -812,10 +808,6 @@
   }
 }
 
-@media (max-width: 640px) {
-  .loginSection {
-    padding: 1rem;
-  }
   
   .loginContainer {
     max-width: 100%;
@@ -849,10 +841,6 @@
   }
 }
 
-@media (max-width: 480px) {
-  .loginSection {
-    padding: 0.5rem;
-  }
   
   .formCard {
     padding: 1.5rem;
@@ -896,10 +884,6 @@
    DARK MODE ADJUSTMENTS
    ================================ */
 
-@media (prefers-color-scheme: light) {
-  .gradientOverlay {
-    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 25%, #6366f1 50%, #a855f7 75%, #1e293b 100%);
-  }
   
   .particle {
     background: linear-gradient(45deg, #1e293b, #6366f1);
@@ -911,15 +895,6 @@
    ACCESSIBILITY IMPROVEMENTS
    ================================ */
 
-@media (prefers-reduced-motion: reduce) {
-  .gradientOverlay,
-  .particle,
-  .logoTextShine,
-  .quantumGlow,
-  .errorPulse,
-  .errorShake {
-    animation: none;
-  }
   
   .submitButton::before {
     display: none;
@@ -944,10 +919,6 @@
 }
 
 /* High contrast mode support */
-@media (prefers-contrast: high) {
-  .formCard {
-    border: 2px solid rgba(255, 255, 255, 0.8);
-  }
   
   .input {
     border: 2px solid rgba(255, 255, 255, 0.6);

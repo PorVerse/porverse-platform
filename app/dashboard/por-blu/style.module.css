@@ -1395,11 +1395,6 @@
 }
 
 /* Responsive Design */
-@media (max-width: 1024px) {
-  .dashboard {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto 1fr;
-  }
   
   .sidebar {
     grid-row: auto;
@@ -1448,10 +1443,6 @@
   }
 }
 
-@media (max-width: 768px) {
-  .headerLeft h1 {
-    font-size: 1.4rem;
-  }
   
   .headerLeft p {
     font-size: 0.85rem;

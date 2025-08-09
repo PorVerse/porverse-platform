@@ -959,12 +959,6 @@
 }
 
 /* Responsive Design */
-@media (max-width: 1024px) {
-  .quantumContent {
-    grid-template-columns: 1fr;
-    gap: 3rem;
-    text-align: center;
-  }
   
   .geoDetection {
     flex-direction: column;
@@ -982,10 +976,6 @@
   }
 }
 
-@media (max-width: 768px) {
-  .pricingContent {
-    padding: 0 1rem;
-  }
   
   .header {
     flex-direction: column;

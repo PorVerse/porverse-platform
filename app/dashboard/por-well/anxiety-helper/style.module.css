@@ -1068,10 +1068,6 @@
 }
 
 /* Responsive Design */
-@media (max-width: 1200px) {
-  .anxiety-status {
-    grid-template-columns: 1fr;
-  }
   
   .techniques-grid {
     grid-template-columns: 1fr;
@@ -1082,10 +1078,6 @@
   }
 }
 
-@media (max-width: 768px) {
-  .anxiety-helper {
-    padding: 0;
-  }
   
   .anxiety-header {
     flex-direction: column;
@@ -1153,12 +1145,6 @@
 
 
 /* Accessibility improvements */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
 }
 
 /* Focus styles pentru accessibility */
@@ -1171,11 +1157,4 @@
 }
 
 /* High contrast mode support */
-@media (prefers-contrast: high) {
-  .technique-card,
-  .insight-card,
-  .status-main,
-  .status-sidebar {
-    border-width: 3px;
-  }
 }

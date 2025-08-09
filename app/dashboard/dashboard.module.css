@@ -609,10 +609,6 @@
 }
 
 /* RESPONSIVE DESIGN */
-@media (max-width: 768px) {
-  .realDashboard {
-    padding: 15px;
-  }
   
   .dashboardHeader {
     flex-direction: column;
@@ -678,10 +674,6 @@
   }
 }
 
-@media (max-width: 480px) {
-  .welcomeSection h1 {
-    font-size: 1.5rem;
-  }
   
   .nutritionCard,
   .fitnessCard,
@@ -709,10 +701,6 @@
 }
 
 /* DARK MODE SUPPORT */
-@media (prefers-color-scheme: dark) {
-  .realDashboard {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-  }
   
   .nutritionCard,
   .fitnessCard,
@@ -759,11 +747,6 @@
 }
 
 /* PRINT STYLES */
-@media print {
-  .realDashboard {
-    background: white !important;
-    color: black !important;
-  }
   
   .actionButton,
   .quickAction,

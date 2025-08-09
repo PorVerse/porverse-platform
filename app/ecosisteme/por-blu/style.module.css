@@ -2,13 +2,6 @@
 
 
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: var(--bg-gradient);
-  color: var(--text-primary);
-  line-height: 1.6;
-  overflow-x: hidden;
-}
 
 /* NAVBAR */
 .navbar {
@@ -768,10 +761,6 @@ body {
 }
 
 /* RESPONSIVE */
-@media (max-width: 768px) {
-  .nav-links {
-    display: none;
-  }
   
   .hero-content {
     grid-template-columns: 1fr;

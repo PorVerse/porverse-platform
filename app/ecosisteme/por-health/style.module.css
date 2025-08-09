@@ -782,22 +782,12 @@
 }
 
 /* Responsive Design */
-@media (max-width: 1024px) {
-  .heroContent {
-    grid-template-columns: 1fr;
-    gap: 3rem;
-    text-align: center;
-  }
   
   .navLinks {
     display: none;
   }
 }
 
-@media (max-width: 768px) {
-  .container {
-    padding: 0 1rem;
-  }
   
   .hero {
     padding: 6rem 0 4rem;
@@ -846,10 +836,6 @@
   }
 }
 
-@media (max-width: 480px) {
-  .heroTitle {
-    font-size: 2rem;
-  }
   
   .ctaContent {
     padding: 2rem 1rem;

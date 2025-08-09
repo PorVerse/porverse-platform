@@ -1067,21 +1067,12 @@
 }
 
 /* Responsive Design */
-@media (max-width: 1024px) {
-  .authMain {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-  }
   
   .authSidebar {
     order: -1;
   }
 }
 
-@media (max-width: 768px) {
-  .authContent {
-    padding: 0 1rem;
-  }
   
   .authCard {
     padding: 2rem;

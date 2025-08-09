@@ -1207,21 +1207,12 @@
 }
 
 /* ===== RESPONSIVE DESIGN ===== */
-@media (max-width: 1200px) {
-  .metricsGrid,
-  .trendsGrid {
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  }
   
   .goalsGrid {
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   }
 }
 
-@media (max-width: 768px) {
-  .biometricsPage {
-    font-size: 0.9rem;
-  }
   
   .header {
     flex-direction: column;
@@ -1308,10 +1299,6 @@
   }
 }
 
-@media (max-width: 480px) {
-  .header {
-    padding: 1rem;
-  }
   
   .pageTitle {
     font-size: 1.5rem;
