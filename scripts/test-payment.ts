@@ -1,6 +1,6 @@
 // scripts/test-payments.ts
 import { PayPalService } from '../lib/services/paypal-service'
-import { StripePaymentService } from '../lib/services/stripe-service'
+import { StripePaymentService } from '// lib/stripe/stripe-service.ts'
 
 async function testPayments() {
   console.log('🧪 Testing Payment Systems...\n')

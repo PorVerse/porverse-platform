@@ -22,13 +22,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Message required' }, { status: 400 })
     }
 
-    // Get user's sleep history and patterns
     const sleepContext = await getSleepContext(user.id, supabase)
-    
-    // Generate personalized sleep coaching response
     const response = await generateSleepCoachingResponse(message, sleep_data, sleepContext, goal)
     
-    // Save conversation
     await supabase.from('ai_conversations').insert({
       user_id: user.id,
       ecosystem: 'por-well',
@@ -41,7 +37,6 @@ export async function POST(request: NextRequest) {
       created_at: new Date().toISOString()
     })
 
-    // Log activity
     await supabase.from('user_activity_logs').insert({
       user_id: user.id,
       ecosystem: 'por-well',
@@ -73,7 +68,6 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Get sleep insights and recommendations
     const sleepInsights = await generateSleepInsights(user.id, supabase)
 
     return NextResponse.json({
@@ -92,7 +86,6 @@ export async function GET(request: NextRequest) {
 }
 
 async function getSleepContext(userId: string, supabase: any) {
-  // Get recent mood entries with sleep data
   const { data: sleepData } = await supabase
     .from('mood_entries')
     .select('sleep_quality, created_at, mood_score, stress_level')
@@ -101,14 +94,12 @@ async function getSleepContext(userId: string, supabase: any) {
     .order('created_at', { ascending: false })
     .limit(14)
 
-  // Get user health profile for sleep preferences
   const { data: healthProfile } = await supabase
     .from('user_health_profiles')
     .select('*')
     .eq('user_id', userId)
     .single()
 
-  // Calculate sleep patterns
   const sleepPatterns = analyzeSleepPatterns(sleepData || [])
 
   return {
@@ -116,7 +107,7 @@ async function getSleepContext(userId: string, supabase: any) {
     health_profile: healthProfile,
     patterns: sleepPatterns,
     average_sleep_quality: sleepData?.length > 0 
-      ? sleepData.reduce((sum, entry) => sum + entry.sleep_quality, 0) / sleepData.length 
+      ? sleepData.reduce((sum: number, entry: any) => sum + entry.sleep_quality, 0) / sleepData.length 
       : null
   }
 }
@@ -157,14 +148,8 @@ Răspunde în română, empatic și profesional. Max 200 cuvinte.`
     })
 
     const aiResponse = completion.choices[0]?.message?.content || 'Răspuns indisponibil temporar'
-
-    // Generate personalized sleep plan
     const sleepPlan = generateSleepPlan(context, goal, sleep_data)
-    
-    // Generate specific recommendations
     const recommendations = generateSleepRecommendations(context, sleep_data)
-    
-    // Calculate sleep score
     const sleepScore = calculateSleepScore(context, sleep_data)
 
     return {
@@ -195,21 +180,18 @@ function analyzeSleepPatterns(sleepData: any[]) {
     mood_correlation: 'unknown'
   }
 
-  // Calculate weekly average
-  patterns.weekly_average = sleepData.reduce((sum, entry) => sum + entry.sleep_quality, 0) / sleepData.length
+  patterns.weekly_average = sleepData.reduce((sum: number, entry: any) => sum + entry.sleep_quality, 0) / sleepData.length
 
-  // Analyze trend
   const recent = sleepData.slice(0, Math.ceil(sleepData.length / 2))
   const older = sleepData.slice(-Math.ceil(sleepData.length / 2))
   
-  const recentAvg = recent.reduce((sum, entry) => sum + entry.sleep_quality, 0) / recent.length
-  const olderAvg = older.reduce((sum, entry) => sum + entry.sleep_quality, 0) / older.length
+  const recentAvg = recent.reduce((sum: number, entry: any) => sum + entry.sleep_quality, 0) / recent.length
+  const olderAvg = older.reduce((sum: number, entry: any) => sum + entry.sleep_quality, 0) / older.length
 
   if (recentAvg > olderAvg + 0.5) patterns.trend = 'improving'
   else if (recentAvg < olderAvg - 0.5) patterns.trend = 'declining'
 
-  // Analyze consistency
-  const sleepQualityValues = sleepData.map(entry => entry.sleep_quality)
+  const sleepQualityValues = sleepData.map((entry: any) => entry.sleep_quality)
   const variance = calculateVariance(sleepQualityValues)
   
   if (variance < 1) patterns.consistency = 'very_consistent'
@@ -217,12 +199,11 @@ function analyzeSleepPatterns(sleepData: any[]) {
   else if (variance < 3) patterns.consistency = 'somewhat_variable'
   else patterns.consistency = 'highly_variable'
 
-  // Analyze mood correlation
-  const validEntries = sleepData.filter(entry => entry.mood_score)
+  const validEntries = sleepData.filter((entry: any) => entry.mood_score)
   if (validEntries.length >= 3) {
     const correlation = calculateSimpleCorrelation(
-      validEntries.map(e => e.sleep_quality),
-      validEntries.map(e => e.mood_score)
+      validEntries.map((e: any) => e.sleep_quality),
+      validEntries.map((e: any) => e.mood_score)
     )
     
     if (correlation > 0.3) patterns.mood_correlation = 'positive'
@@ -238,11 +219,10 @@ function generateSleepPlan(context: any, goal?: string, sleepData?: any) {
     target_bedtime: '22:30',
     target_wake_time: '06:30',
     sleep_duration_goal: '8 hours',
-    weekly_goals: [],
-    daily_routine: []
+    weekly_goals: [] as string[],
+    daily_routine: [] as string[]
   }
 
-  // Customize based on current sleep quality
   if (context.average_sleep_quality < 5) {
     plan.weekly_goals = [
       'Săptămâna 1: Stabilizează program de somn',
@@ -257,7 +237,6 @@ function generateSleepPlan(context: any, goal?: string, sleepData?: any) {
     ]
   }
 
-  // Daily routine based on patterns
   plan.daily_routine = [
     '19:00 - Ultima masă consistentă',
     '20:00 - Activități relaxante (lectură, baie caldă)',
@@ -266,7 +245,6 @@ function generateSleepPlan(context: any, goal?: string, sleepData?: any) {
     '22:30 - Ora țintă de adormire'
   ]
 
-  // Adjust for goal
   if (goal?.includes('insomnie') || goal?.includes('adormire')) {
     plan.daily_routine.push('Dacă nu adormi în 20 min, ieși din pat și fa o activitate liniștitoare')
   }
@@ -275,9 +253,8 @@ function generateSleepPlan(context: any, goal?: string, sleepData?: any) {
 }
 
 function generateSleepRecommendations(context: any, sleepData?: any) {
-  const recommendations = []
+  const recommendations: any[] = []
 
-  // Based on sleep quality average
   if (context.average_sleep_quality < 5) {
     recommendations.push({
       category: 'urgent',
@@ -294,7 +271,6 @@ function generateSleepRecommendations(context: any, sleepData?: any) {
     })
   }
 
-  // Based on patterns
   if (context.patterns?.consistency === 'highly_variable') {
     recommendations.push({
       category: 'consistency',
@@ -313,7 +289,6 @@ function generateSleepRecommendations(context: any, sleepData?: any) {
     })
   }
 
-  // General recommendations
   recommendations.push({
     category: 'lifestyle',
     title: 'Optimizare stil de viață',
@@ -321,8 +296,8 @@ function generateSleepRecommendations(context: any, sleepData?: any) {
     priority: 'low'
   })
 
-  return recommendations.sort((a, b) => {
-    const priorityOrder = { high: 3, medium: 2, low: 1 }
+  return recommendations.sort((a: any, b: any) => {
+    const priorityOrder: { [key: string]: number } = { high: 3, medium: 2, low: 1 }
     return priorityOrder[b.priority] - priorityOrder[a.priority]
   })
 }
@@ -330,17 +305,14 @@ function generateSleepRecommendations(context: any, sleepData?: any) {
 function calculateSleepScore(context: any, sleepData?: any) {
   if (!context.average_sleep_quality) return null
 
-  let score = context.average_sleep_quality * 10 // Base score from 0-100
+  let score = context.average_sleep_quality * 10
 
-  // Adjust for consistency
   if (context.patterns?.consistency === 'very_consistent') score += 10
   else if (context.patterns?.consistency === 'highly_variable') score -= 15
 
-  // Adjust for trend
   if (context.patterns?.trend === 'improving') score += 10
   else if (context.patterns?.trend === 'declining') score -= 15
 
-  // Adjust for mood correlation
   if (context.patterns?.mood_correlation === 'positive') score += 5
 
   return {
@@ -360,32 +332,32 @@ function calculateSleepScore(context: any, sleepData?: any) {
 async function generateSleepInsights(userId: string, supabase: any) {
   const context = await getSleepContext(userId, supabase)
   
-  // Get additional insights
   const weeklyData = context.recent_sleep_data.slice(0, 7)
   const weeklyAverage = weeklyData.length > 0 
-    ? weeklyData.reduce((sum, entry) => sum + entry.sleep_quality, 0) / weeklyData.length 
+    ? weeklyData.reduce((sum: number, entry: any) => sum + entry.sleep_quality, 0) / weeklyData.length 
     : 0
 
-  // Calculate sleep debt (simplified)
-  const idealSleep = 8 // hours
-  const estimatedActualSleep = Math.max(4, weeklyAverage * 0.8) // rough estimation
-  const sleepDebt = Math.max(0, (idealSleep - estimatedActualSleep) * 7) // weekly debt
+  const idealSleep = 8
+  const estimatedActualSleep = Math.max(4, weeklyAverage * 0.8)
+  const sleepDebt = Math.max(0, (idealSleep - estimatedActualSleep) * 7)
 
-  const insights = []
+  const insights: string[] = []
 
-  if (context.patterns?.trend === 'improving') {
+  if (context.patterns && 'trend' in context.patterns) {
+  if (context.patterns.trend === 'improving') {
     insights.push('📈 Calitatea somnului se îmbunătățește! Continuă rutina actuală.')
-  } else if (context.patterns?.trend === 'declining') {
+  } else if (context.patterns.trend === 'declining') {
     insights.push('⚠️ Calitatea somnului scade. Este timpul să revizuiești rutina de culcare.')
   }
+}
 
-  if (context.patterns?.mood_correlation === 'positive') {
-    insights.push('😊 Există o legătură clară între calitatea somnului și dispoziția ta.')
-  }
+if (context.patterns && 'mood_correlation' in context.patterns && context.patterns.mood_correlation === 'positive') {
+  insights.push('😊 Există o legătură clară între calitatea somnului și dispoziția ta.')
+}
 
-  if (context.patterns?.consistency === 'highly_variable') {
-    insights.push('🎯 Focusează-te pe o rutină mai constantă pentru rezultate mai bune.')
-  }
+if (context.patterns && 'consistency' in context.patterns && context.patterns.consistency === 'highly_variable') {
+  insights.push('🎯 Focusează-te pe o rutină mai constantă pentru rezultate mai bune.')
+}
 
   return {
     insights,
@@ -400,24 +372,23 @@ async function generateSleepInsights(userId: string, supabase: any) {
   }
 }
 
-// Helper functions
 function calculateVariance(numbers: number[]): number {
   if (numbers.length === 0) return 0
   
-  const mean = numbers.reduce((sum, num) => sum + num, 0) / numbers.length
-  const squaredDiffs = numbers.map(num => Math.pow(num - mean, 2))
-  return squaredDiffs.reduce((sum, diff) => sum + diff, 0) / numbers.length
+  const mean = numbers.reduce((sum: number, num: number) => sum + num, 0) / numbers.length
+  const squaredDiffs = numbers.map((num: number) => Math.pow(num - mean, 2))
+  return squaredDiffs.reduce((sum: number, diff: number) => sum + diff, 0) / numbers.length
 }
 
 function calculateSimpleCorrelation(arr1: number[], arr2: number[]): number {
   if (arr1.length !== arr2.length || arr1.length < 2) return 0
 
   const n = arr1.length
-  const sum1 = arr1.reduce((sum, val) => sum + val, 0)
-  const sum2 = arr2.reduce((sum, val) => sum + val, 0)
-  const sum1Sq = arr1.reduce((sum, val) => sum + val * val, 0)
-  const sum2Sq = arr2.reduce((sum, val) => sum + val * val, 0)
-  const pSum = arr1.reduce((sum, val, i) => sum + val * arr2[i], 0)
+  const sum1 = arr1.reduce((sum: number, val: number) => sum + val, 0)
+  const sum2 = arr2.reduce((sum: number, val: number) => sum + val, 0)
+  const sum1Sq = arr1.reduce((sum: number, val: number) => sum + val * val, 0)
+  const sum2Sq = arr2.reduce((sum: number, val: number) => sum + val * val, 0)
+  const pSum = arr1.reduce((sum: number, val: number, i: number) => sum + val * arr2[i], 0)
 
   const num = pSum - (sum1 * sum2 / n)
   const den = Math.sqrt((sum1Sq - sum1 * sum1 / n) * (sum2Sq - sum2 * sum2 / n))

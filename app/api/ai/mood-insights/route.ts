@@ -308,7 +308,7 @@ function analyzeWeeklyPatterns(entries: any[]) {
 }
 
 function analyzeTriggerPatterns(entries: any[]) {
-  const patterns = []
+  const patterns: any[] = []
   const triggerCounts: { [key: string]: { count: number; avgMood: number; moods: number[] } } = {}
 
   entries.forEach(entry => {
@@ -413,7 +413,7 @@ function calculateCorrelation(arr1: number[], arr2: number[]): { strength: numbe
 }
 
 function analyzeActivityMoodCorrelations(entries: any[]) {
-  const correlations = []
+  const correlations: any[] = []
   const activityMoods: { [key: string]: number[] } = {}
 
   entries.forEach(entry => {
@@ -521,6 +521,6 @@ function generatePersonalizedRecommendations(statistics: any, patterns: any[], c
 
   return recommendations.sort((a, b) => {
     const priorityOrder = { high: 3, medium: 2, low: 1 }
-    return priorityOrder[b.priority] - priorityOrder[a.priority]
+    return (priorityOrder as any)[b.priority] - (priorityOrder as any)[a.priority]
   })
 }

@@ -28,12 +28,10 @@ export async function POST(request: NextRequest) {
       stress_level
     } = await request.json()
 
-    // Validate required fields
     if (!mood_score || mood_score < 1 || mood_score > 10) {
       return NextResponse.json({ error: 'Valid mood_score (1-10) required' }, { status: 400 })
     }
 
-    // Save mood entry to database
     const { data: moodEntry, error: dbError } = await supabase
       .from('mood_entries')
       .insert({
@@ -57,13 +55,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to save mood entry' }, { status: 500 })
     }
 
-    // Generate AI insights for the mood entry
     const moodAnalysis = await generateMoodInsights(user.id, moodEntry, supabase)
-
-    // Check for crisis indicators
     const crisisCheck = await checkForCrisisSignals(moodEntry, thoughts)
 
-    // Log activity
     await supabase.from('user_activity_logs').insert({
       user_id: user.id,
       ecosystem: 'por-well',
@@ -86,16 +80,12 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('Mood entry error:', error)
-    return NextResponse.json(
-      { error: 'Failed to process mood entry' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Failed to process mood entry' }, { status: 500 })
   }
 }
 
 async function generateMoodInsights(userId: string, moodEntry: any, supabase: any) {
   try {
-    // Get recent mood history for context
     const { data: recentMoods } = await supabase
       .from('mood_entries')
       .select('*')
@@ -159,7 +149,6 @@ function detectMoodPatterns(moodHistory: any[]) {
 
   const patterns = []
   
-  // Check for declining trend
   const recentScores = moodHistory.slice(0, 5).map(m => m.mood_score)
   const isDecline = recentScores.every((score, i) => 
     i === 0 || score <= recentScores[i - 1]
@@ -173,12 +162,11 @@ function detectMoodPatterns(moodHistory: any[]) {
     })
   }
 
-  // Check for common triggers
   const allTriggers = moodHistory.flatMap(m => m.triggers || [])
-  const triggerCounts = allTriggers.reduce((acc, trigger) => {
+  const triggerCounts: Record<string, number> = allTriggers.reduce((acc, trigger) => {
     acc[trigger] = (acc[trigger] || 0) + 1
     return acc
-  }, {})
+  }, {} as Record<string, number>)
 
   const commonTrigger = Object.entries(triggerCounts)
     .sort(([,a], [,b]) => b - a)[0]
@@ -224,7 +212,6 @@ async function checkForCrisisSignals(moodEntry: any, thoughts: string) {
   let severity = 'low'
   const indicators = []
 
-  // Check mood scores
   if (moodEntry.mood_score <= lowMoodThreshold) {
     requiresAttention = true
     indicators.push('Very low mood score')
@@ -236,7 +223,6 @@ async function checkForCrisisSignals(moodEntry: any, thoughts: string) {
     indicators.push('High anxiety level')
   }
 
-  // Check for crisis keywords in thoughts
   if (thoughts) {
     const hasKeywords = crisisKeywords.some(keyword => 
       thoughts.toLowerCase().includes(keyword.toLowerCase())
@@ -263,7 +249,6 @@ async function checkForCrisisSignals(moodEntry: any, thoughts: string) {
 async function generateMoodRecommendations(moodEntry: any, analysis: any) {
   const recommendations = []
 
-  // Based on mood score
   if (moodEntry.mood_score <= 4) {
     recommendations.push({
       type: 'activity',
@@ -288,12 +273,11 @@ async function generateMoodRecommendations(moodEntry: any, analysis: any) {
     })
   }
 
-  // Default positive recommendation
   recommendations.push({
     type: 'gratitude',
     title: 'Jurnalul recunoștinței',
     description: 'Scrie 3 lucruri pentru care ești recunoscător/oare azi'
   })
 
-  return recommendations.slice(0, 3) // Max 3 recommendations
+  return recommendations.slice(0, 3)
 }
