@@ -171,7 +171,6 @@ export const usePayments = () => {
 }
 
 // hooks/usePricing.ts
-import { useState, useEffect } from 'react'
 
 export const PRICING_TIERS: PricingTier[] = [
   {
@@ -377,7 +376,6 @@ export const usePricing = () => {
 }
 
 // hooks/useSubscription.ts
-import { useState, useEffect } from 'react'
 import { usePayments } from './usePayments'
 
 export const useSubscription = () => {
