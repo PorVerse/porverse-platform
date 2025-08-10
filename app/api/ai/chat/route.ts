@@ -1,72 +1,110 @@
-// app/api/ai/chat/route.ts - AI Chat API Production
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabase } from '@/lib/supabase'
 import OpenAI from 'openai'
 
-// Initialize OpenAI with fallback to OpenRouter
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY || process.env.OPENROUTER_API_KEY,
-  baseURL: process.env.OPENROUTER_API_KEY ? 'https://openrouter.ai/api/v1' : undefined,
-  defaultHeaders: process.env.OPENROUTER_API_KEY ? {
-    'HTTP-Referer': process.env.NEXT_PUBLIC_APP_URL,
-    'X-Title': 'PorVerse AI Platform'
-  } : undefined
+  baseURL: process.env.OPENROUTER_API_KEY ? 'https://openrouter.ai/api/v1' : undefined
 })
 
-// Ecosystem-specific system prompts
-const ECOSYSTEM_PROMPTS = {
-  'por-health': `You are PorHealth AI, an expert nutritionist, fitness trainer, and wellness coach. Help users optimize their physical health through personalized nutrition plans, workout routines, and lifestyle recommendations. Always include medical disclaimers when appropriate and suggest consulting healthcare providers for serious concerns.`,
-  
-  'por-kids': `You are PorKids AI, an educational assistant for children and parents. Help with homework, create engaging learning experiences, and support child development. Always maintain age-appropriate content and prioritize child safety. Encourage parental involvement when needed.`,
-  
-  'por-mind': `You are PorMind AI, a financial education expert and wealth building coach. Help users understand personal finance, create budgets, plan investments, and build long-term wealth. Provide educational content, not specific investment advice. Always include appropriate disclaimers.`,
-  
-  'por-well': `You are PorWell AI, a mental wellness companion and therapeutic support system. Provide emotional support, mood tracking insights, stress management techniques, and mental health resources. Always prioritize user safety and suggest professional help when appropriate. Be empathetic and non-judgmental.`,
-  
-  'por-flow': `You are PorFlow AI, a productivity optimization expert. Help users manage their time, organize tasks, improve focus, and create efficient workflows. Provide practical, actionable advice for better productivity and work-life balance.`,
-  
-  'por-blu': `You are PorBlu AI, an executive coach and strategic planning advisor. Help users with leadership development, strategic thinking, vision creation, and long-term planning. Provide frameworks for decision-making and personal growth.`,
-  
-  'quantum-vault': `You are Quantum Vault AI, an advanced consciousness explorer with access to deep psychological analysis and future projection capabilities. Help users explore their identity, simulate future scenarios, and identify patterns in their behavior across all life areas.`
-}
-
-// Safety keywords that require crisis intervention
+// Crisis keywords for Romanian language
 const CRISIS_KEYWORDS = [
-  'suicide', 'kill myself', 'end my life', 'want to die', 'hurt myself',
-  'self-harm', 'overdose', 'no point living', 'better off dead'
+  'vreau să mor', 'să mă sinucid', 'să mă omor', 'să dispăr', 'să mă ucid',
+  'nu mai vreau să trăiesc', 'să îmi fac rău', 'să mă tai', 'să iau pastile',
+  'să mă arunc', 'nu mai pot', 'totul e fără sens', 'nimeni nu mă iubește',
+  'sunt o povară', 'ar fi mai bine fără mine', 'vreau să plec din lume',
+  'să mă spânzur', 'să mă înec', 'pastile multe', 'cuțit', 'sinucidere'
 ]
 
-interface ChatRequest {
-  message: string
-  ecosystem: string
-  conversationId?: string
-  userId: string
+const ECOSYSTEM_PROMPTS = {
+  'por-health': `You are an expert health and wellness coach with deep knowledge of nutrition, fitness, and holistic wellness. 
+    
+    Guidelines:
+    - Always include medical disclaimers for health advice
+    - Focus on evidence-based recommendations
+    - Encourage consulting healthcare professionals for serious issues
+    - Provide practical, actionable advice
+    - Be supportive and motivating
+    
+    IMPORTANT: Always add this disclaimer for health advice: "⚕️ Disclaimer: This is not medical advice. Consult a healthcare professional for medical concerns."`,
+
+  'por-kids': `You are a specialized educational assistant and child development expert focused on helping children learn effectively.
+    
+    Guidelines:
+    - Adapt language to be age-appropriate
+    - Make learning fun and engaging
+    - Provide step-by-step explanations
+    - Encourage critical thinking
+    - Support both children and parents
+    - Align with Romanian curriculum when applicable`,
+
+  'por-mind': `You are a financial literacy expert and wealth-building coach with deep knowledge of personal finance and investing.
+    
+    Guidelines:
+    - Provide educational content, not specific investment advice
+    - Focus on Romanian financial context when relevant
+    - Emphasize long-term thinking and risk management
+    - Include appropriate disclaimers about financial decisions
+    - Be practical and actionable
+    
+    IMPORTANT: Always add this disclaimer: "💰 Disclaimer: This is educational content, not personalized financial advice. Consult a financial advisor for investment decisions."`,
+
+  'por-well': `You are an empathetic, professional mental health support assistant with training in therapeutic approaches.
+    
+    Guidelines:
+    - Prioritize user safety above all else
+    - Use evidence-based therapeutic techniques (CBT, DBT, mindfulness)
+    - Provide emotional validation and support
+    - Detect crisis situations and provide resources
+    - Maintain professional boundaries
+    - Encourage professional help when needed
+    
+    CRISIS PROTOCOL: If you detect ANY signs of self-harm or suicidal ideation, immediately provide crisis resources and emergency contacts.`,
+
+  'por-flow': `You are a productivity optimization expert and time management coach specializing in helping people achieve peak performance.
+    
+    Guidelines:
+    - Focus on practical, implementable strategies
+    - Consider work-life balance and sustainability
+    - Provide personalized productivity recommendations
+    - Help with goal setting and achievement
+    - Support habit formation and routine optimization`,
+
+  'por-blu': `You are an executive coach and strategic planning expert helping leaders and high-achievers reach their full potential.
+    
+    Guidelines:
+    - Focus on leadership development and strategic thinking
+    - Provide frameworks for decision-making
+    - Support vision creation and goal achievement
+    - Encourage systems thinking and long-term planning
+    - Help with personal branding and influence building`
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const body: ChatRequest = await request.json()
-    const { message, ecosystem, conversationId, userId } = body
-
-    // Validate required fields
-    if (!message || !ecosystem || !userId) {
-      return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
-      )
-    }
-
-    // Initialize Supabase
     const supabase = createServerSupabase()
-
-    // Verify user authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    if (authError || !user || user.id !== userId) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
+
+    if (authError || !user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
+
+    const { 
+      message, 
+      ecosystem, 
+      conversation_id: conversationId,
+      mood_score,
+      anxiety_level,
+      context 
+    } = await request.json()
+
+    if (!message || !ecosystem) {
+      return NextResponse.json({ 
+        error: 'Message and ecosystem required' 
+      }, { status: 400 })
+    }
+
+    const userId = user.id
 
     // Check ecosystem access
     const { data: ecosystemAccess } = await supabase
@@ -76,47 +114,36 @@ export async function POST(request: NextRequest) {
       .eq('ecosystem', ecosystem)
       .single()
 
-    if (!ecosystemAccess || ecosystemAccess.access_level === 'locked') {
-      return NextResponse.json(
-        { error: 'No access to this ecosystem' },
-        { status: 403 }
-      )
+    if (!ecosystemAccess) {
+      return NextResponse.json({ 
+        error: 'No access to this ecosystem' 
+      }, { status: 403 })
     }
 
     // Crisis detection for PorWell
     if (ecosystem === 'por-well') {
-      const messageContent = message.toLowerCase()
-      const isCrisis = CRISIS_KEYWORDS.some(keyword => 
-        messageContent.includes(keyword)
-      )
+      const crisisCheck = await detectCrisis(message, mood_score, anxiety_level)
+      
+      if (crisisCheck.requiresIntervention) {
+        // Log crisis intervention
+        await supabase.from('crisis_interventions').insert({
+          user_id: userId,
+          message: message.substring(0, 500),
+          risk_level: crisisCheck.riskLevel,
+          confidence: crisisCheck.confidence,
+          keywords_found: crisisCheck.keywordsFound,
+          intervention_triggered: true,
+          created_at: new Date().toISOString()
+        })
 
-      if (isCrisis) {
-        // Log crisis event
-        await supabase
-          .from('crisis_events')
-          .insert({
-            user_id: userId,
-            message: message,
-            severity: 'high',
-            auto_detected: true
-          })
-
-        // Return crisis response
         return NextResponse.json({
-          message: `I'm very concerned about what you've shared. Your life has value and there are people who want to help. Please reach out to:
-
-🆘 **Immediate Help:**
-• Romania: 0800 801 200 (National Mental Health)
-• Emergency: 112
-• International: 988 (Suicide Prevention)
-
-You're not alone in this. Would you like me to help you find local support resources or coping strategies?`,
-          isCrisis: true,
-          resources: [
-            { name: 'National Mental Health Hotline (RO)', number: '0800 801 200' },
-            { name: 'Emergency Services', number: '112' },
-            { name: 'International Crisis Line', number: '988' }
-          ]
+          success: true,
+          response: crisisCheck.response,
+          crisis_intervention: true,
+          emergency_resources: crisisCheck.emergencyResources,
+          risk_level: crisisCheck.riskLevel,
+          follow_up_required: true,
+          session_id: conversationId || crypto.randomUUID()
         })
       }
     }
@@ -162,7 +189,7 @@ Guidelines:
 - For financial topics, emphasize education over advice
 - For mental health, prioritize safety`
       },
-      // Include last 5 messages for context
+      // Include last 10 messages for context
       ...conversationHistory.slice(-10),
       {
         role: 'user',
@@ -172,98 +199,249 @@ Guidelines:
 
     // Call OpenAI/OpenRouter API
     const completion = await openai.chat.completions.create({
-      model: process.env.OPENROUTER_API_KEY ? 'openai/gpt-4-turbo' : 'gpt-4-turbo-preview',
-      messages: contextMessages as any,
+      model: process.env.OPENROUTER_API_KEY ? 
+        'anthropic/claude-3-haiku' : 'gpt-4-turbo-preview',
+      messages: contextMessages,
       max_tokens: 1000,
-      temperature: 0.7,
-      stream: false
+      temperature: 0.7
     })
 
-    const aiResponse = completion.choices[0]?.message?.content
+    const aiResponse = completion.choices[0]?.message?.content || 
+      'I apologize, but I cannot provide a response right now. Please try again.'
 
-    if (!aiResponse) {
-      throw new Error('No response from AI service')
+    // Calculate token usage and cost
+    const totalTokens = completion.usage?.total_tokens || 0
+    const costCents = Math.round(totalTokens * 0.01) // Approximate cost
+
+    // Save conversation
+    const conversationData = {
+      user_id: userId,
+      ecosystem: ecosystem,
+      ai_model: process.env.OPENROUTER_API_KEY ? 'claude-3-haiku' : 'gpt-4-turbo',
+      messages: [
+        ...conversationHistory.slice(-10),
+        { role: 'user', content: message, timestamp: new Date().toISOString() },
+        { role: 'assistant', content: aiResponse, timestamp: new Date().toISOString() }
+      ],
+      context_data: { 
+        mood_score, 
+        anxiety_level, 
+        context,
+        ecosystem_access: ecosystemAccess.access_level
+      },
+      total_tokens: totalTokens,
+      cost_cents: costCents,
+      created_at: new Date().toISOString()
     }
 
-    // Log AI usage for billing
+    let savedConversationId = conversationId
+
+    if (conversationId) {
+      // Update existing conversation
+      await supabase
+        .from('ai_conversations')
+        .update({
+          messages: conversationData.messages,
+          total_tokens: totalTokens,
+          cost_cents: costCents,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', conversationId)
+        .eq('user_id', userId)
+    } else {
+      // Create new conversation
+      const { data: newConversation } = await supabase
+        .from('ai_conversations')
+        .insert(conversationData)
+        .select('id')
+        .single()
+      
+      savedConversationId = newConversation?.id
+    }
+
+    // Log user activity
+    await supabase.from('user_activity_logs').insert({
+      user_id: userId,
+      ecosystem: ecosystem,
+      action_type: 'ai_chat',
+      action_data: {
+        conversation_id: savedConversationId,
+        message_length: message.length,
+        response_length: aiResponse.length,
+        tokens_used: totalTokens
+      },
+      created_at: new Date().toISOString()
+    })
+
+    // Update ecosystem usage
     await supabase
-      .from('ai_usage_logs')
-      .insert({
-        user_id: userId,
-        ecosystem,
-        prompt_tokens: completion.usage?.prompt_tokens || 0,
-        completion_tokens: completion.usage?.completion_tokens || 0,
-        total_tokens: completion.usage?.total_tokens || 0,
-        model: completion.model,
-        cost_estimate: calculateCost(completion.usage?.total_tokens || 0, completion.model)
+      .from('user_ecosystems')
+      .update({
+        last_accessed_at: new Date().toISOString(),
+        usage_minutes: supabase.rpc('increment_usage', { 
+          user_id: userId, 
+          ecosystem: ecosystem, 
+          minutes: 1 
+        })
       })
+      .eq('user_id', userId)
+      .eq('ecosystem', ecosystem)
 
     return NextResponse.json({
-      message: aiResponse,
-      tokens: completion.usage?.total_tokens || 0,
-      model: completion.model
+      success: true,
+      response: aiResponse,
+      conversation_id: savedConversationId,
+      tokens_used: totalTokens,
+      cost_cents: costCents,
+      ecosystem: ecosystem,
+      crisis_intervention: false
     })
 
-  } catch (error: any) {
-    console.error('AI Chat Error:', error)
-
-    // Handle specific errors
-    if (error.message?.includes('rate_limit')) {
-      return NextResponse.json(
-        { error: 'Rate limit exceeded. Please try again later.' },
-        { status: 429 }
-      )
-    }
-
-    if (error.message?.includes('insufficient_quota')) {
-      return NextResponse.json(
-        { error: 'AI service temporarily unavailable. Please try again later.' },
-        { status: 503 }
-      )
-    }
-
-    return NextResponse.json(
-      { error: 'Failed to process AI request' },
-      { status: 500 }
-    )
+  } catch (error) {
+    console.error('AI Chat error:', error)
+    return NextResponse.json({ 
+      error: 'AI service temporarily unavailable' 
+    }, { status: 500 })
   }
 }
 
-// Cost calculation helper
-function calculateCost(tokens: number, model: string): number {
-  const costPer1kTokens = {
-    'gpt-4-turbo-preview': 0.01,
-    'gpt-4': 0.03,
-    'gpt-3.5-turbo': 0.001,
-    'openai/gpt-4-turbo': 0.01,
-    'anthropic/claude-3-opus': 0.015,
-    'anthropic/claude-3-sonnet': 0.003
-  }
+export async function GET(request: NextRequest) {
+  try {
+    const supabase = createServerSupabase()
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
 
-  const rate = costPer1kTokens[model as keyof typeof costPer1kTokens] || 0.01
-  return (tokens / 1000) * rate
+    if (authError || !user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const { searchParams } = new URL(request.url)
+    const ecosystem = searchParams.get('ecosystem')
+    const limit = parseInt(searchParams.get('limit') || '10')
+
+    // Get conversation history
+    let query = supabase
+      .from('ai_conversations')
+      .select('id, ecosystem, messages, created_at, updated_at')
+      .eq('user_id', user.id)
+      .order('updated_at', { ascending: false })
+      .limit(limit)
+
+    if (ecosystem) {
+      query = query.eq('ecosystem', ecosystem)
+    }
+
+    const { data: conversations, error } = await query
+
+    if (error) {
+      throw error
+    }
+
+    return NextResponse.json({
+      success: true,
+      conversations: conversations || []
+    })
+
+  } catch (error) {
+    console.error('Get conversations error:', error)
+    return NextResponse.json({ 
+      error: 'Could not retrieve conversations' 
+    }, { status: 500 })
+  }
 }
 
-// Rate limiting (simple in-memory store for demo)
-const rateLimitStore = new Map<string, { count: number; resetTime: number }>()
+// Crisis detection function
+async function detectCrisis(message: string, moodScore?: number, anxietyLevel?: number) {
+  const messageText = message.toLowerCase()
+  let riskLevel = 'low'
+  let confidence = 0
+  const keywordsFound: string[] = []
+  let requiresIntervention = false
 
-function checkRateLimit(userId: string): boolean {
-  const now = Date.now()
-  const windowMs = 60 * 1000 // 1 minute
-  const limit = 30 // 30 requests per minute
+  // Check for crisis keywords
+  CRISIS_KEYWORDS.forEach(keyword => {
+    if (messageText.includes(keyword.toLowerCase())) {
+      keywordsFound.push(keyword)
+      confidence += 0.2
+    }
+  })
 
-  const key = `ai_chat:${userId}`
-  const current = rateLimitStore.get(key)
-
-  if (!current || now > current.resetTime) {
-    rateLimitStore.set(key, { count: 1, resetTime: now + windowMs })
-    return true
+  // Check mood indicators
+  if (moodScore && moodScore <= 2) {
+    confidence += 0.3
+    riskLevel = 'medium'
   }
 
-  if (current.count >= limit) {
-    return false
+  if (anxietyLevel && anxietyLevel >= 9) {
+    confidence += 0.2
   }
 
-  current.count++
-  return true
+  // Check for crisis patterns
+  const crisisPatterns = [
+    /nu\s+mai\s+(pot|vreau|am\s+putere)/i,
+    /totul\s+e\s+(fără\s+sens|inutil|zadarnic)/i,
+    /nimeni\s+nu\s+(mă\s+iubește|îi\s+pasă)/i,
+    /sunt\s+(o\s+povară|de\s+prisos|inutilă?)/i,
+    /ar\s+fi\s+mai\s+bine\s+(fără\s+mine|să\s+dispar)/i
+  ]
+
+  crisisPatterns.forEach(pattern => {
+    if (pattern.test(messageText)) {
+      confidence += 0.15
+    }
+  })
+
+  // Determine intervention need and risk level
+  if (keywordsFound.length > 0 || confidence >= 0.4) {
+    requiresIntervention = true
+    
+    if (keywordsFound.length >= 2 || confidence >= 0.7) {
+      riskLevel = 'high'
+    } else if (keywordsFound.length >= 1 || confidence >= 0.5) {
+      riskLevel = 'medium'
+    }
+  }
+
+  // Generate crisis response
+  let crisisResponse = ''
+  if (requiresIntervention) {
+    if (riskLevel === 'high') {
+      crisisResponse = `Îmi pare foarte rău că te simți așa. Siguranța ta este cea mai importantă. 
+
+🚨 RESURSE IMEDIATE:
+• Urgențe generale: 112
+• Prevenirea suicidului: 0800.801.200 (GRATUIT, 24/7)
+• Linia de criză: 116.123
+
+Nu ești singur/ă în această luptă. Vorbește cu cineva de încredere chiar acum - un prieten, familie, sau sună la una din liniile de mai sus.
+
+Aceste sentimente pot fi copleșitoare, dar sunt temporare. Există ajutor și speranță. 💙`
+    } else {
+      crisisResponse = `Îmi pare rău că treci prin această perioadă dificilă. Sentimentele tale sunt valide și importante.
+
+📞 Resurse de suport:
+• Linia de viață: 0800.801.200
+• Urgențe: 112
+
+Te încurajez să vorbești cu cineva de încredere despre cum te simți. Aceste momente grele pot trece, și există oameni care vor să te ajute.
+
+Poți să îmi spui mai multe despre ce te face să te simți așa? Sunt aici să te ascult. 💙`
+    }
+  }
+
+  return {
+    requiresIntervention,
+    riskLevel,
+    confidence,
+    keywordsFound,
+    response: crisisResponse,
+    emergencyResources: {
+      romania: {
+        general_emergency: '112',
+        suicide_prevention: '0800.801.200',
+        crisis_hotline: '116.123',
+        mental_health_hotline: '0800.800.100',
+        children_hotline: '116.111'
+      }
+    }
+  }
 }
