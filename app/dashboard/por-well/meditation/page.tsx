@@ -611,9 +611,9 @@ export default function MeditationCenter() {
                 className="filter-select"
               >
                 <option value="all">Toate duratele</option>
-                <option value="short">Scurt (≤10 min)</option>
+                <option value="short">Scurt (&le;10 min)</option>
                 <option value="medium">Mediu (11-20 min)</option>
-                <option value="long">Lung (>20 min)</option>
+                <option value="long">Lung (&gt;20 min)</option>
               </select>
             </div>
           </div>

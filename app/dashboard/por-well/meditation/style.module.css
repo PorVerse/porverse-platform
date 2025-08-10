@@ -1066,9 +1066,6 @@
   .sessions-grid {
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   }
-}
-
-  
   .header-stats {
     gap: 1rem;
     padding: 0.8rem 1.5rem;
@@ -1140,7 +1137,6 @@
   .time-remaining {
     font-size: 1.8rem;
   }
-}
 
 /* Scrollbar Styling */
 .meditation-content::-webkit-scrollbar,
@@ -1173,4 +1169,3 @@
   .breathe {
     animation: none;
   }
-}

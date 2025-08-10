@@ -1,4 +1,4 @@
-// lib/payments/payment-service-complete.ts - COMPLETE PAYMENT SYSTEM
+// lib/payments/payment-service.ts - COMPLETE PAYMENT SYSTEM
 import Stripe from 'stripe'
 import { PayPalApi, PayPalOrder, PayPalSubscription } from 'paypal-rest-sdk'
 import { DatabaseService } from '../database/database-service-complete'
