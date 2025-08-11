@@ -388,7 +388,7 @@ Generate an optimal time-blocked schedule with reasoning.`
       daily_focus_hours: todaySessions.reduce((sum, s) => sum + (s.actual_duration / 60), 0),
       tasks_completed: todayTasks.length,
       average_productivity_score: todaySessions.length > 0 
-        ? todaySessions.reduce((sum, s) => sum + s.productivity_rating: 85, 0) / todaySessions.length 
+        ? todaySessions.reduce((sum, s) => sum + (s.productivity_rating || 85), 0) / todaySessions.length 
         : 0,
       time_blocking_adherence: 85, // Mock calculation
       distraction_rate: todaySessions.reduce((sum, s) => sum + s.distractions, 0) / Math.max(1, todaySessions.length)
@@ -542,7 +542,7 @@ function ProductivityOverview({
   
   const productivityData = sessions.slice(0, 7).reverse().map(session => ({
     date: new Date(session.started_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-    productivity: session.productivity_rating: 85,
+    productivity: session.productivity_rating || 85,
     focus_hours: session.actual_duration / 60,
     distractions: session.distractions
   }))

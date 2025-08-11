@@ -992,7 +992,7 @@ function CrisisSupport({
             variant="outline"
             onClick={() => {
               // Would open episode logging modal
-              // toast.info('Episode logging feature coming soon')
+              // // toast.info('Episode logging feature coming soon')
             }}
           >
             Log New Episode
