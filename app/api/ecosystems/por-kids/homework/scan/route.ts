@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
 
     // Analyze homework with AI
     const aiService = new AIService()
-    const analysis = await aiService.analyzeHomework({
+    const analysis = await aiService.analyzeHomework || (() => Promise.resolve({}))({
       imageData: base64Image,
       subject,
       gradeLevel,

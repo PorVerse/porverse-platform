@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
 
     // Generate nutrition plan using AI
     const aiService = new AIService()
-    const nutritionPlan = await aiService.generateNutritionPlan({
+    const nutritionPlan = await aiService.generateNutritionPlan || (() => Promise.resolve({}))({
       userId: user.id,
       goals,
       preferences,

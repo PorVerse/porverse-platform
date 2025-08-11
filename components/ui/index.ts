@@ -1,9 +1,4 @@
-
-// @ts-nocheck
-export * from './button'
-export * from './badge'
-export * from './card'
-export * from './progress'
-export * from './select'
-export * from './slider'
-export * from './tabs'
+// components/ui/index.ts
+export { Button } from './button'
+export { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from './card'
+export { Badge } from './badge'

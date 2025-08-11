@@ -1,4 +1,4 @@
-// @ts-nocheck
+import { Button, Card, CardContent, Badge } from '@/components/ui'
 // ========================================
 // 1. PORHEALTH ECOSYSTEM - COMPLETE
 // ========================================

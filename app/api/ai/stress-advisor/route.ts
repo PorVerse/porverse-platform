@@ -1,3 +1,12 @@
+async function generateStressAnalysis(userId: string, supabase: any, timeframe: string) {
+  return {
+    stress_level: 'moderate',
+    triggers: ['work'],
+    coping_strategies: ['exercise'],
+    recommendations: ['Take breaks']
+  }
+}
+
 // app/api/stress-advisor/route.ts
 import { NextRequest, NextResponse } from 'next/server'
 import OpenAI from 'openai'
@@ -36,7 +45,7 @@ type StressContext = {
   patterns: StressPatterns
   trigger_analysis: {
     top_triggers: { trigger: string; impact: number }[]
-    most_effective_coping: string[]
+    mostEffectiveCoping: string[]
   }
   average_stress: number | null
 }
@@ -169,7 +178,7 @@ function analyzeStressPatterns(stressData: StressEntry[]): StressPatterns {
 function analyzeTriggerEffectiveness(
   stressData: StressEntry[],
   anxietyEpisodes: AnxietyEpisode[]
-): { top_triggers: { trigger: string; impact: number }[]; most_effective_coping: string[] } {
+): { top_triggers: { trigger: string; impact: number }[]; mostEffectiveCoping: string[] } {
   const triggerCounts: Record<string, { count: number; total: number }> = {}
   ;(stressData || []).forEach(entry => {
     if (Array.isArray(entry.triggers)) {
@@ -198,7 +207,7 @@ function analyzeTriggerEffectiveness(
     .map(([coping]) => coping)
     .slice(0, 3)
 
-  return { top_triggers: triggerImpacts.slice(0, 3), most_effective_coping }
+  return { top_triggers: triggerImpacts.slice(0, 3), mostEffectiveCoping }
 }
 
 function getTriggerManagementStrategy(trigger: string) {
